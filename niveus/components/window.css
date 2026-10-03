@@ -59,8 +59,10 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--nv-space-3);
-  min-block-size: var(--nv-control-height-lg);
-  padding-inline: var(--nv-space-4);
+  /* Slim, as titlebars on the desktop are: tall enough for the lights and
+     a label, not a toolbar's height. */
+  min-block-size: calc(var(--nv-control-height-sm) + var(--nv-space-1));
+  padding-inline: var(--nv-space-3);
 
   background-color: var(--nv-color-surface-elevated);
   background-image: var(--nv-sheen-raised);
