@@ -853,7 +853,7 @@
     --nv-light-surface-elevated: #f8f8f6;
     --nv-light-surface-inset: color-mix(in oklab, #e3e2dd, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-surface-hover: color-mix(in oklab, #f1f0ec, var(--nv-brand) var(--nv-brand-tint));
-    --nv-light-surface-active: color-mix(in oklab, #e8e5de, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-active: color-mix(in oklab, #e6e5e0, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-scrim: rgb(28 24 18 / 0.34);
 
     /* --- Text ---------------------------------------------------------------
