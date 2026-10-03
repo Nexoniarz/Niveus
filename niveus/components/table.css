@@ -1,0 +1,95 @@
+/* ==========================================================================
+   Niveus — Table
+   --------------------------------------------------------------------------
+     <div class="nv-table-frame">
+       <table class="nv-table"> … </table>
+     </div>
+
+   Rows of the same kind of thing. The frame handles the overflow, because a
+   table is the one component that legitimately refuses to get narrower — it
+   scrolls sideways inside its frame rather than forcing the page to.
+
+   Numbers belong in .nv-table__number: aligned to the end and set in tabular
+   figures, so columns of digits line up and can be compared by eye.
+   ========================================================================== */
+
+.nv-table-frame {
+  inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.nv-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font: var(--nv-font-body);
+  text-align: start;
+}
+
+.nv-table th {
+  padding: var(--nv-space-2-5) var(--nv-space-4);
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-wide);
+  color: var(--nv-color-text-tertiary);
+  text-align: start;
+  white-space: nowrap;
+  border-block-end: var(--nv-border-width) solid var(--nv-color-border);
+}
+
+.nv-table td {
+  padding: var(--nv-space-3) var(--nv-space-4);
+  color: var(--nv-color-text-secondary);
+  border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  vertical-align: middle;
+}
+
+/* The first cell in a row names it, so it carries the reading weight. */
+.nv-table td:first-child {
+  color: var(--nv-color-text-primary);
+  font-weight: var(--nv-font-weight-medium);
+}
+
+.nv-table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+@media (hover: hover) {
+  .nv-table tbody tr {
+    transition: var(--nv-transition-colors);
+  }
+
+  .nv-table tbody tr:hover {
+    background-color: var(--nv-color-surface-hover);
+  }
+}
+
+.nv-table__number {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.nv-table__actions {
+  inline-size: 1%;
+  white-space: nowrap;
+  text-align: end;
+}
+
+.nv-table--compact th {
+  padding-block: var(--nv-space-2);
+}
+
+.nv-table--compact td {
+  padding-block: var(--nv-space-2);
+}
+
+/* Rows that lead somewhere. Same physical language as an interactive card:
+   it responds to a pointer, so it must look like it can be pressed. */
+.nv-table--interactive tbody tr {
+  cursor: pointer;
+}
+
+.nv-table--interactive tbody tr:focus-visible {
+  outline: none;
+  box-shadow: var(--nv-focus-ring);
+}

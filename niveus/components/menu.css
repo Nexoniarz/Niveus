@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Niveus — Menu
+   --------------------------------------------------------------------------
+     <button class="nv-button nv-menu-trigger" popovertarget="actions"
+             style="--nv-anchor: --actions">Actions</button>
+
+     <div class="nv-menu" popover id="actions" style="--nv-anchor: --actions">
+       <button class="nv-menu__item">Rename</button>
+       <hr class="nv-menu__separator">
+       <button class="nv-menu__item nv-menu__item--danger">Delete</button>
+     </div>
+
+   A menu has a spatial relationship with the control that opened it: anchor
+   positioning ties it to the trigger, and it scales out of the trigger's edge
+   rather than appearing somewhere unrelated. Both sides name the same anchor
+   through --nv-anchor, so the pair stays obvious in the markup.
+
+   Light dismiss, Escape, and top-layer stacking come from the popover
+   attribute — none of it is scripted.
+   ========================================================================== */
+
+.nv-menu-trigger {
+  anchor-name: var(--nv-anchor);
+}
+
+.nv-menu {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: var(--nv-space-1);
+
+  min-inline-size: 12rem;
+  max-inline-size: min(20rem, calc(100vw - var(--nv-space-8)));
+  max-block-size: min(24rem, calc(100svh - var(--nv-space-12)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  /* Below the trigger, aligned to its inline-start edge, flipping to whichever
+     side has room. */
+  position-anchor: var(--nv-anchor);
+  position-area: block-end span-inline-end;
+  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  margin-block-start: var(--nv-space-2);
+
+  background-color: var(--nv-material-frosted-bg);
+  border: var(--nv-border-width) solid var(--nv-material-frosted-border);
+  border-radius: var(--nv-radius-lg);
+  box-shadow: var(--nv-material-frosted-shadow);
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+  color: var(--nv-color-text-primary);
+
+  /* Grows from the edge nearest the trigger. */
+  transform-origin: center block-start;
+
+  opacity: 0;
+  scale: 0.96;
+  translate: 0 calc(var(--nv-travel-sm) * -1);
+  transition:
+    opacity var(--nv-duration-quick) var(--nv-ease-standard),
+    scale var(--nv-duration-quick) var(--nv-ease-entrance),
+    translate var(--nv-duration-quick) var(--nv-ease-entrance),
+    display var(--nv-duration-quick) allow-discrete,
+    overlay var(--nv-duration-quick) allow-discrete;
+}
+
+.nv-menu:popover-open {
+  opacity: 1;
+  scale: 1;
+  translate: 0;
+}
+
+@starting-style {
+  .nv-menu:popover-open {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 calc(var(--nv-travel-sm) * -1);
+  }
+}
+
+/* Without anchor positioning the menu cannot know where its trigger is, so it
+   falls back to the popover's own centring rather than landing somewhere
+   arbitrary. The relationship is lost; the usability is not. */
+@supports not (anchor-name: --nv-test) {
+  .nv-menu {
+    inset: 0;
+    margin: auto;
+    transform-origin: center;
+  }
+}
+
+/* --- Items -------------------------------------------------------------------- */
+
+.nv-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2-5);
+  inline-size: 100%;
+  padding: var(--nv-space-2) var(--nv-space-2-5);
+
+  background-color: transparent;
+  border: 0;
+  border-radius: var(--nv-radius-sm);
+  color: var(--nv-color-text-secondary);
+  font: var(--nv-font-label);
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--nv-transition-colors);
+}
+
+@media (hover: hover) {
+  .nv-menu__item:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--nv-color-surface-hover);
+    color: var(--nv-color-text-primary);
+  }
+}
+
+.nv-menu__item:focus-visible {
+  outline: none;
+  background-color: var(--nv-color-surface-hover);
+  color: var(--nv-color-text-primary);
+  box-shadow: var(--nv-focus-ring);
+}
+
+.nv-menu__item--danger {
+  color: var(--nv-color-danger-text);
+}
+
+@media (hover: hover) {
+  .nv-menu__item--danger:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--nv-color-danger-subtle);
+    color: var(--nv-color-danger-text);
+  }
+}
+
+.nv-menu__item:disabled,
+.nv-menu__item[aria-disabled="true"] {
+  color: var(--nv-color-text-disabled);
+  cursor: not-allowed;
+}
+
+.nv-menu__item[aria-checked="true"]::before {
+  content: "";
+  inline-size: 0.28em;
+  block-size: 0.55em;
+  margin-inline-end: var(--nv-space-1);
+  translate: 0 -0.12em;
+  rotate: 45deg;
+  border-inline-end: 2px solid var(--nv-color-accent);
+  border-block-end: 2px solid var(--nv-color-accent);
+}
+
+.nv-menu__shortcut {
+  margin-inline-start: auto;
+  padding-inline-start: var(--nv-space-4);
+  color: var(--nv-color-text-tertiary);
+  font: var(--nv-font-caption);
+}
+
+.nv-menu__separator {
+  border: 0;
+  border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  margin: var(--nv-space-1) 0;
+}
+
+.nv-menu__label {
+  padding: var(--nv-space-2) var(--nv-space-2-5) var(--nv-space-1);
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--nv-color-text-tertiary);
+}

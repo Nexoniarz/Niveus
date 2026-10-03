@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Northwire — shop layout
+   --------------------------------------------------------------------------
+   Layout only. Note what this shop did *not* need in order to look like a
+   different product from the AI site next door: a second stylesheet, an
+   override file, or a single color. It set --nv-brand and kept going.
+   ========================================================================== */
+
+.shell {
+  max-inline-size: var(--nv-layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--nv-layout-gutter);
+}
+
+.section {
+  padding-block: var(--nv-space-10);
+}
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--nv-space-4);
+  margin-block-end: var(--nv-space-6);
+}
+
+/* --- Search sits inside the bar, so it must not grow forever --------------- */
+
+.search {
+  flex: 1;
+  max-inline-size: 26rem;
+  min-inline-size: 8rem;
+}
+
+/* --- Catalogue -------------------------------------------------------------- */
+
+.catalogue {
+  display: grid;
+  gap: var(--nv-space-8);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .catalogue {
+    grid-template-columns: 15rem 1fr;
+  }
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-6);
+  position: sticky;
+  inset-block-start: calc(var(--nv-control-height-lg) + var(--nv-space-6));
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-2-5);
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+  gap: var(--nv-space-4);
+}
+
+/* --- Product ------------------------------------------------------------------
+   The illustration tile is a bed: it gives the line art a ground that is
+   visibly not the card, without inventing a colour for it. */
+
+.product__art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+  border-inline: 0;
+  border-block-start: 0;
+  padding: var(--nv-space-4);
+}
+
+.product__art svg {
+  inline-size: 60%;
+  max-inline-size: 8rem;
+  color: var(--nv-color-text-tertiary);
+}
+
+.product__price {
+  font-size: var(--nv-font-size-lg);
+  font-weight: var(--nv-font-weight-semibold);
+  color: var(--nv-color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.product__was {
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-tertiary);
+  text-decoration: line-through;
+}
+
+/* --- Cart ---------------------------------------------------------------------- */
+
+.cart-line__art {
+  inline-size: var(--nv-space-10);
+  block-size: var(--nv-space-10);
+  display: grid;
+  place-items: center;
+  border-radius: var(--nv-radius-sm);
+  background-color: var(--nv-color-surface-inset);
+  box-shadow: var(--nv-elevation-inset-sm);
+  color: var(--nv-color-text-tertiary);
+}
+
+.cart-line__art svg {
+  inline-size: 60%;
+}
+
+.cart-totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-2);
+  padding-block-start: var(--nv-space-4);
+}
+
+.cart-totals__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--nv-space-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-totals__row--due {
+  padding-block-start: var(--nv-space-3);
+  border-block-start: var(--nv-border-width) solid var(--nv-color-border);
+  font-size: var(--nv-font-size-lg);
+  font-weight: var(--nv-font-weight-semibold);
+  color: var(--nv-color-text-primary);
+}
+
+.site-footer {
+  padding-block: var(--nv-space-8) var(--nv-space-12);
+  border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+}

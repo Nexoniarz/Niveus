@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Niveus — Base
+   --------------------------------------------------------------------------
+   The minimum an application needs before any component renders: a predictable
+   box model, the canvas, the default type, and the system-wide focus and
+   selection treatment.
+
+   This layer styles elements, never classes with intent. Anything opinionated
+   enough to need a name belongs in components/.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background-color: var(--nv-color-background);
+  color: var(--nv-color-text-primary);
+  font: var(--nv-font-body);
+  letter-spacing: var(--nv-letter-spacing-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis-weight: none;
+
+  /* The canvas glides into a new appearance with everything standing on it,
+     rather than cutting while the surfaces above it fade. */
+  transition: var(--nv-transition-colors);
+}
+
+/* --- Rhythm ---------------------------------------------------------------
+   Block elements carry no outer margin of their own; spacing between them is
+   the layout's decision, set with gap or the spacing tokens. */
+h1, h2, h3, h4, h5, h6,
+p, figure, blockquote, dl, dd, pre {
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-tight);
+  line-height: var(--nv-line-height-snug);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--nv-font-size-3xl); letter-spacing: var(--nv-letter-spacing-tighter); }
+h2 { font-size: var(--nv-font-size-2xl); }
+h3 { font-size: var(--nv-font-size-xl); }
+h4 { font-size: var(--nv-font-size-lg); }
+h5 { font-size: var(--nv-font-size-md); }
+h6 { font-size: var(--nv-font-size-sm); }
+
+p {
+  text-wrap: pretty;
+}
+
+small {
+  font-size: var(--nv-font-size-xs);
+}
+
+code, kbd, samp, pre {
+  font-family: var(--nv-font-family-mono);
+  font-size: var(--nv-font-size-sm);
+}
+
+/* --- Links ----------------------------------------------------------------- */
+a {
+  color: var(--nv-color-accent-text);
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 0.18em;
+  transition: var(--nv-transition-colors);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* --- Media ----------------------------------------------------------------- */
+img, svg, video, canvas, audio, iframe, embed, object {
+  display: block;
+  max-width: 100%;
+}
+
+svg {
+  flex: none;
+}
+
+hr {
+  border: 0;
+  border-top: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  margin: 0;
+}
+
+/* --- Forms -----------------------------------------------------------------
+   Form controls do not inherit type by default; without this every field in
+   the system would silently fall back to the browser's own font. */
+button, input, optgroup, select, textarea {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+textarea {
+  resize: vertical;
+}
+
+:disabled {
+  cursor: not-allowed;
+}
+
+/* --- Focus -----------------------------------------------------------------
+   One focus treatment for the whole system. Components that need the ring to
+   follow their own shape override box-shadow, not outline-color. */
+:focus-visible {
+  outline: var(--nv-focus-ring-width) solid var(--nv-color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--nv-radius-xs);
+}
+
+::selection {
+  background-color: var(--nv-color-selection);
+  color: var(--nv-color-text-primary);
+}
+
+/* --- Scrollbars ------------------------------------------------------------ */
+* {
+  scrollbar-color: var(--nv-color-border-strong) transparent;
+  scrollbar-width: thin;
+}
+
+/* ==========================================================================
+   Type roles
+   --------------------------------------------------------------------------
+   Named roles from tokens/typography.css, available as classes so hierarchy
+   stays consistent even when the markup cannot use a heading element.
+   ========================================================================== */
+
+.nv-display {
+  font: var(--nv-font-display);
+  letter-spacing: var(--nv-letter-spacing-tighter);
+  text-wrap: balance;
+}
+
+.nv-heading {
+  font: var(--nv-font-heading);
+  letter-spacing: var(--nv-letter-spacing-tight);
+  text-wrap: balance;
+}
+
+.nv-title {
+  font: var(--nv-font-title);
+  letter-spacing: var(--nv-letter-spacing-tight);
+}
+
+.nv-body {
+  font: var(--nv-font-body);
+  text-wrap: pretty;
+}
+
+.nv-label {
+  font: var(--nv-font-label);
+}
+
+.nv-caption {
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-secondary);
+}
+
+/* Engraved: small mono capitals that mark a region the way markings mark an
+   instrument panel. Not for anything that has to be read as a sentence. */
+.nv-overline {
+  font: var(--nv-font-engraved);
+  letter-spacing: var(--nv-letter-spacing-engraved);
+  text-transform: uppercase;
+  color: var(--nv-color-text-tertiary);
+}
+
+.nv-code {
+  font: var(--nv-font-code);
+}
+
+/* Text color roles, for when the role is about emphasis rather than size. */
+.nv-text-primary { color: var(--nv-color-text-primary); }
+.nv-text-secondary { color: var(--nv-color-text-secondary); }
+.nv-text-tertiary { color: var(--nv-color-text-tertiary); }
+.nv-text-accent { color: var(--nv-color-accent-text); }
+.nv-text-success { color: var(--nv-color-success-text); }
+.nv-text-warning { color: var(--nv-color-warning-text); }
+.nv-text-danger { color: var(--nv-color-danger-text); }

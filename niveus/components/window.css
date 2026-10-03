@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Niveus — Window
+   --------------------------------------------------------------------------
+     .nv-window                   a framed application window
+     .nv-window--inactive         a window that does not have focus
+     .nv-window__titlebar         controls · title · trailing actions
+     .nv-window__controls         the three lights, at the start of the bar
+     .nv-window__control          one light: --close, --minimize or --zoom
+     .nv-window__title            the window's name, centered on the bar
+     .nv-window__actions          trailing slot for a few ghost buttons
+     .nv-window__body             the content area
+
+   <div class="nv-window">
+     <div class="nv-window__titlebar">
+       <div class="nv-window__controls">
+         <button class="nv-window__control nv-window__control--close" aria-label="Close"></button>
+         <button class="nv-window__control nv-window__control--minimize" aria-label="Minimize"></button>
+         <button class="nv-window__control nv-window__control--zoom" aria-label="Zoom"></button>
+       </div>
+       <span class="nv-window__title">Settings</span>
+     </div>
+     <div class="nv-window__body">…</div>
+   </div>
+
+   A window is a solid object: the content it holds never sits on glass. Its
+   titlebar is a raised strip lit like a control, and the controls are three
+   lights at its start — close, minimize, zoom — always in that order and in
+   those colors, because people find them by position and color before they
+   read anything. Their glyphs appear only while the pointer is over the
+   group. An inactive window greys its lights and steps back one elevation,
+   and the lights regain their color the moment they are hovered.
+   ========================================================================== */
+
+.nv-window {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+
+  background-color: var(--nv-color-surface);
+  color: var(--nv-color-text-primary);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: var(--nv-radius-xl);
+  box-shadow: var(--nv-highlight-top), var(--nv-outline), var(--nv-elevation-4);
+
+  overflow: hidden;
+  transition: var(--nv-transition-surface);
+}
+
+.nv-window--inactive {
+  box-shadow: var(--nv-highlight-top), var(--nv-outline), var(--nv-elevation-3);
+}
+
+/* --- Titlebar ---------------------------------------------------------------
+   Three columns with the outer two sharing the slack, so the title stays on
+   the window's center line whatever the controls and actions measure. */
+
+.nv-window__titlebar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--nv-space-3);
+  min-block-size: var(--nv-control-height-lg);
+  padding-inline: var(--nv-space-4);
+
+  background-color: var(--nv-color-surface-elevated);
+  background-image: var(--nv-sheen-raised);
+  border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  box-shadow: var(--nv-highlight-top);
+  user-select: none;
+}
+
+.nv-window__title {
+  grid-column: 2;
+  min-inline-size: 0;
+  overflow: hidden;
+  font: var(--nv-font-label);
+  font-weight: var(--nv-font-weight-semibold);
+  color: var(--nv-color-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nv-window--inactive .nv-window__title {
+  color: var(--nv-color-text-tertiary);
+}
+
+.nv-window__actions {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-1);
+}
+
+/* --- Controls ----------------------------------------------------------------- */
+
+.nv-window__controls {
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2);
+}
+
+.nv-window__control {
+  --_light: var(--nv-color-window-close);
+  --_c: var(--_light);
+
+  position: relative;
+  flex: none;
+  inline-size: var(--nv-space-3);
+  block-size: var(--nv-space-3);
+  margin: 0;
+  padding: 0;
+
+  background-color: var(--_c);
+  background-image: var(--nv-sheen-filled);
+  border: 0;
+  border-radius: var(--nv-radius-full);
+  box-shadow: inset 0 0 0 var(--nv-border-width) var(--nv-color-window-control-ring);
+
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: var(--nv-transition-colors);
+}
+
+.nv-window__control--minimize { --_light: var(--nv-color-window-minimize); }
+.nv-window__control--zoom { --_light: var(--nv-color-window-zoom); }
+
+/* The glyph is two bars drawn from the light's center: crossed for close, one
+   for minimize, a plus for zoom. They are always present and fade in, so the
+   whole group reveals at once instead of one glyph at a time. */
+.nv-window__control::before,
+.nv-window__control::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 55%;
+  block-size: calc(var(--nv-border-width) * 1.5);
+  translate: -50% -50%;
+  background-color: var(--nv-color-window-glyph);
+  border-radius: var(--nv-radius-full);
+  opacity: 0;
+  transition: opacity var(--nv-duration-fast) var(--nv-ease-standard);
+}
+
+.nv-window__control--close::before { rotate: 45deg; }
+.nv-window__control--close::after { rotate: -45deg; }
+.nv-window__control--minimize::after { display: none; }
+.nv-window__control--zoom::after { rotate: 90deg; }
+
+.nv-window__controls:hover .nv-window__control::before,
+.nv-window__controls:hover .nv-window__control::after,
+.nv-window__controls:focus-within .nv-window__control::before,
+.nv-window__controls:focus-within .nv-window__control::after {
+  opacity: 1;
+}
+
+.nv-window__control:active {
+  background-image: none;
+  box-shadow:
+    inset 0 0 0 var(--nv-border-width) var(--nv-color-window-control-ring),
+    var(--nv-elevation-inset-sm);
+}
+
+.nv-window__control:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 var(--nv-border-width) var(--nv-color-window-control-ring),
+    var(--nv-focus-ring);
+}
+
+.nv-window--inactive .nv-window__control {
+  --_c: var(--nv-color-window-inactive);
+}
+
+.nv-window--inactive .nv-window__controls:hover .nv-window__control {
+  --_c: var(--_light);
+}
+
+/* --- Body --------------------------------------------------------------------- */
+
+.nv-window__body {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+}

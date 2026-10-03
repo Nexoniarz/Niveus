@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Niveus — Spacing and size
+   --------------------------------------------------------------------------
+   A 4px rhythm. The numeric suffix is the value in quarter-steps, so
+   --nv-space-4 is 16px and --nv-space-6 is 24px. Anything not on the scale is
+   application layout, not design-system spacing.
+   ========================================================================== */
+
+:root {
+  --nv-space-0: 0;
+  --nv-space-px: 1px;
+  --nv-space-0-5: 0.125rem; /*  2px */
+  --nv-space-1: 0.25rem; /*     4px */
+  --nv-space-1-5: 0.375rem; /*  6px */
+  --nv-space-2: 0.5rem; /*      8px */
+  --nv-space-2-5: 0.625rem; /* 10px */
+  --nv-space-3: 0.75rem; /*    12px */
+  --nv-space-4: 1rem; /*       16px */
+  --nv-space-5: 1.25rem; /*    20px */
+  --nv-space-6: 1.5rem; /*     24px */
+  --nv-space-7: 1.75rem; /*    28px */
+  --nv-space-8: 2rem; /*       32px */
+  --nv-space-10: 2.5rem; /*    40px */
+  --nv-space-12: 3rem; /*      48px */
+  --nv-space-14: 3.5rem; /*    56px */
+  --nv-space-16: 4rem; /*      64px */
+  --nv-space-20: 5rem; /*      80px */
+  --nv-space-24: 6rem; /*      96px */
+  --nv-space-32: 8rem; /*     128px */
+
+  /* --- Control sizing -------------------------------------------------------
+     Shared by every interactive control so a button, an input and a select
+     line up on the same row without per-component tuning. */
+  --nv-control-height-sm: 1.75rem; /*  28px */
+  --nv-control-height-md: 2.25rem; /*  36px */
+  --nv-control-height-lg: 2.75rem; /*  44px */
+
+  --nv-control-padding-sm: var(--nv-space-2-5);
+  --nv-control-padding-md: var(--nv-space-3);
+  --nv-control-padding-lg: var(--nv-space-4);
+
+  --nv-control-gap-sm: var(--nv-space-1-5);
+  --nv-control-gap-md: var(--nv-space-2);
+  --nv-control-gap-lg: var(--nv-space-2-5);
+
+  /* Minimum pointer target, independent of visual control height. */
+  --nv-target-min: 2.75rem; /* 44px */
+
+  /* --- Layout ---------------------------------------------------------------- */
+  --nv-layout-gutter: var(--nv-space-6);
+  --nv-layout-max-width: 72rem;
+  --nv-border-width: 1px;
+  --nv-border-width-strong: 2px;
+}

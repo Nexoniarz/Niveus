@@ -1,0 +1,4161 @@
+/* Niveus — generated bundle. Do not edit.
+   Source: niveus/niveus.css and the files it imports.
+   Rebuild: python3 tools/build.py
+*/
+
+/* ==========================================================================
+   Niveus — a tactile, adaptive interface language.
+   Made by Nexoniarz.
+   --------------------------------------------------------------------------
+   The single entry point. An application links this file and nothing else:
+
+     <link rel="stylesheet" href="niveus/niveus.css">
+     <script src="niveus/niveus.js"></script>   — optional, see below
+     <html data-theme="dark">        — or omit data-theme to follow the system
+
+   niveus.js is not required for anything to render. It exists only so state
+   changes can be *continuous*: it wraps an update in a view transition so the
+   browser can animate between the two states. Without it, every component
+   still works — changes simply arrive rather than travel.
+
+   Everything ships inside the `niveus` cascade layer, so unlayered application
+   styles always win without needing !important or selector escalation. The
+   sub-layers are ordered below; that statement is what fixes their precedence,
+   independently of the order the files happen to load in.
+   ========================================================================== */
+
+@layer niveus.tokens, niveus.theme, niveus.base, niveus.continuity,
+  niveus.components, niveus.utilities;
+
+/* --- Fonts: the faces Niveus ships, so it reads the same everywhere ---------- */
+/* ==========================================================================
+   Niveus — Fonts
+   --------------------------------------------------------------------------
+   Niveus ships its own faces, so it reads the same wherever it is used
+   instead of depending on what a machine happens to have installed. Both are
+   variable fonts under the SIL Open Font License (fonts/OFL-*.txt), free to
+   bundle with anything.
+
+     Instrument Sans   the interface. Crisp, slightly narrow, warm at small
+                       sizes — the voice of every label, control and heading.
+     JetBrains Mono    code, figures, and the engraved labels (.nv-overline)
+                       that mark sections the way markings mark an instrument.
+
+   The paths are relative to this file and to dist/niveus.css alike: both sit
+   one level below the root, where fonts/ lives.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("../fonts/InstrumentSans.woff2") format("woff2");
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("../fonts/InstrumentSans-Italic.woff2") format("woff2");
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/JetBrainsMono.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Tokens: the values, appearance-agnostic ------------------------------- */
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Color
+     --------------------------------------------------------------------------
+     Two levels of tokens live here:
+
+     1. Palette      Raw, appearance-agnostic values. Never referenced by
+                     components. Prefixed --nv-palette-*.
+
+     2. Semantic     The roles components actually consume (background, surface,
+                     text-primary, accent, danger, …). Each role resolves with
+                     light-dark(), pulling its value from the matching appearance
+                     file: themes/light.css (--nv-light-*) or themes/dark.css
+                     (--nv-dark-*).
+
+     The appearance is chosen by `color-scheme`, which themes/*.css bind to the
+     [data-theme] attribute. A component therefore never knows — and must never
+     ask — which appearance is active.
+     ========================================================================== */
+
+  /* ==========================================================================
+     Brand
+     --------------------------------------------------------------------------
+     The whole color system has one input. Set --nv-brand and the accent, its
+     hover and active states, the text that lands on it, the focus ring, the
+     selection highlight, the tint in the greys and the lean of the status colors
+     are all re-derived from it — in both appearances, with no second value to
+     keep in sync.
+
+       :root { --nv-brand: #d92e3f; }
+
+     Set it on any element with [data-nv-brand] to re-brand a subtree.
+     ========================================================================== */
+
+  :root {
+    --nv-brand: #4f6cff;
+
+    /* How much of the brand bleeds into the greys. Enough that the neutrals
+       belong to the same family as the accent; not enough to read as colored.
+       0% gives strictly neutral greys. */
+    --nv-brand-tint: 4%;
+
+    /* How far the status colors lean towards the brand. Red still reads as
+       danger and green still reads as success — they just stop looking borrowed
+       from another system. 0% keeps them literal. */
+    --nv-brand-harmony: 12%;
+
+    /* Where "too mid-toned to carry a label" begins, and how far either side a
+       color is pushed to escape it. Raising the pivot sends more brands dark
+       (white labels); lowering it sends more of them light (dark labels). */
+    --nv-contrast-pivot: 0.7;
+    --nv-contrast-dark: 0.53;
+    --nv-contrast-light: 0.78;
+  }
+
+  :root {
+    /* --- Neutral ----------------------------------------------------------
+       Warm graphite to warm paper. A grey that leans very slightly towards
+       yellow reads as a material (metal, enamel, paper); a grey that leans blue
+       reads as a screen. The lean is small enough that the brand tint still
+       decides the family. */
+    --nv-palette-neutral-0: #ffffff;
+    --nv-palette-neutral-25: #fcfcfb;
+    --nv-palette-neutral-50: #f8f8f6;
+    --nv-palette-neutral-100: #f2f1ee;
+    --nv-palette-neutral-150: #eae9e5;
+    --nv-palette-neutral-200: #e1e0db;
+    --nv-palette-neutral-300: #cfcec8;
+    --nv-palette-neutral-400: #aeada7;
+    --nv-palette-neutral-500: #87867f;
+    --nv-palette-neutral-600: #63625d;
+    --nv-palette-neutral-700: #4a4945;
+    --nv-palette-neutral-800: #343337;
+    --nv-palette-neutral-850: #2a2a2d;
+    --nv-palette-neutral-900: #1d1d20;
+    --nv-palette-neutral-925: #18181a;
+    --nv-palette-neutral-950: #131315;
+    --nv-palette-neutral-975: #0e0e10;
+    --nv-palette-neutral-1000: #08080a;
+
+    /* --- Window controls ----------------------------------------------------
+       The three lights at the start of a titlebar. They are the one place the
+       system uses fixed colors instead of the brand: their meaning is learned
+       from position and color together, and re-coloring them would unteach it. */
+    --nv-palette-window-close: #ff5f57;
+    --nv-palette-window-minimize: #febc2e;
+    --nv-palette-window-zoom: #28c840;
+
+    /* --- Accent (indigo) --------------------------------------------------- */
+    --nv-palette-accent-50: #eef2ff;
+    --nv-palette-accent-100: #dfe6ff;
+    --nv-palette-accent-200: #c4d0ff;
+    --nv-palette-accent-300: #9fb3ff;
+    --nv-palette-accent-400: #7691ff;
+    --nv-palette-accent-500: #4f6cff;
+    --nv-palette-accent-600: #3f5cf0;
+    --nv-palette-accent-700: #3450d6;
+    --nv-palette-accent-800: #2a3fa8;
+    --nv-palette-accent-900: #22347f;
+
+    /* --- Success (green) --------------------------------------------------- */
+    --nv-palette-success-50: #e8f9ef;
+    --nv-palette-success-100: #ccf0dc;
+    --nv-palette-success-200: #9ee2bc;
+    --nv-palette-success-300: #62cd96;
+    --nv-palette-success-400: #33b478;
+    --nv-palette-success-500: #189a60;
+    --nv-palette-success-600: #0f7d4d;
+    --nv-palette-success-700: #0c6440;
+    --nv-palette-success-800: #0a5034;
+    --nv-palette-success-900: #08412b;
+
+    /* --- Warning (amber) --------------------------------------------------- */
+    --nv-palette-warning-50: #fff6e6;
+    --nv-palette-warning-100: #ffe9c2;
+    --nv-palette-warning-200: #ffd68d;
+    --nv-palette-warning-300: #fbbe52;
+    --nv-palette-warning-400: #eda520;
+    --nv-palette-warning-500: #cf8809;
+    --nv-palette-warning-600: #a96d05;
+    --nv-palette-warning-700: #855505;
+    --nv-palette-warning-800: #6a4406;
+    --nv-palette-warning-900: #563806;
+
+    /* --- Danger (red) ------------------------------------------------------ */
+    --nv-palette-danger-50: #ffeff1;
+    --nv-palette-danger-100: #ffdbde;
+    --nv-palette-danger-200: #ffb9bf;
+    --nv-palette-danger-300: #ff8b96;
+    --nv-palette-danger-400: #f95b6c;
+    --nv-palette-danger-500: #e2334a;
+    --nv-palette-danger-600: #c01f36;
+    --nv-palette-danger-700: #9c172b;
+    --nv-palette-danger-800: #7e1524;
+    --nv-palette-danger-900: #67141f;
+  }
+
+  /* ==========================================================================
+     Semantic roles
+     ========================================================================== */
+
+  /* The subtree selector has to be repeated here, not just on the theme files:
+     var() inside a custom property is substituted where that property is
+     *declared*, so a --nv-color-* declared only on :root would bake in the root
+     brand and inherit the result unchanged. Re-declaring on [data-nv-brand]
+     re-runs the substitution against the subtree's own brand. */
+  :root,
+  [data-nv-brand] {
+    /* --- Canvas and surfaces ----------------------------------------------- */
+    --nv-color-background: light-dark(var(--nv-light-background), var(--nv-dark-background));
+    --nv-color-background-subtle: light-dark(var(--nv-light-background-subtle), var(--nv-dark-background-subtle));
+    --nv-color-surface: light-dark(var(--nv-light-surface), var(--nv-dark-surface));
+    --nv-color-surface-elevated: light-dark(var(--nv-light-surface-elevated), var(--nv-dark-surface-elevated));
+    --nv-color-surface-inset: light-dark(var(--nv-light-surface-inset), var(--nv-dark-surface-inset));
+    --nv-color-surface-hover: light-dark(var(--nv-light-surface-hover), var(--nv-dark-surface-hover));
+    --nv-color-surface-active: light-dark(var(--nv-light-surface-active), var(--nv-dark-surface-active));
+    --nv-color-scrim: light-dark(var(--nv-light-scrim), var(--nv-dark-scrim));
+
+    /* --- Text --------------------------------------------------------------- */
+    --nv-color-text-primary: light-dark(var(--nv-light-text-primary), var(--nv-dark-text-primary));
+    --nv-color-text-secondary: light-dark(var(--nv-light-text-secondary), var(--nv-dark-text-secondary));
+    --nv-color-text-tertiary: light-dark(var(--nv-light-text-tertiary), var(--nv-dark-text-tertiary));
+    --nv-color-text-disabled: light-dark(var(--nv-light-text-disabled), var(--nv-dark-text-disabled));
+    --nv-color-text-inverted: light-dark(var(--nv-light-text-inverted), var(--nv-dark-text-inverted));
+
+    /* --- Borders ------------------------------------------------------------ */
+    --nv-color-border-subtle: light-dark(var(--nv-light-border-subtle), var(--nv-dark-border-subtle));
+    --nv-color-border: light-dark(var(--nv-light-border), var(--nv-dark-border));
+    --nv-color-border-strong: light-dark(var(--nv-light-border-strong), var(--nv-dark-border-strong));
+
+    /* --- Accent ------------------------------------------------------------- */
+    --nv-color-accent: light-dark(var(--nv-light-accent), var(--nv-dark-accent));
+    --nv-color-accent-hover: light-dark(var(--nv-light-accent-hover), var(--nv-dark-accent-hover));
+    --nv-color-accent-active: light-dark(var(--nv-light-accent-active), var(--nv-dark-accent-active));
+    --nv-color-accent-subtle: light-dark(var(--nv-light-accent-subtle), var(--nv-dark-accent-subtle));
+    --nv-color-accent-subtle-hover: light-dark(var(--nv-light-accent-subtle-hover), var(--nv-dark-accent-subtle-hover));
+    --nv-color-accent-border: light-dark(var(--nv-light-accent-border), var(--nv-dark-accent-border));
+    --nv-color-accent-text: light-dark(var(--nv-light-accent-text), var(--nv-dark-accent-text));
+    --nv-color-on-accent: light-dark(var(--nv-light-on-accent), var(--nv-dark-on-accent));
+
+    /* --- Success ------------------------------------------------------------ */
+    --nv-color-success: light-dark(var(--nv-light-success), var(--nv-dark-success));
+    --nv-color-success-hover: light-dark(var(--nv-light-success-hover), var(--nv-dark-success-hover));
+    --nv-color-success-subtle: light-dark(var(--nv-light-success-subtle), var(--nv-dark-success-subtle));
+    --nv-color-success-border: light-dark(var(--nv-light-success-border), var(--nv-dark-success-border));
+    --nv-color-success-text: light-dark(var(--nv-light-success-text), var(--nv-dark-success-text));
+    --nv-color-on-success: light-dark(var(--nv-light-on-success), var(--nv-dark-on-success));
+
+    /* --- Warning ------------------------------------------------------------ */
+    --nv-color-warning: light-dark(var(--nv-light-warning), var(--nv-dark-warning));
+    --nv-color-warning-hover: light-dark(var(--nv-light-warning-hover), var(--nv-dark-warning-hover));
+    --nv-color-warning-subtle: light-dark(var(--nv-light-warning-subtle), var(--nv-dark-warning-subtle));
+    --nv-color-warning-border: light-dark(var(--nv-light-warning-border), var(--nv-dark-warning-border));
+    --nv-color-warning-text: light-dark(var(--nv-light-warning-text), var(--nv-dark-warning-text));
+    --nv-color-on-warning: light-dark(var(--nv-light-on-warning), var(--nv-dark-on-warning));
+
+    /* --- Danger ------------------------------------------------------------- */
+    --nv-color-danger: light-dark(var(--nv-light-danger), var(--nv-dark-danger));
+    --nv-color-danger-hover: light-dark(var(--nv-light-danger-hover), var(--nv-dark-danger-hover));
+    --nv-color-danger-active: light-dark(var(--nv-light-danger-active), var(--nv-dark-danger-active));
+    --nv-color-danger-subtle: light-dark(var(--nv-light-danger-subtle), var(--nv-dark-danger-subtle));
+    --nv-color-danger-border: light-dark(var(--nv-light-danger-border), var(--nv-dark-danger-border));
+    --nv-color-danger-text: light-dark(var(--nv-light-danger-text), var(--nv-dark-danger-text));
+    --nv-color-on-danger: light-dark(var(--nv-light-on-danger), var(--nv-dark-on-danger));
+
+    /* --- Depth and material ------------------------------------------------- */
+    --nv-color-shadow-ambient: light-dark(var(--nv-light-shadow-ambient), var(--nv-dark-shadow-ambient));
+    --nv-color-shadow-penumbra: light-dark(var(--nv-light-shadow-penumbra), var(--nv-dark-shadow-penumbra));
+    --nv-color-shadow-umbra: light-dark(var(--nv-light-shadow-umbra), var(--nv-dark-shadow-umbra));
+    --nv-color-shadow-inset: light-dark(var(--nv-light-shadow-inset), var(--nv-dark-shadow-inset));
+    --nv-color-highlight: light-dark(var(--nv-light-highlight), var(--nv-dark-highlight));
+    --nv-color-highlight-strong: light-dark(var(--nv-light-highlight-strong), var(--nv-dark-highlight-strong));
+
+    /* The bevel's other half: the shade along a raised surface's bottom edge,
+       and the contact line around anything that sits on another surface. Light
+       along the top and shade along the bottom is what makes a control read as
+       something pressable instead of a painted rectangle. */
+    --nv-color-lowlight: light-dark(var(--nv-light-lowlight), var(--nv-dark-lowlight));
+    --nv-color-outline: light-dark(var(--nv-light-outline), var(--nv-dark-outline));
+
+    /* Sheen: the light falling across a raised face, top to bottom. The plain
+       pair is for neutral controls and surfaces; the strong pair is for filled
+       color (primary buttons, checked marks), where it has to read through a
+       saturated fill. Both are laid over a surface's own color, never instead
+       of it. */
+    --nv-color-sheen-top: light-dark(var(--nv-light-sheen-top), var(--nv-dark-sheen-top));
+    --nv-color-sheen-bottom: light-dark(var(--nv-light-sheen-bottom), var(--nv-dark-sheen-bottom));
+    --nv-color-sheen-strong-top: light-dark(var(--nv-light-sheen-strong-top), var(--nv-dark-sheen-strong-top));
+    --nv-color-sheen-strong-bottom: light-dark(var(--nv-light-sheen-strong-bottom), var(--nv-dark-sheen-strong-bottom));
+
+    /* A knob: the thumb of a switch or a slider. It stays light in both
+       appearances, the way a physical knob does not change color with the room. */
+    --nv-color-knob: light-dark(var(--nv-light-knob), var(--nv-dark-knob));
+    --nv-color-knob-shade: light-dark(var(--nv-light-knob-shade), var(--nv-dark-knob-shade));
+
+    /* Elevation tint: on a dark canvas a shadow has nothing to darken, so a
+       raised surface also has to gain light. Transparent in light, where the
+       shadow does all the work. */
+    --nv-color-elevation-tint-1: light-dark(var(--nv-light-elevation-tint-1), var(--nv-dark-elevation-tint-1));
+    --nv-color-elevation-tint-2: light-dark(var(--nv-light-elevation-tint-2), var(--nv-dark-elevation-tint-2));
+    --nv-color-elevation-tint-3: light-dark(var(--nv-light-elevation-tint-3), var(--nv-dark-elevation-tint-3));
+    --nv-color-elevation-tint-4: light-dark(var(--nv-light-elevation-tint-4), var(--nv-dark-elevation-tint-4));
+    --nv-color-elevation-tint-5: light-dark(var(--nv-light-elevation-tint-5), var(--nv-dark-elevation-tint-5));
+
+    --nv-color-material-frosted: light-dark(var(--nv-light-material-frosted), var(--nv-dark-material-frosted));
+    --nv-color-material-glass: light-dark(var(--nv-light-material-glass), var(--nv-dark-material-glass));
+    --nv-color-material-border: light-dark(var(--nv-light-material-border), var(--nv-dark-material-border));
+
+    /* --- Window controls ------------------------------------------------------- */
+    --nv-color-window-close: light-dark(var(--nv-light-window-close), var(--nv-dark-window-close));
+    --nv-color-window-minimize: light-dark(var(--nv-light-window-minimize), var(--nv-dark-window-minimize));
+    --nv-color-window-zoom: light-dark(var(--nv-light-window-zoom), var(--nv-dark-window-zoom));
+    --nv-color-window-inactive: light-dark(var(--nv-light-window-inactive), var(--nv-dark-window-inactive));
+    --nv-color-window-control-ring: light-dark(var(--nv-light-window-control-ring), var(--nv-dark-window-control-ring));
+    --nv-color-window-glyph: light-dark(var(--nv-light-window-glyph), var(--nv-dark-window-glyph));
+
+    /* --- Interaction --------------------------------------------------------- */
+    --nv-color-focus-ring: light-dark(var(--nv-light-focus-ring), var(--nv-dark-focus-ring));
+    --nv-color-focus-ring-contrast: light-dark(var(--nv-light-focus-ring-contrast), var(--nv-dark-focus-ring-contrast));
+    --nv-color-selection: light-dark(var(--nv-light-selection), var(--nv-dark-selection));
+  }
+}
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Typography
+     --------------------------------------------------------------------------
+     One type scale, used everywhere. Sizes are in rem so they respect the user's
+     browser font size; line heights are unitless so they inherit correctly.
+     ========================================================================== */
+
+  :root {
+    /* --- Families ----------------------------------------------------------- */
+    /* Both ship with Niveus (fonts.css); the rest of each stack only covers the
+       moment before they load, or a context that cannot load them. */
+    --nv-font-family-sans:
+      "Instrument Sans", "Inter var", "Inter", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --nv-font-family-mono:
+      "JetBrains Mono", "SF Mono", "IBM Plex Mono", ui-monospace, "Menlo",
+      "Consolas", monospace;
+
+    /* --- Size scale ---------------------------------------------------------- */
+    --nv-font-size-2xs: 0.6875rem; /* 11px — dense metadata, never body text */
+    --nv-font-size-xs: 0.75rem; /*  12px */
+    --nv-font-size-sm: 0.8125rem; /* 13px */
+    --nv-font-size-md: 0.9375rem; /* 15px — default body size */
+    --nv-font-size-lg: 1.0625rem; /* 17px */
+    --nv-font-size-xl: 1.25rem; /*  20px */
+    --nv-font-size-2xl: 1.5rem; /*   24px */
+    --nv-font-size-3xl: 1.875rem; /* 30px */
+    --nv-font-size-4xl: 2.375rem; /* 38px */
+    --nv-font-size-5xl: 3rem; /*     48px */
+
+    /* --- Weight -------------------------------------------------------------- */
+    --nv-font-weight-regular: 400;
+    --nv-font-weight-medium: 500;
+    --nv-font-weight-semibold: 600;
+    --nv-font-weight-bold: 700;
+
+    /* --- Line height --------------------------------------------------------- */
+    --nv-line-height-tight: 1.18; /* display and large headings */
+    --nv-line-height-snug: 1.32; /*  headings, single-line controls */
+    --nv-line-height-normal: 1.5; /* body copy */
+    --nv-line-height-relaxed: 1.68; /* long-form reading */
+
+    /* --- Letter spacing -------------------------------------------------------
+       Large text needs negative tracking to stay optically even; small caps-ish
+       labels need positive tracking to stay readable. */
+    --nv-letter-spacing-tighter: -0.022em;
+    --nv-letter-spacing-tight: -0.012em;
+    --nv-letter-spacing-normal: 0em;
+    --nv-letter-spacing-wide: 0.02em;
+    --nv-letter-spacing-wider: 0.06em;
+    /* Engraved labels: small mono capitals, spaced like markings on a panel. */
+    --nv-letter-spacing-engraved: 0.1em;
+
+    /* --- Composite roles ------------------------------------------------------
+       Applied as classes in base.css (.nv-display, .nv-heading, …). Kept as
+       tokens so applications can compose their own elements from the same
+       values instead of guessing. */
+    --nv-font-display: var(--nv-font-weight-semibold) var(--nv-font-size-4xl) /
+      var(--nv-line-height-tight) var(--nv-font-family-sans);
+    --nv-font-heading: var(--nv-font-weight-semibold) var(--nv-font-size-2xl) /
+      var(--nv-line-height-snug) var(--nv-font-family-sans);
+    --nv-font-title: var(--nv-font-weight-semibold) var(--nv-font-size-lg) /
+      var(--nv-line-height-snug) var(--nv-font-family-sans);
+    --nv-font-body: var(--nv-font-weight-regular) var(--nv-font-size-md) /
+      var(--nv-line-height-normal) var(--nv-font-family-sans);
+    --nv-font-label: var(--nv-font-weight-medium) var(--nv-font-size-sm) /
+      var(--nv-line-height-snug) var(--nv-font-family-sans);
+    --nv-font-caption: var(--nv-font-weight-regular) var(--nv-font-size-xs) /
+      var(--nv-line-height-normal) var(--nv-font-family-sans);
+    --nv-font-code: var(--nv-font-weight-regular) var(--nv-font-size-sm) /
+      var(--nv-line-height-normal) var(--nv-font-family-mono);
+    /* The engraved label: section markers, the clock, anything that names a
+       region rather than being read. Paired with uppercase and the engraved
+       tracking (see .nv-overline in base.css). */
+    --nv-font-engraved: var(--nv-font-weight-medium) var(--nv-font-size-2xs) /
+      var(--nv-line-height-snug) var(--nv-font-family-mono);
+
+    /* --- Measure --------------------------------------------------------------- */
+    --nv-measure-narrow: 44ch;
+    --nv-measure: 68ch;
+    --nv-measure-wide: 82ch;
+  }
+}
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Spacing and size
+     --------------------------------------------------------------------------
+     A 4px rhythm. The numeric suffix is the value in quarter-steps, so
+     --nv-space-4 is 16px and --nv-space-6 is 24px. Anything not on the scale is
+     application layout, not design-system spacing.
+     ========================================================================== */
+
+  :root {
+    --nv-space-0: 0;
+    --nv-space-px: 1px;
+    --nv-space-0-5: 0.125rem; /*  2px */
+    --nv-space-1: 0.25rem; /*     4px */
+    --nv-space-1-5: 0.375rem; /*  6px */
+    --nv-space-2: 0.5rem; /*      8px */
+    --nv-space-2-5: 0.625rem; /* 10px */
+    --nv-space-3: 0.75rem; /*    12px */
+    --nv-space-4: 1rem; /*       16px */
+    --nv-space-5: 1.25rem; /*    20px */
+    --nv-space-6: 1.5rem; /*     24px */
+    --nv-space-7: 1.75rem; /*    28px */
+    --nv-space-8: 2rem; /*       32px */
+    --nv-space-10: 2.5rem; /*    40px */
+    --nv-space-12: 3rem; /*      48px */
+    --nv-space-14: 3.5rem; /*    56px */
+    --nv-space-16: 4rem; /*      64px */
+    --nv-space-20: 5rem; /*      80px */
+    --nv-space-24: 6rem; /*      96px */
+    --nv-space-32: 8rem; /*     128px */
+
+    /* --- Control sizing -------------------------------------------------------
+       Shared by every interactive control so a button, an input and a select
+       line up on the same row without per-component tuning. */
+    --nv-control-height-sm: 1.75rem; /*  28px */
+    --nv-control-height-md: 2.25rem; /*  36px */
+    --nv-control-height-lg: 2.75rem; /*  44px */
+
+    --nv-control-padding-sm: var(--nv-space-2-5);
+    --nv-control-padding-md: var(--nv-space-3);
+    --nv-control-padding-lg: var(--nv-space-4);
+
+    --nv-control-gap-sm: var(--nv-space-1-5);
+    --nv-control-gap-md: var(--nv-space-2);
+    --nv-control-gap-lg: var(--nv-space-2-5);
+
+    /* Minimum pointer target, independent of visual control height. */
+    --nv-target-min: 2.75rem; /* 44px */
+
+    /* --- Layout ---------------------------------------------------------------- */
+    --nv-layout-gutter: var(--nv-space-6);
+    --nv-layout-max-width: 72rem;
+    --nv-border-width: 1px;
+    --nv-border-width-strong: 2px;
+  }
+}
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Radius
+     --------------------------------------------------------------------------
+     Corner softness carries as much of the Niveus character as shadow does.
+     Radii grow with the surface: controls stay modest and machined, containers
+     get noticeably rounder — a window or a popover is a soft object, a button
+     is a key — and only pills, knobs and avatars go fully round.
+     ========================================================================== */
+
+  :root {
+    --nv-radius-none: 0;
+    --nv-radius-xs: 0.25rem; /*   4px — tags, swatches, nested chips */
+    --nv-radius-sm: 0.5rem; /*    8px — small controls, menu items */
+    --nv-radius-md: 0.625rem; /* 10px — buttons, inputs, default control radius */
+    --nv-radius-lg: 0.875rem; /* 14px — cards, panels, menus */
+    --nv-radius-xl: 1.25rem; /*  20px — windows, dialogs, sheets, popovers */
+    --nv-radius-2xl: 1.5rem; /*  24px — docks, hero surfaces */
+    --nv-radius-full: 999rem; /*      — pills, avatars, switches */
+
+    /* Nested radius: an inner surface inset by N should be N smaller than its
+       parent, or the corners read as off-center. */
+    --nv-radius-nested-md: calc(var(--nv-radius-lg) - var(--nv-space-2));
+    --nv-radius-nested-lg: calc(var(--nv-radius-xl) - var(--nv-space-3));
+  }
+}
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Elevation
+     --------------------------------------------------------------------------
+     Depth is a scale, not a free choice. Each level describes one relationship
+     between a surface and what sits behind it:
+
+       0  flush        painted on the canvas, no separation
+       1  resting      cards, list rows, static panels
+       2  raised       buttons, controls, anything that reacts to a pointer
+       3  floating     popovers, menus, dropdowns, tooltips
+       4  lifted       dialogs, sheets, detached panels
+       5  overlay      the topmost layer, used sparingly
+
+     Every level is built from the same three shadow colors so depth stays
+     consistent between appearances: an ambient contact shadow that keeps the
+     edge crisp, a soft penumbra for the spread, and an umbra that only appears
+     once a surface is genuinely far from the canvas.
+     ========================================================================== */
+
+  :root {
+    --nv-elevation-0: none;
+
+    --nv-elevation-1:
+      0 1px 1px var(--nv-color-shadow-ambient),
+      0 1px 3px -1px var(--nv-color-shadow-penumbra);
+
+    --nv-elevation-2:
+      0 1px 1px var(--nv-color-shadow-ambient),
+      0 2px 4px -1px var(--nv-color-shadow-penumbra),
+      0 4px 8px -4px var(--nv-color-shadow-umbra);
+
+    --nv-elevation-3:
+      0 1px 1px var(--nv-color-shadow-ambient),
+      0 4px 8px -2px var(--nv-color-shadow-penumbra),
+      0 10px 20px -6px var(--nv-color-shadow-umbra);
+
+    --nv-elevation-4:
+      0 1px 2px var(--nv-color-shadow-ambient),
+      0 8px 16px -4px var(--nv-color-shadow-penumbra),
+      0 20px 40px -10px var(--nv-color-shadow-umbra);
+
+    --nv-elevation-5:
+      0 1px 2px var(--nv-color-shadow-ambient),
+      0 14px 28px -6px var(--nv-color-shadow-penumbra),
+      0 32px 64px -14px var(--nv-color-shadow-umbra);
+
+    /* --- Inset ---------------------------------------------------------------
+       Recessed surfaces: fields, wells, tracks, pressed controls. */
+    --nv-elevation-inset-sm: inset 0 1px 2px var(--nv-color-shadow-inset);
+    --nv-elevation-inset-md:
+      inset 0 1px 1px var(--nv-color-shadow-inset),
+      inset 0 2px 5px -1px var(--nv-color-shadow-inset);
+    --nv-elevation-inset-lg:
+      inset 0 2px 3px var(--nv-color-shadow-inset),
+      inset 0 6px 12px -3px var(--nv-color-shadow-inset);
+
+    /* --- Highlight -----------------------------------------------------------
+       The thin catch of light along the top edge of a raised surface. This is
+       what makes Niveus read as material rather than as a rectangle with a
+       shadow. Always paired with an elevation, never used alone. */
+    --nv-highlight-top: inset 0 1px 0 var(--nv-color-highlight);
+    --nv-highlight-top-strong: inset 0 1px 0 var(--nv-color-highlight-strong);
+    --nv-highlight-edge:
+      inset 0 1px 0 var(--nv-color-highlight),
+      inset 0 0 0 1px var(--nv-color-border-subtle);
+
+    /* --- Bevel -----------------------------------------------------------------
+       The highlight's other half. A raised face is lit along its top edge and
+       shaded along its bottom one; together they are the bevel, and the bevel is
+       what makes a Niveus control look like something a finger could press.
+       Raised controls and surfaces take the full bevel; the highlight alone is
+       for things that sit flush. */
+    --nv-lowlight-bottom: inset 0 -1px 0 var(--nv-color-lowlight);
+    --nv-bevel:
+      inset 0 1px 0 var(--nv-color-highlight),
+      inset 0 -1px 0 var(--nv-color-lowlight);
+
+    /* --- Outline ---------------------------------------------------------------
+       The contact line: a hairline just outside a raised surface, where it meets
+       whatever it rests on. In dark it is near-black and does most of the
+       separating; in light it only softens the border beside it. */
+    --nv-outline: 0 0 0 1px var(--nv-color-outline);
+
+    /* --- Ledge -----------------------------------------------------------------
+       A recess catches light on its *lower* lip, the edge facing the viewer.
+       Paired with an inset shadow, it turns a field from a dark rectangle into
+       a well cut into the surface. */
+    --nv-ledge: 0 1px 0 var(--nv-color-highlight);
+
+    /* --- Focus ---------------------------------------------------------------
+       A contrast ring sits under the accent ring so focus stays visible on both
+       light and dark surfaces, and on accent-filled controls. */
+    --nv-focus-ring-width: 3px;
+    --nv-focus-ring:
+      0 0 0 1px var(--nv-color-focus-ring-contrast),
+      0 0 0 calc(1px + var(--nv-focus-ring-width)) var(--nv-color-focus-ring);
+  }
+}
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Motion
+     --------------------------------------------------------------------------
+     Motion explains state and spatial relationship. It is short enough to feel
+     immediate and eased enough to feel physical.
+
+     Rule of thumb: the smaller the element, the faster it moves. A button's
+     hover is 120ms; a dialog's entrance is 240ms.
+     ========================================================================== */
+
+  :root {
+    /* --- Duration ------------------------------------------------------------ */
+    --nv-duration-instant: 0ms;
+    --nv-duration-fast: 120ms; /*   hover, press, color change */
+    --nv-duration-quick: 160ms; /*  small elements entering */
+    --nv-duration-normal: 220ms; /* popovers, menus, expansion */
+    --nv-duration-slow: 320ms; /*   dialogs, sheets, large surfaces */
+    --nv-duration-slower: 480ms; /* full-screen transitions */
+
+    /* --- Easing ---------------------------------------------------------------
+       `standard` covers almost everything. Entrance decelerates into place, exit
+       accelerates away, and `spring` is reserved for confirmations — never for
+       anything a user triggers repeatedly. */
+    --nv-ease-standard: cubic-bezier(0.2, 0.05, 0, 1);
+    --nv-ease-entrance: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --nv-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+    --nv-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+    --nv-ease-linear: linear;
+
+    /* --- Continuity -------------------------------------------------------------
+       Durations for changes the user is meant to *follow*, not merely notice.
+       They are longer than an interaction response because the eye has further
+       to travel: emphasis crossing a navigation bar, a panel growing open, a
+       whole surface changing appearance. */
+    --nv-duration-travel: 260ms; /* emphasis moving from one element to another */
+    --nv-duration-expand: 280ms; /* content growing out of, or back into, place */
+    --nv-duration-theme: 400ms; /*  the entire surface changing appearance */
+
+    /* Leaves quickly, lands softly. The right curve for something travelling a
+       distance the user is meant to follow with their eye. */
+    --nv-ease-emphasized: cubic-bezier(0.32, 0.04, 0.06, 1);
+
+    /* --- Composites ------------------------------------------------------------
+       `translate` and `scale` are listed rather than `transform`, because the
+       components animate the individual properties — a transition on `transform`
+       does not cover them, and the movement snaps. */
+    --nv-transition-colors:
+      color var(--nv-duration-fast) var(--nv-ease-standard),
+      background-color var(--nv-duration-fast) var(--nv-ease-standard),
+      border-color var(--nv-duration-fast) var(--nv-ease-standard);
+    --nv-transition-depth:
+      box-shadow var(--nv-duration-fast) var(--nv-ease-standard),
+      translate var(--nv-duration-fast) var(--nv-ease-standard),
+      scale var(--nv-duration-fast) var(--nv-ease-standard);
+    --nv-transition-control:
+      color var(--nv-duration-fast) var(--nv-ease-standard),
+      background-color var(--nv-duration-fast) var(--nv-ease-standard),
+      border-color var(--nv-duration-fast) var(--nv-ease-standard),
+      box-shadow var(--nv-duration-fast) var(--nv-ease-standard),
+      translate var(--nv-duration-fast) var(--nv-ease-standard),
+      scale var(--nv-duration-fast) var(--nv-ease-standard);
+
+    /* Containers: the same as depth, plus the colors, so a surface glides into
+       its new appearance when the theme changes instead of snapping. */
+    --nv-transition-surface:
+      color var(--nv-duration-fast) var(--nv-ease-standard),
+      background-color var(--nv-duration-fast) var(--nv-ease-standard),
+      border-color var(--nv-duration-fast) var(--nv-ease-standard),
+      box-shadow var(--nv-duration-fast) var(--nv-ease-standard),
+      translate var(--nv-duration-fast) var(--nv-ease-standard),
+      scale var(--nv-duration-fast) var(--nv-ease-standard);
+
+    --nv-transition-expand:
+      block-size var(--nv-duration-expand) var(--nv-ease-standard),
+      grid-template-rows var(--nv-duration-expand) var(--nv-ease-standard),
+      opacity var(--nv-duration-expand) var(--nv-ease-standard);
+
+    /* --- Displacement ----------------------------------------------------------
+       How far things move. Presses sink by 1px; surfaces enter from 8px away. */
+    --nv-lift-hover: -1px;
+    --nv-press-depth: 1px;
+    --nv-travel-sm: 4px;
+    --nv-travel-md: 8px;
+    --nv-travel-lg: 16px;
+  }
+
+  /* Reduced motion is a system-wide contract, not a per-component opt-in: cut
+     duration to near-zero and neutralise displacement, but keep transitions
+     alive so state changes still resolve rather than snapping mid-flight. */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --nv-duration-fast: 1ms;
+      --nv-duration-quick: 1ms;
+      --nv-duration-normal: 1ms;
+      --nv-duration-slow: 1ms;
+      --nv-duration-slower: 1ms;
+      --nv-duration-travel: 1ms;
+      --nv-duration-expand: 1ms;
+      --nv-duration-theme: 1ms;
+      --nv-ease-spring: var(--nv-ease-standard);
+      --nv-lift-hover: 0px;
+      --nv-press-depth: 0px;
+      --nv-travel-sm: 0px;
+      --nv-travel-md: 0px;
+      --nv-travel-lg: 0px;
+    }
+  }
+}
+@layer niveus.tokens {
+  /* ==========================================================================
+     Niveus — Materials
+     --------------------------------------------------------------------------
+     A material is a surface treatment: what it is made of, not where it sits.
+     Elevation answers "how far from the canvas"; material answers "what does
+     light do when it hits this".
+
+       solid      opaque, stable. The default. Content lives here.
+       elevated   solid with depth and a top highlight. Separated from context.
+       inset      recessed into its parent. Fields, wells, tracks.
+       frosted    translucent, moderately blurred, bevelled. Chrome that sits
+                  over content: bars, docks, launchers, notifications, menus.
+       glass      more translucent, lightly blurred. Contextual layers where the
+                  content behind should stay legible: overlays, hover cards.
+
+     Niveus is a solid system with glass used sparingly. Windows, cards, dialogs
+     and everything that holds content are solid; translucency is reserved for
+     the chrome that floats over them. Translucency has a cost — it tints
+     whatever is behind it and forces the GPU to composite — and used everywhere
+     it stops meaning "this floats".
+
+     Sheen is the light falling across a raised face. It is laid over a
+     surface's own color as background-image, so a surface keeps its role color
+     and gains the gradient; anything that does not draw gradients simply shows
+     the role color.
+     ========================================================================== */
+
+  :root {
+    /* --- Blur ---------------------------------------------------------------- */
+    --nv-blur-sm: 8px;
+    --nv-blur-md: 16px;
+    --nv-blur-lg: 28px;
+    --nv-blur-xl: 44px;
+
+    /* Backdrops lose saturation when blurred; a touch of saturate() puts the
+       color back so frosted surfaces do not read as gray films. Moderate on
+       purpose: the blur says "this floats", it is not the look itself. */
+    --nv-backdrop-saturate: 160%;
+    --nv-backdrop-frosted: blur(var(--nv-blur-md)) saturate(var(--nv-backdrop-saturate));
+    --nv-backdrop-glass: blur(var(--nv-blur-sm)) saturate(var(--nv-backdrop-saturate));
+
+    /* --- Sheen ------------------------------------------------------------------
+       raised    neutral controls: buttons, the selected tab, a titlebar
+       filled    saturated fills: primary and danger buttons, checked marks
+       surface   large surfaces: windows, dialogs, cards. The light fades out
+                 within the first stretch, so it reads as a lit top edge
+                 rather than as a gradient over the content.
+       knob      a round thumb: lit from above, shaded towards its rim */
+    --nv-sheen-raised: linear-gradient(var(--nv-color-sheen-top), var(--nv-color-sheen-bottom));
+    --nv-sheen-filled: linear-gradient(var(--nv-color-sheen-strong-top), var(--nv-color-sheen-strong-bottom));
+    --nv-sheen-surface: linear-gradient(var(--nv-color-sheen-top), transparent 6rem);
+    --nv-sheen-knob: radial-gradient(circle at 50% 30%, transparent 35%, var(--nv-color-knob-shade));
+    --nv-backdrop-scrim: blur(var(--nv-blur-sm)) saturate(120%);
+
+    /* --- Material recipes -----------------------------------------------------
+       Each recipe is the full set of properties that defines the material.
+       Applied by the .nv-material-* classes in components/surface.css. */
+    --nv-material-solid-bg: var(--nv-color-surface);
+    --nv-material-solid-border: var(--nv-color-border);
+    --nv-material-solid-shadow: var(--nv-elevation-0);
+
+    --nv-material-elevated-bg: var(--nv-color-surface-elevated);
+    --nv-material-elevated-border: var(--nv-color-border-subtle);
+    --nv-material-elevated-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+
+    --nv-material-inset-bg: var(--nv-color-surface-inset);
+    --nv-material-inset-border: var(--nv-color-border-subtle);
+    --nv-material-inset-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+
+    --nv-material-frosted-bg: var(--nv-color-material-frosted);
+    --nv-material-frosted-border: var(--nv-color-material-border);
+    --nv-material-frosted-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+
+    --nv-material-glass-bg: var(--nv-color-material-glass);
+    --nv-material-glass-border: var(--nv-color-material-border);
+    --nv-material-glass-shadow: var(--nv-highlight-top-strong), var(--nv-outline), var(--nv-elevation-4);
+  }
+
+  /* Where translucency cannot be honoured — reduced transparency, or a browser
+     without backdrop-filter — materials fall back to their solid equivalents
+     rather than becoming unreadable washes. */
+  @media (prefers-reduced-transparency: reduce) {
+    :root {
+      --nv-material-frosted-bg: var(--nv-color-surface-elevated);
+      --nv-material-glass-bg: var(--nv-color-surface-elevated);
+      --nv-backdrop-frosted: none;
+      --nv-backdrop-glass: none;
+      --nv-backdrop-scrim: none;
+    }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    :root {
+      --nv-material-frosted-bg: var(--nv-color-surface-elevated);
+      --nv-material-glass-bg: var(--nv-color-surface-elevated);
+    }
+  }
+}
+
+/* --- Themes: what those values become in each appearance -------------------- */
+@layer niveus.theme {
+  /* ==========================================================================
+     Niveus — Light appearance
+     --------------------------------------------------------------------------
+     Values for the light side of every semantic role. Nothing here is consumed
+     by components directly; tokens/color.css resolves these through light-dark().
+
+     Almost nothing below is a literal color. Each role is *derived* from
+     --nv-brand, so setting one value re-colours the entire system: the accent
+     and its states, what text goes on top of it, how the status colors lean, and
+     how much of the brand bleeds into the greys. See tokens/color.css for the
+     inputs.
+
+     Light Niveus reads as soft paper and enamel on a warm grey desk: surfaces
+     that hold content stay near-white, so documents never look yellowed; the
+     canvas around them is a few steps warmer and darker, so a window sits *on*
+     something. Raised controls are bevelled — a bright top edge, a soft shade
+     along the bottom, light falling across the face — and shadows are warm,
+     the color of shade on paper rather than of a grey filter.
+     ========================================================================== */
+
+  :root {
+    /* Follow the environment unless the application states an appearance. */
+    color-scheme: light dark;
+  }
+
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  /* [data-nv-brand] re-derives the whole set for a subtree, so one region can
+     carry a different brand without a second theme. */
+  :root,
+  [data-nv-brand] {
+    /* --- Canvas and surfaces -----------------------------------------------
+       Paper stays paper: the two surfaces that hold content are left untinted so
+       text keeps its contrast. Everything the surfaces sit *in* picks up a trace
+       of the brand, which is what stops an accent from looking stuck on. */
+    --nv-light-background: color-mix(in oklab, #e8e5de, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-background-subtle: color-mix(in oklab, #eeece6, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface: #fbfbfa;
+    --nv-light-surface-elevated: #f8f8f6;
+    --nv-light-surface-inset: color-mix(in oklab, #e3e2dd, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-hover: color-mix(in oklab, #f1f0ec, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-active: color-mix(in oklab, #e8e5de, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-scrim: rgb(28 24 18 / 0.34);
+
+    /* --- Text ---------------------------------------------------------------
+       Primary text stays neutral — it carries the reading contrast. The quieter
+       two lean towards the brand, where a tint reads as warmth rather than as a
+       loss of legibility. */
+    --nv-light-text-primary: var(--nv-palette-neutral-900);
+    --nv-light-text-secondary: color-mix(in oklab, var(--nv-palette-neutral-600), var(--nv-brand) 8%);
+    --nv-light-text-tertiary: color-mix(in oklab, var(--nv-palette-neutral-500), var(--nv-brand) 8%);
+    --nv-light-text-disabled: var(--nv-palette-neutral-400);
+    --nv-light-text-inverted: var(--nv-palette-neutral-0);
+
+    /* --- Borders ------------------------------------------------------------ */
+    --nv-light-border-subtle: rgb(28 24 18 / 0.07);
+    --nv-light-border: rgb(28 24 18 / 0.13);
+    --nv-light-border-strong: rgb(28 24 18 / 0.22);
+
+    /* --- Accent --------------------------------------------------------------
+       Every filled color is pushed away from the middle of the lightness range
+       before it is used. A mid-tone is the one place where neither white nor
+       black text reaches 4.5:1, so a brand that lands there is darkened until
+       white works — or, if it is already light, lightened until black does. The
+       brand's hue and chroma are untouched; only its lightness moves, and only
+       as far as it has to. */
+    --nv-light-accent: oklch(from var(--nv-brand) calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-light-accent-hover: oklch(from var(--nv-light-accent) calc(l - 0.045) c h);
+    --nv-light-accent-active: oklch(from var(--nv-light-accent) calc(l - 0.09) c h);
+    --nv-light-accent-subtle: oklch(from var(--nv-light-accent) 0.965 calc(c * 0.16) h);
+    --nv-light-accent-subtle-hover: oklch(from var(--nv-light-accent) 0.93 calc(c * 0.22) h);
+    --nv-light-accent-border: oklch(from var(--nv-light-accent) l c h / 0.32);
+    --nv-light-accent-text: oklch(from var(--nv-light-accent) clamp(0.3, calc(l - 0.12), 0.5) c h);
+    /* Text that lands on the color itself. The clamp is a step function: below
+       the lightness threshold it resolves to 1 and the text goes near-white,
+       above it to 0 and the text goes near-black — so a yellow brand gets dark
+       labels and a navy one gets light labels, with no second token to set. */
+    --nv-light-on-accent: oklch(from var(--nv-light-accent)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Success ------------------------------------------------------------- */
+    --nv-light-success: oklch(from
+      color-mix(in oklab, var(--nv-palette-success-500), var(--nv-brand) var(--nv-brand-harmony))
+      calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-light-success-hover: oklch(from var(--nv-light-success) calc(l - 0.05) c h);
+    --nv-light-success-subtle: oklch(from var(--nv-light-success) 0.965 calc(c * 0.16) h);
+    --nv-light-success-border: oklch(from var(--nv-light-success) l c h / 0.3);
+    --nv-light-success-text: oklch(from var(--nv-light-success) clamp(0.3, calc(l - 0.1), 0.48) c h);
+    --nv-light-on-success: oklch(from var(--nv-light-success)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Warning -------------------------------------------------------------- */
+    /* Amber starts above the pivot on purpose. Pushed the other way it lands as
+       brown, which reads as neither a warning nor a color anyone chose. */
+    --nv-light-warning: oklch(from
+      color-mix(in oklab, var(--nv-palette-warning-400), var(--nv-brand) var(--nv-brand-harmony))
+      calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-light-warning-hover: oklch(from var(--nv-light-warning) calc(l - 0.05) c h);
+    --nv-light-warning-subtle: oklch(from var(--nv-light-warning) 0.965 calc(c * 0.16) h);
+    --nv-light-warning-border: oklch(from var(--nv-light-warning) l c h / 0.32);
+    --nv-light-warning-text: oklch(from var(--nv-light-warning) clamp(0.3, calc(l - 0.1), 0.48) c h);
+    --nv-light-on-warning: oklch(from var(--nv-light-warning)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Danger ---------------------------------------------------------------- */
+    --nv-light-danger: oklch(from
+      color-mix(in oklab, var(--nv-palette-danger-500), var(--nv-brand) var(--nv-brand-harmony))
+      calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-light-danger-hover: oklch(from var(--nv-light-danger) calc(l - 0.05) c h);
+    --nv-light-danger-active: oklch(from var(--nv-light-danger) calc(l - 0.1) c h);
+    --nv-light-danger-subtle: oklch(from var(--nv-light-danger) 0.965 calc(c * 0.16) h);
+    --nv-light-danger-border: oklch(from var(--nv-light-danger) l c h / 0.3);
+    --nv-light-danger-text: oklch(from var(--nv-light-danger) clamp(0.3, calc(l - 0.1), 0.48) c h);
+    --nv-light-on-danger: oklch(from var(--nv-light-danger)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Depth and material -------------------------------------------------
+       Three shadow colors build every elevation level: an ambient contact
+       shadow, a soft penumbra, and a deeper umbra for high elevations. */
+    --nv-light-shadow-ambient: rgb(40 32 20 / 0.09);
+    --nv-light-shadow-penumbra: rgb(40 32 20 / 0.12);
+    --nv-light-shadow-umbra: rgb(40 32 20 / 0.11);
+    --nv-light-shadow-inset: rgb(40 32 20 / 0.17);
+    --nv-light-highlight: rgb(255 255 255 / 0.9);
+    --nv-light-highlight-strong: rgb(255 255 255 / 1);
+
+    /* Paper already has a border doing the contact work, so the outline only
+       softens it; the bottom shade is faint for the same reason. */
+    --nv-light-lowlight: rgb(40 32 20 / 0.07);
+    --nv-light-outline: rgb(40 32 20 / 0.05);
+
+    --nv-light-sheen-top: rgb(255 255 255 / 0.75);
+    --nv-light-sheen-bottom: rgb(40 32 20 / 0.04);
+    --nv-light-sheen-strong-top: rgb(255 255 255 / 0.24);
+    --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.1);
+
+    --nv-light-knob: var(--nv-palette-neutral-0);
+    --nv-light-knob-shade: rgb(40 32 20 / 0.13);
+
+    /* Light surfaces are already lighter than their canvas; the shadow alone
+       carries elevation, so there is nothing to add. */
+    --nv-light-elevation-tint-1: transparent;
+    --nv-light-elevation-tint-2: transparent;
+    --nv-light-elevation-tint-3: transparent;
+    --nv-light-elevation-tint-4: transparent;
+    --nv-light-elevation-tint-5: transparent;
+
+    --nv-light-material-frosted: rgb(251 251 249 / 0.66);
+    --nv-light-material-glass: rgb(251 251 249 / 0.5);
+    --nv-light-material-border: rgb(255 255 255 / 0.6);
+
+    /* --- Window controls --------------------------------------------------------- */
+    --nv-light-window-close: var(--nv-palette-window-close);
+    --nv-light-window-minimize: var(--nv-palette-window-minimize);
+    --nv-light-window-zoom: var(--nv-palette-window-zoom);
+    --nv-light-window-inactive: var(--nv-palette-neutral-300);
+    --nv-light-window-control-ring: rgb(0 0 0 / 0.16);
+    --nv-light-window-glyph: rgb(0 0 0 / 0.55);
+
+    /* --- Interaction ----------------------------------------------------------- */
+    --nv-light-focus-ring: oklch(from var(--nv-light-accent) l c h / 0.4);
+    --nv-light-focus-ring-contrast: rgb(255 255 255 / 0.9);
+    --nv-light-selection: oklch(from var(--nv-light-accent) l c h / 0.2);
+  }
+}
+@layer niveus.theme {
+  /* ==========================================================================
+     Niveus — Dark appearance
+     --------------------------------------------------------------------------
+     Values for the dark side of every semantic role, resolved through
+     light-dark() in tokens/color.css. Like the light appearance, almost nothing
+     here is a literal color — every role is derived from --nv-brand.
+
+     Dark Niveus is warm graphite, not the light theme inverted. Surfaces get
+     *lighter* as they rise and each step is large enough to see; shadows are
+     deep and every raised thing carries a near-black contact line, because on a
+     dark canvas a shadow alone has nothing left to darken. The bevel is what
+     carries depth here — a lit top edge, a shaded bottom one — and filled color
+     stays saturated: a vivid accent with a light label reads as a lit key, not
+     as a hole.
+     ========================================================================== */
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  :root,
+  [data-nv-brand] {
+    /* --- Canvas and surfaces ----------------------------------------------- */
+    --nv-dark-background: color-mix(in oklab, #121214, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-background-subtle: color-mix(in oklab, #18181b, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface: color-mix(in oklab, #1f1f22, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface-elevated: color-mix(in oklab, #2a2a2e, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface-inset: color-mix(in oklab, #111113, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface-hover: color-mix(in oklab, #313136, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface-active: color-mix(in oklab, #39393f, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-scrim: rgb(6 6 8 / 0.62);
+
+    /* --- Text --------------------------------------------------------------- */
+    --nv-dark-text-primary: #ecebe8;
+    --nv-dark-text-secondary: color-mix(in oklab, #a9a8a3, var(--nv-brand) 8%);
+    --nv-dark-text-tertiary: color-mix(in oklab, #7d7c77, var(--nv-brand) 8%);
+    --nv-dark-text-disabled: #58585c;
+    --nv-dark-text-inverted: var(--nv-palette-neutral-975);
+
+    /* --- Borders ------------------------------------------------------------ */
+    --nv-dark-border-subtle: rgb(255 255 255 / 0.06);
+    --nv-dark-border: rgb(255 255 255 / 0.1);
+    --nv-dark-border-strong: rgb(255 255 255 / 0.2);
+
+    /* --- Accent -------------------------------------------------------------
+       The same derivation as light: a fill is pushed out of the mid-tones until
+       its label clears 4.5:1, so the brand keeps its full saturation and a light
+       label. Earlier Niveus lifted the dark accent into pastel to avoid neon;
+       with bevel and sheen doing the shaping, a saturated fill reads as a lit
+       key instead, and the pastel was what made the whole system feel washed
+       out. Only the accent *text* (links, subtle labels) moves up the ramp,
+       because text on a dark canvas needs the lightness that a fill does not. */
+    --nv-dark-accent: oklch(from var(--nv-brand) calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-dark-accent-hover: oklch(from var(--nv-dark-accent) calc(l + 0.05) c h);
+    --nv-dark-accent-active: oklch(from var(--nv-dark-accent) calc(l + 0.09) c h);
+    --nv-dark-accent-subtle: oklch(from var(--nv-dark-accent) l c h / 0.2);
+    --nv-dark-accent-subtle-hover: oklch(from var(--nv-dark-accent) l c h / 0.28);
+    --nv-dark-accent-border: oklch(from var(--nv-dark-accent) l c h / 0.5);
+    --nv-dark-accent-text: oklch(from var(--nv-dark-accent) clamp(0.74, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+    --nv-dark-on-accent: oklch(from var(--nv-dark-accent)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Success ------------------------------------------------------------ */
+    --nv-dark-success: oklch(from
+      color-mix(in oklab, var(--nv-palette-success-500), var(--nv-brand) var(--nv-brand-harmony))
+      calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-dark-success-hover: oklch(from var(--nv-dark-success) calc(l + 0.05) c h);
+    --nv-dark-success-subtle: oklch(from var(--nv-dark-success) l c h / 0.2);
+    --nv-dark-success-border: oklch(from var(--nv-dark-success) l c h / 0.35);
+    --nv-dark-success-text: oklch(from var(--nv-dark-success) clamp(0.76, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+    --nv-dark-on-success: oklch(from var(--nv-dark-success)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Warning ------------------------------------------------------------ */
+    --nv-dark-warning: oklch(from
+      color-mix(in oklab, var(--nv-palette-warning-400), var(--nv-brand) var(--nv-brand-harmony))
+      calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-dark-warning-hover: oklch(from var(--nv-dark-warning) calc(l + 0.05) c h);
+    --nv-dark-warning-subtle: oklch(from var(--nv-dark-warning) l c h / 0.2);
+    --nv-dark-warning-border: oklch(from var(--nv-dark-warning) l c h / 0.35);
+    --nv-dark-warning-text: oklch(from var(--nv-dark-warning) clamp(0.76, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+    --nv-dark-on-warning: oklch(from var(--nv-dark-warning)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Danger ------------------------------------------------------------- */
+    --nv-dark-danger: oklch(from
+      color-mix(in oklab, var(--nv-palette-danger-500), var(--nv-brand) var(--nv-brand-harmony))
+      calc(
+      clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+      (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+    ) clamp(0.02, c, 0.25) h);
+    --nv-dark-danger-hover: oklch(from var(--nv-dark-danger) calc(l + 0.05) c h);
+    --nv-dark-danger-active: oklch(from var(--nv-dark-danger) calc(l + 0.09) c h);
+    --nv-dark-danger-subtle: oklch(from var(--nv-dark-danger) l c h / 0.2);
+    --nv-dark-danger-border: oklch(from var(--nv-dark-danger) l c h / 0.35);
+    --nv-dark-danger-text: oklch(from var(--nv-dark-danger) clamp(0.76, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+    --nv-dark-on-danger: oklch(from var(--nv-dark-danger)
+      calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+      calc(c * 0.2) h);
+
+    /* --- Depth and material -------------------------------------------------- */
+    --nv-dark-shadow-ambient: rgb(0 0 0 / 0.5);
+    --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.5);
+    --nv-dark-shadow-umbra: rgb(0 0 0 / 0.55);
+    --nv-dark-shadow-inset: rgb(0 0 0 / 0.65);
+    --nv-dark-highlight: rgb(255 255 255 / 0.11);
+    --nv-dark-highlight-strong: rgb(255 255 255 / 0.17);
+
+    /* The contact line is what separates graphite from graphite: a raised
+       surface over a dark canvas has no shadow to show, but it always has an
+       edge. */
+    --nv-dark-lowlight: rgb(0 0 0 / 0.42);
+    --nv-dark-outline: rgb(0 0 0 / 0.72);
+
+    --nv-dark-sheen-top: rgb(255 255 255 / 0.06);
+    --nv-dark-sheen-bottom: rgb(0 0 0 / 0.09);
+    --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.2);
+    --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.12);
+
+    --nv-dark-knob: #f4f3ef;
+    --nv-dark-knob-shade: rgb(40 32 20 / 0.24);
+
+    /* The higher a surface sits, the more light reaches it. */
+    --nv-dark-elevation-tint-1: rgb(255 255 255 / 0.025);
+    --nv-dark-elevation-tint-2: rgb(255 255 255 / 0.042);
+    --nv-dark-elevation-tint-3: rgb(255 255 255 / 0.06);
+    --nv-dark-elevation-tint-4: rgb(255 255 255 / 0.078);
+    --nv-dark-elevation-tint-5: rgb(255 255 255 / 0.095);
+
+    --nv-dark-material-frosted: color-mix(in oklab, rgb(36 36 40 / 0.62), var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 48 / 0.5), var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-material-border: rgb(255 255 255 / 0.1);
+
+    /* --- Window controls --------------------------------------------------------- */
+    --nv-dark-window-close: var(--nv-palette-window-close);
+    --nv-dark-window-minimize: var(--nv-palette-window-minimize);
+    --nv-dark-window-zoom: var(--nv-palette-window-zoom);
+    --nv-dark-window-inactive: var(--nv-palette-neutral-700);
+    --nv-dark-window-control-ring: rgb(0 0 0 / 0.35);
+    --nv-dark-window-glyph: rgb(0 0 0 / 0.6);
+
+    /* --- Interaction ---------------------------------------------------------- */
+    --nv-dark-focus-ring: oklch(from var(--nv-dark-accent-text) l c h / 0.55);
+    --nv-dark-focus-ring-contrast: rgb(8 8 10 / 0.9);
+    --nv-dark-selection: oklch(from var(--nv-dark-accent) l c h / 0.4);
+  }
+}
+
+/* --- Base: elements, before any component ----------------------------------- */
+@layer niveus.base {
+  /* ==========================================================================
+     Niveus — Base
+     --------------------------------------------------------------------------
+     The minimum an application needs before any component renders: a predictable
+     box model, the canvas, the default type, and the system-wide focus and
+     selection treatment.
+
+     This layer styles elements, never classes with intent. Anything opinionated
+     enough to need a name belongs in components/.
+     ========================================================================== */
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background-color: var(--nv-color-background);
+    color: var(--nv-color-text-primary);
+    font: var(--nv-font-body);
+    letter-spacing: var(--nv-letter-spacing-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-synthesis-weight: none;
+
+    /* The canvas glides into a new appearance with everything standing on it,
+       rather than cutting while the surfaces above it fade. */
+    transition: var(--nv-transition-colors);
+  }
+
+  /* --- Rhythm ---------------------------------------------------------------
+     Block elements carry no outer margin of their own; spacing between them is
+     the layout's decision, set with gap or the spacing tokens. */
+  h1, h2, h3, h4, h5, h6,
+  p, figure, blockquote, dl, dd, pre {
+    margin: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--nv-font-weight-semibold);
+    letter-spacing: var(--nv-letter-spacing-tight);
+    line-height: var(--nv-line-height-snug);
+    text-wrap: balance;
+  }
+
+  h1 { font-size: var(--nv-font-size-3xl); letter-spacing: var(--nv-letter-spacing-tighter); }
+  h2 { font-size: var(--nv-font-size-2xl); }
+  h3 { font-size: var(--nv-font-size-xl); }
+  h4 { font-size: var(--nv-font-size-lg); }
+  h5 { font-size: var(--nv-font-size-md); }
+  h6 { font-size: var(--nv-font-size-sm); }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  small {
+    font-size: var(--nv-font-size-xs);
+  }
+
+  code, kbd, samp, pre {
+    font-family: var(--nv-font-family-mono);
+    font-size: var(--nv-font-size-sm);
+  }
+
+  /* --- Links ----------------------------------------------------------------- */
+  a {
+    color: var(--nv-color-accent-text);
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-underline-offset: 0.18em;
+    transition: var(--nv-transition-colors);
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* --- Media ----------------------------------------------------------------- */
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    max-width: 100%;
+  }
+
+  svg {
+    flex: none;
+  }
+
+  hr {
+    border: 0;
+    border-top: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    margin: 0;
+  }
+
+  /* --- Forms -----------------------------------------------------------------
+     Form controls do not inherit type by default; without this every field in
+     the system would silently fall back to the browser's own font. */
+  button, input, optgroup, select, textarea {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  :disabled {
+    cursor: not-allowed;
+  }
+
+  /* --- Focus -----------------------------------------------------------------
+     One focus treatment for the whole system. Components that need the ring to
+     follow their own shape override box-shadow, not outline-color. */
+  :focus-visible {
+    outline: var(--nv-focus-ring-width) solid var(--nv-color-focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--nv-radius-xs);
+  }
+
+  ::selection {
+    background-color: var(--nv-color-selection);
+    color: var(--nv-color-text-primary);
+  }
+
+  /* --- Scrollbars ------------------------------------------------------------ */
+  * {
+    scrollbar-color: var(--nv-color-border-strong) transparent;
+    scrollbar-width: thin;
+  }
+
+  /* ==========================================================================
+     Type roles
+     --------------------------------------------------------------------------
+     Named roles from tokens/typography.css, available as classes so hierarchy
+     stays consistent even when the markup cannot use a heading element.
+     ========================================================================== */
+
+  .nv-display {
+    font: var(--nv-font-display);
+    letter-spacing: var(--nv-letter-spacing-tighter);
+    text-wrap: balance;
+  }
+
+  .nv-heading {
+    font: var(--nv-font-heading);
+    letter-spacing: var(--nv-letter-spacing-tight);
+    text-wrap: balance;
+  }
+
+  .nv-title {
+    font: var(--nv-font-title);
+    letter-spacing: var(--nv-letter-spacing-tight);
+  }
+
+  .nv-body {
+    font: var(--nv-font-body);
+    text-wrap: pretty;
+  }
+
+  .nv-label {
+    font: var(--nv-font-label);
+  }
+
+  .nv-caption {
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-secondary);
+  }
+
+  /* Engraved: small mono capitals that mark a region the way markings mark an
+     instrument panel. Not for anything that has to be read as a sentence. */
+  .nv-overline {
+    font: var(--nv-font-engraved);
+    letter-spacing: var(--nv-letter-spacing-engraved);
+    text-transform: uppercase;
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .nv-code {
+    font: var(--nv-font-code);
+  }
+
+  /* Text color roles, for when the role is about emphasis rather than size. */
+  .nv-text-primary { color: var(--nv-color-text-primary); }
+  .nv-text-secondary { color: var(--nv-color-text-secondary); }
+  .nv-text-tertiary { color: var(--nv-color-text-tertiary); }
+  .nv-text-accent { color: var(--nv-color-accent-text); }
+  .nv-text-success { color: var(--nv-color-success-text); }
+  .nv-text-warning { color: var(--nv-color-warning-text); }
+  .nv-text-danger { color: var(--nv-color-danger-text); }
+}
+
+/* --- Continuity: how one state becomes the next ----------------------------- */
+@layer niveus.continuity {
+  /* ==========================================================================
+     Niveus — Continuity
+     --------------------------------------------------------------------------
+     Every interaction should read as a continuation of the previous state, not
+     as a replacement of it. When something moves, grows, collapses or changes
+     appearance, the change itself should be perceptible: where it came from,
+     where it went, and why.
+
+     This layer holds the cross-cutting machinery that individual components
+     then opt into:
+
+       · one duration and easing for everything the browser animates between
+         two states via a view transition
+       · emphasis that travels between elements instead of disappearing from one
+         and reappearing on another (--nv-selection-name)
+       · direction, so moving forward and moving back do not look identical
+       · appearance changes that cross-fade rather than cut
+
+     The goal is not to animate everything. It is that nothing pops into a new
+     state the user could have watched it reach.
+     ========================================================================== */
+
+  :root {
+    /* Lets block-size: auto participate in transitions, which is what allows
+       content to expand from where it already is instead of appearing at full
+       height. Without it, every disclosure in the system would jump. */
+    interpolate-size: allow-keywords;
+
+    /* The default name for travelling emphasis. A page with more than one
+       selection group must give each group its own name — two visible elements
+       sharing a view-transition-name abort the transition entirely. */
+    --nv-selection-name: nv-selection;
+  }
+
+  /* --- View transitions -------------------------------------------------------
+     Anything the application wraps in document.startViewTransition() inherits
+     the system's travel duration and easing, so a state change animates like
+     the rest of Niveus without the application choosing timings. */
+
+  ::view-transition-group(*) {
+    animation-duration: var(--nv-duration-travel);
+    animation-timing-function: var(--nv-ease-emphasized);
+  }
+
+  /* The page behind a travelling element cross-fades quickly — it is context,
+     not the subject of the change, and a slow fade would make the whole
+     interface feel as though it were being replaced. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--nv-duration-quick);
+    animation-timing-function: var(--nv-ease-standard);
+  }
+
+  /* --- Travelling emphasis -------------------------------------------------------
+     A selection marker moves between two elements, which no single element can
+     transition — so it is captured and interpolated. The problem that creates is
+     layering: transition layers paint above the page snapshot, so a marker that
+     sits *behind* its label at rest would slide over the top of every label it
+     passed, washing the text as it went.
+
+     The fix is to capture the labels too and order the groups explicitly. The
+     marker travels below; the items ride above it, exactly as they do at rest.
+     niveus.js names the items of the group that is changing, and only while it
+     changes — names have to be unique per document, which no stylesheet can
+     guarantee — and every other item simply stays in the page snapshot.
+
+     Because the layering is now correct, the marker needs no trick to stay out of
+     the way: it travels at full opacity, like the solid object it is. */
+
+  ::view-transition-group(.nv-travelling) {
+    z-index: 0;
+  }
+
+  /* The marker changes shape as it travels — a short label's pill becomes a
+     long one's. By default the browser scales each snapshot to the group's
+     width and keeps its aspect ratio, so mid-way a 40×26 pill stretched to
+     80px wide is drawn 52px tall, hanging out below its strip. The marker is a
+     plain surface, so its snapshots fill the box instead. */
+  ::view-transition-old(.nv-travelling),
+  ::view-transition-new(.nv-travelling) {
+    block-size: 100%;
+  }
+
+  ::view-transition-group(.nv-carried) {
+    z-index: 1;
+  }
+
+  /* A carried item does not move — only its color changes when selection leaves
+     or arrives. That resolves quickly so the label does not sit half-way between
+     two colors for the length of the travel. */
+  ::view-transition-old(.nv-carried),
+  ::view-transition-new(.nv-carried) {
+    animation-duration: var(--nv-duration-fast);
+  }
+
+  /* --- Appearance ---------------------------------------------------------------
+     A theme change is the one moment the entire surface is the subject, so the
+     root cross-fade slows down and every color arrives together. The attribute
+     is set for the duration of the change by nv.setTheme(). */
+
+  :root[data-nv-transition="theme"]::view-transition-old(root),
+  :root[data-nv-transition="theme"]::view-transition-new(root) {
+    animation-duration: var(--nv-duration-theme);
+    animation-timing-function: var(--nv-ease-standard);
+  }
+
+  /* Without the view-transition path — no script, or a browser without the API —
+     surfaces still glide, because their own transitions cover color. */
+
+  /* --- Direction ------------------------------------------------------------------
+     Moving forward and moving back should not look the same. The application
+     sets data-nv-direction on the root for the length of the transition; content
+     then leaves towards where the user came from and enters from where they are
+     going. Without a direction, content simply rises into place.
+
+     Content hands over; it does not cross-fade. Two blocks of text at half
+     opacity on top of each other read as a rendering fault, not as motion, so
+     the outgoing content is gone (fast) before the incoming arrives (delayed by
+     that same beat). The box itself never empties for longer than a blink.
+
+     Any element whose content changes in place takes part by carrying the
+     nv-content class: .nv-continuous and .nv-tab-panel both do.
+
+     The box clips what it holds. When a tall panel gives way to a short one,
+     the page around it has already reflowed to the new height, so unclipped
+     outgoing content would spill out below its own card. */
+
+  ::view-transition-group(.nv-content) {
+    overflow: clip;
+  }
+
+  ::view-transition-old(.nv-content) {
+    animation: nv-fade-out var(--nv-duration-fast) var(--nv-ease-exit) both;
+  }
+
+  ::view-transition-new(.nv-content) {
+    animation:
+      nv-fade-in var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both,
+      nv-rise var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both;
+  }
+
+  :root[data-nv-direction="forward"]::view-transition-old(.nv-content) {
+    animation:
+      nv-fade-out var(--nv-duration-fast) var(--nv-ease-exit) both,
+      nv-exit-to-start var(--nv-duration-fast) var(--nv-ease-exit) both;
+  }
+
+  :root[data-nv-direction="forward"]::view-transition-new(.nv-content) {
+    animation:
+      nv-fade-in var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both,
+      nv-enter-from-end var(--nv-duration-normal) var(--nv-ease-emphasized) var(--nv-duration-fast) both;
+  }
+
+  :root[data-nv-direction="backward"]::view-transition-old(.nv-content) {
+    animation:
+      nv-fade-out var(--nv-duration-fast) var(--nv-ease-exit) both,
+      nv-exit-to-end var(--nv-duration-fast) var(--nv-ease-exit) both;
+  }
+
+  :root[data-nv-direction="backward"]::view-transition-new(.nv-content) {
+    animation:
+      nv-fade-in var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both,
+      nv-enter-from-start var(--nv-duration-normal) var(--nv-ease-emphasized) var(--nv-duration-fast) both;
+  }
+
+  @keyframes nv-fade-in {
+    from { opacity: 0; }
+  }
+
+  @keyframes nv-fade-out {
+    to { opacity: 0; }
+  }
+
+  @keyframes nv-rise {
+    from { translate: 0 var(--nv-travel-sm); }
+  }
+
+  @keyframes nv-enter-from-end {
+    from { translate: var(--nv-travel-lg) 0; }
+  }
+
+  @keyframes nv-enter-from-start {
+    from { translate: calc(var(--nv-travel-lg) * -1) 0; }
+  }
+
+  @keyframes nv-exit-to-start {
+    to { translate: calc(var(--nv-travel-md) * -1) 0; }
+  }
+
+  @keyframes nv-exit-to-end {
+    to { translate: var(--nv-travel-md) 0; }
+  }
+
+  /* --- Utilities ---------------------------------------------------------------------
+     .nv-continuous marks a region whose content should cross-fade in place when
+     it changes — the "same surface, different content" relationship. */
+
+  .nv-continuous {
+    view-transition-name: var(--nv-content-name, nv-content);
+    view-transition-class: nv-content;
+  }
+
+  /* Collapsible region for markup that is not a <details>. The 0fr -> 1fr grid
+     row is the one technique that animates to an unknown content height in every
+     browser, with no measurement and no script. */
+
+  .nv-collapse {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+      grid-template-rows var(--nv-duration-expand) var(--nv-ease-standard),
+      opacity var(--nv-duration-expand) var(--nv-ease-standard);
+    opacity: 0;
+  }
+
+  .nv-collapse > * {
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  .nv-collapse[data-open],
+  .nv-collapse:not([hidden])[open] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  /* Reduced motion does not mean "no continuity" — a state change still has to
+     resolve rather than be cut mid-way. The token layer already collapses every
+     duration to 1ms; this removes the displacement so nothing slides. */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation-duration: 1ms;
+    }
+  }
+}
+
+/* --- Components -------------------------------------------------------------- */
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Surface
+     --------------------------------------------------------------------------
+     The material vocabulary, expressed as classes. Every other component is
+     built from these; applications use them directly for anything the system
+     does not ship as a named component.
+
+       .nv-surface                  a container using the solid material
+       .nv-material-{type}          apply a material to any element
+       .nv-elevation-{0..5}         apply a depth level to any element
+
+     A material and an elevation are independent: .nv-material-solid
+     .nv-elevation-3 is a legitimate combination. What is not legitimate is a
+     raw box-shadow that belongs to neither scale.
+     ========================================================================== */
+
+  .nv-surface {
+    background-color: var(--nv-color-surface);
+    color: var(--nv-color-text-primary);
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    border-radius: var(--nv-radius-lg);
+    transition: var(--nv-transition-surface);
+  }
+
+  /* --- Materials ------------------------------------------------------------- */
+
+  .nv-material-solid {
+    background-color: var(--nv-material-solid-bg);
+    border: var(--nv-border-width) solid var(--nv-material-solid-border);
+    box-shadow: var(--nv-material-solid-shadow);
+    backdrop-filter: none;
+  }
+
+  .nv-material-elevated {
+    background-color: var(--nv-material-elevated-bg);
+    border: var(--nv-border-width) solid var(--nv-material-elevated-border);
+    box-shadow: var(--nv-material-elevated-shadow);
+    backdrop-filter: none;
+  }
+
+  .nv-material-inset {
+    background-color: var(--nv-material-inset-bg);
+    border: var(--nv-border-width) solid var(--nv-material-inset-border);
+    box-shadow: var(--nv-material-inset-shadow);
+    backdrop-filter: none;
+  }
+
+  .nv-material-frosted {
+    background-color: var(--nv-material-frosted-bg);
+    border: var(--nv-border-width) solid var(--nv-material-frosted-border);
+    box-shadow: var(--nv-material-frosted-shadow);
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+  }
+
+  .nv-material-glass {
+    background-color: var(--nv-material-glass-bg);
+    border: var(--nv-border-width) solid var(--nv-material-glass-border);
+    box-shadow: var(--nv-material-glass-shadow);
+    backdrop-filter: var(--nv-backdrop-glass);
+    -webkit-backdrop-filter: var(--nv-backdrop-glass);
+  }
+
+  /* --- Elevation -------------------------------------------------------------
+     Elevation utilities carry three things at once, because a lifted surface is
+     never only a shadow: the shadow itself, the highlight along its top edge,
+     and — on a dark canvas, where a shadow has nothing left to darken — a tint
+     that lets more light reach the surface the higher it sits. The tint is
+     transparent in light appearance, so the two read as one scale. */
+
+  .nv-elevation-0 { box-shadow: var(--nv-elevation-0); }
+
+  .nv-elevation-1 {
+    box-shadow: var(--nv-highlight-top), var(--nv-elevation-1);
+    background-image: linear-gradient(var(--nv-color-elevation-tint-1) 0 0);
+  }
+
+  .nv-elevation-2 {
+    box-shadow: var(--nv-highlight-top), var(--nv-elevation-2);
+    background-image: linear-gradient(var(--nv-color-elevation-tint-2) 0 0);
+  }
+
+  .nv-elevation-3 {
+    box-shadow: var(--nv-highlight-top), var(--nv-elevation-3);
+    background-image: linear-gradient(var(--nv-color-elevation-tint-3) 0 0);
+  }
+
+  .nv-elevation-4 {
+    box-shadow: var(--nv-highlight-top), var(--nv-elevation-4);
+    background-image: linear-gradient(var(--nv-color-elevation-tint-4) 0 0);
+  }
+
+  .nv-elevation-5 {
+    box-shadow: var(--nv-highlight-top-strong), var(--nv-elevation-5);
+    background-image: linear-gradient(var(--nv-color-elevation-tint-5) 0 0);
+  }
+
+  .nv-elevation-inset-sm { box-shadow: var(--nv-elevation-inset-sm); }
+  .nv-elevation-inset-md { box-shadow: var(--nv-elevation-inset-md); }
+  .nv-elevation-inset-lg { box-shadow: var(--nv-elevation-inset-lg); }
+
+  /* --- Divider ---------------------------------------------------------------- */
+
+  .nv-divider {
+    border: 0;
+    border-top: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    margin-block: var(--nv-space-4);
+  }
+
+  .nv-divider--vertical {
+    border-top: 0;
+    border-left: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    margin-block: 0;
+    margin-inline: var(--nv-space-4);
+    align-self: stretch;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Button
+     --------------------------------------------------------------------------
+       .nv-button                   secondary by default — a raised surface
+       .nv-button--primary          the single affirmative action in a view
+       .nv-button--ghost            low-emphasis, no material until hovered
+       .nv-button--danger           destructive, and only when it is
+       .nv-button--frosted          for use over imagery or frosted chrome
+       .nv-button--sm | --lg        36px by default
+       .nv-button--icon             square, for a lone icon (needs a label)
+       .nv-button--block            fills its container
+
+     A button is a key: a bevelled face with light falling across it, a contact
+     line where it meets the surface, and a press that sinks it into an inset.
+
+     Every variant is defined purely by reassigning the private --_* properties
+     below. Interaction — the lift on hover, the sink on press, the focus ring —
+     lives once in the base rule, so a new variant can never drift from the way
+     the rest of the system responds to a pointer.
+     ========================================================================== */
+
+  .nv-button {
+    /* Variant surface, overridden per modifier. */
+    --_bg: var(--nv-color-surface-elevated);
+    --_bg-hover: var(--nv-color-surface-hover);
+    --_bg-active: var(--nv-color-surface-active);
+    --_fg: var(--nv-color-text-primary);
+    --_border: var(--nv-color-border);
+    --_sheen: var(--nv-sheen-raised);
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+    --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+    --_shadow-active: var(--nv-elevation-inset-sm), var(--nv-outline);
+
+    /* Size, overridden per size modifier. */
+    --_height: var(--nv-control-height-md);
+    --_padding: var(--nv-control-padding-md);
+    --_gap: var(--nv-control-gap-md);
+    --_font-size: var(--nv-font-size-sm);
+    --_radius: var(--nv-radius-md);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--_gap);
+
+    block-size: var(--_height);
+    padding-inline: var(--_padding);
+    border: var(--nv-border-width) solid var(--_border);
+    border-radius: var(--_radius);
+
+    background-color: var(--_bg);
+    background-image: var(--_sheen);
+    color: var(--_fg);
+    box-shadow: var(--_shadow);
+
+    font-family: var(--nv-font-family-sans);
+    font-size: var(--_font-size);
+    font-weight: var(--nv-font-weight-medium);
+    line-height: var(--nv-line-height-snug);
+    letter-spacing: var(--nv-letter-spacing-normal);
+    white-space: nowrap;
+    text-decoration: none;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: var(--nv-transition-control);
+  }
+
+  /* A control smaller than the minimum target still gets a full-size hit area:
+     the pseudo-element grows outward without changing the visual size. */
+  .nv-button::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: max(100%, var(--nv-target-min));
+    block-size: max(100%, var(--nv-target-min));
+  }
+
+  @media (hover: hover) {
+    .nv-button:hover:not(:disabled, [aria-disabled="true"]) {
+      background-color: var(--_bg-hover);
+      box-shadow: var(--_shadow-hover);
+      translate: 0 var(--nv-lift-hover);
+    }
+  }
+
+  /* Pressed, the face is pushed below the light: the sheen goes and the inset
+     takes over. */
+  .nv-button:active:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--_bg-active);
+    background-image: none;
+    box-shadow: var(--_shadow-active);
+    translate: 0 var(--nv-press-depth);
+    transition-duration: var(--nv-duration-instant);
+  }
+
+  .nv-button:focus-visible {
+    outline: none;
+    box-shadow: var(--_shadow), var(--nv-focus-ring);
+  }
+
+  .nv-button:disabled,
+  .nv-button[aria-disabled="true"] {
+    background-color: var(--nv-color-surface-inset);
+    background-image: none;
+    color: var(--nv-color-text-disabled);
+    border-color: var(--nv-color-border-subtle);
+    box-shadow: none;
+    translate: none;
+    cursor: not-allowed;
+  }
+
+  /* --- Variants --------------------------------------------------------------- */
+
+  .nv-button--primary {
+    --_bg: var(--nv-color-accent);
+    --_bg-hover: var(--nv-color-accent-hover);
+    --_bg-active: var(--nv-color-accent-active);
+    --_fg: var(--nv-color-on-accent);
+    --_border: transparent;
+    --_sheen: var(--nv-sheen-filled);
+    font-weight: var(--nv-font-weight-semibold);
+  }
+
+  .nv-button--danger {
+    --_bg: var(--nv-color-danger);
+    --_bg-hover: var(--nv-color-danger-hover);
+    --_bg-active: var(--nv-color-danger-active);
+    --_fg: var(--nv-color-on-danger);
+    --_border: transparent;
+    --_sheen: var(--nv-sheen-filled);
+    --nv-color-focus-ring: var(--nv-color-danger-border);
+    font-weight: var(--nv-font-weight-semibold);
+  }
+
+  .nv-button--ghost {
+    --_bg: transparent;
+    --_bg-hover: var(--nv-color-surface-hover);
+    --_bg-active: var(--nv-color-surface-active);
+    --_fg: var(--nv-color-text-secondary);
+    --_border: transparent;
+    --_sheen: none;
+    --_shadow: none;
+    --_shadow-hover: none;
+    --_shadow-active: var(--nv-elevation-inset-sm);
+  }
+
+  @media (hover: hover) {
+    .nv-button--ghost:hover:not(:disabled, [aria-disabled="true"]) {
+      color: var(--nv-color-text-primary);
+      translate: none; /* nothing to lift — a ghost has no material to raise */
+    }
+  }
+
+  .nv-button--subtle {
+    --_bg: var(--nv-color-accent-subtle);
+    --_bg-hover: var(--nv-color-accent-subtle-hover);
+    --_bg-active: var(--nv-color-accent-subtle-hover);
+    --_fg: var(--nv-color-accent-text);
+    --_border: var(--nv-color-accent-border);
+    --_sheen: none;
+    --_shadow: none;
+    --_shadow-hover: var(--nv-elevation-1);
+  }
+
+  .nv-button--frosted {
+    --_bg: var(--nv-material-glass-bg);
+    --_bg-hover: var(--nv-material-frosted-bg);
+    --_bg-active: var(--nv-material-frosted-bg);
+    --_border: var(--nv-material-glass-border);
+    --_sheen: none;
+    backdrop-filter: var(--nv-backdrop-glass);
+    -webkit-backdrop-filter: var(--nv-backdrop-glass);
+  }
+
+  /* --- Sizes ------------------------------------------------------------------- */
+
+  .nv-button--sm {
+    --_height: var(--nv-control-height-sm);
+    --_padding: var(--nv-control-padding-sm);
+    --_gap: var(--nv-control-gap-sm);
+    --_font-size: var(--nv-font-size-xs);
+    --_radius: var(--nv-radius-sm);
+  }
+
+  .nv-button--lg {
+    --_height: var(--nv-control-height-lg);
+    --_padding: var(--nv-control-padding-lg);
+    --_gap: var(--nv-control-gap-lg);
+    --_font-size: var(--nv-font-size-md);
+  }
+
+  .nv-button--icon {
+    --_padding: 0;
+    inline-size: var(--_height);
+  }
+
+  .nv-button--pill {
+    --_radius: var(--nv-radius-full);
+  }
+
+  .nv-button--block {
+    display: flex;
+    inline-size: 100%;
+  }
+
+  /* --- Floating ------------------------------------------------------------------
+     A control that sits *over* content rather than in the flow: a carousel arrow,
+     a floating action. Two things change.
+
+     It is already off the surface, so there is nothing to lift it from — it grows
+     instead. And it is almost always positioned with `translate`, which the hover
+     lift would overwrite, throwing the button half its own height down the page
+     the moment a pointer touched it. --nv-button-offset carries that positioning
+     through every state. */
+
+  .nv-button--float {
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+    --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-4);
+    --_shadow-active: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+
+    translate: var(--nv-button-offset, 0 0);
+  }
+
+  @media (hover: hover) {
+    .nv-button--float:hover:not(:disabled, [aria-disabled="true"]) {
+      translate: var(--nv-button-offset, 0 0);
+      scale: 1.06;
+    }
+  }
+
+  .nv-button--float:active:not(:disabled, [aria-disabled="true"]) {
+    translate: var(--nv-button-offset, 0 0);
+    scale: 0.97;
+  }
+
+  /* --- Parts --------------------------------------------------------------------- */
+
+  .nv-button__icon {
+    inline-size: 1em;
+    block-size: 1em;
+    font-size: 1.15em;
+    opacity: 0.9;
+  }
+
+  /* Busy: the label stays in place to keep the button from resizing mid-action,
+     and the spinner replaces it. */
+  .nv-button[aria-busy="true"] {
+    color: transparent;
+    pointer-events: none;
+  }
+
+  .nv-button[aria-busy="true"]::before {
+    content: "";
+    position: absolute;
+    inline-size: 1em;
+    block-size: 1em;
+    border: 2px solid var(--_fg);
+    border-block-start-color: transparent;
+    border-radius: var(--nv-radius-full);
+    animation: nv-spin var(--nv-duration-slower) var(--nv-ease-linear) infinite;
+  }
+
+  @keyframes nv-spin {
+    to { rotate: 1turn; }
+  }
+
+  /* --- Group ---------------------------------------------------------------------
+     Segmented controls: buttons share an edge, so only the outer corners round
+     and the shared border is not drawn twice. */
+
+  .nv-button-group {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nv-button-group > .nv-button:not(:first-child) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    margin-inline-start: calc(var(--nv-border-width) * -1);
+  }
+
+  .nv-button-group > .nv-button:not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .nv-button-group > .nv-button:hover,
+  .nv-button-group > .nv-button:focus-visible {
+    z-index: 1;
+    translate: none;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Input
+     --------------------------------------------------------------------------
+       .nv-field                    label + control + hint, correctly spaced
+       .nv-input                    text input, textarea and select
+       .nv-input-group              control with a leading or trailing affix
+       .nv-select                   wrapper that supplies the chevron
+       .nv-checkbox / .nv-radio     custom marks on the native controls
+       .nv-switch                   binary control with an inset track
+
+     Inputs are the system's inset material: they read as wells cut into the
+     surface that holds them — shaded inside, lit along the lower lip — which is
+     what distinguishes a place to type from a thing to press. On focus the recess stays — only the ring and border change,
+     so the field never appears to jump forward.
+     ========================================================================== */
+
+  .nv-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-1-5);
+    min-inline-size: 0;
+  }
+
+  .nv-field__label {
+    font: var(--nv-font-label);
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-field__label[data-optional]::after {
+    content: " " attr(data-optional);
+    color: var(--nv-color-text-tertiary);
+    font-weight: var(--nv-font-weight-regular);
+  }
+
+  .nv-field__hint {
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-secondary);
+  }
+
+  .nv-field__error {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-1-5);
+    font: var(--nv-font-caption);
+    font-weight: var(--nv-font-weight-medium);
+    color: var(--nv-color-danger-text);
+  }
+
+  /* --- Control ----------------------------------------------------------------- */
+
+  .nv-input {
+    --_height: var(--nv-control-height-md);
+    --_padding: var(--nv-control-padding-md);
+    --_font-size: var(--nv-font-size-md);
+    --_radius: var(--nv-radius-md);
+    --_border: var(--nv-color-border);
+
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--_height);
+    padding-inline: var(--_padding);
+
+    background-color: var(--nv-color-surface-inset);
+    color: var(--nv-color-text-primary);
+    border: var(--nv-border-width) solid var(--_border);
+    border-radius: var(--_radius);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+
+    font-family: var(--nv-font-family-sans);
+    font-size: var(--_font-size);
+    line-height: var(--nv-line-height-snug);
+    transition: var(--nv-transition-control);
+    appearance: none;
+  }
+
+  .nv-input::placeholder {
+    color: var(--nv-color-text-tertiary);
+  }
+
+  @media (hover: hover) {
+    .nv-input:hover:not(:disabled, [readonly]) {
+      --_border: var(--nv-color-border-strong);
+    }
+  }
+
+  .nv-input:focus-visible,
+  .nv-input:focus {
+    outline: none;
+    --_border: var(--nv-color-accent);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-focus-ring);
+  }
+
+  .nv-input[aria-invalid="true"] {
+    --_border: var(--nv-color-danger);
+    --nv-color-focus-ring: var(--nv-color-danger-border);
+  }
+
+  .nv-input:disabled {
+    background-color: var(--nv-color-background-subtle);
+    color: var(--nv-color-text-disabled);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .nv-input[readonly] {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  /* Multi-line controls grow, so height becomes a minimum and the block padding
+     has to be stated explicitly. */
+  textarea.nv-input {
+    block-size: auto;
+    min-block-size: calc(var(--nv-control-height-lg) * 2);
+    padding-block: var(--nv-space-2-5);
+    line-height: var(--nv-line-height-normal);
+  }
+
+  .nv-input--sm {
+    --_height: var(--nv-control-height-sm);
+    --_padding: var(--nv-control-padding-sm);
+    --_font-size: var(--nv-font-size-sm);
+    --_radius: var(--nv-radius-sm);
+  }
+
+  /* A color well: the swatch fills the control, so the value is the control. */
+  .nv-input--color {
+    inline-size: var(--nv-control-height-md);
+    padding: var(--nv-space-1);
+    cursor: pointer;
+  }
+
+  .nv-input--color::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .nv-input--color::-webkit-color-swatch,
+  .nv-input--color::-moz-color-swatch {
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    border-radius: calc(var(--nv-radius-md) - var(--nv-space-1));
+  }
+
+  .nv-input--lg {
+    --_height: var(--nv-control-height-lg);
+    --_padding: var(--nv-control-padding-lg);
+    --_font-size: var(--nv-font-size-lg);
+  }
+
+  /* --- Affixes -------------------------------------------------------------------
+     <div class="nv-input-group">
+       <span class="nv-input-group__affix">@</span>
+       <input class="nv-input">
+     </div>
+     The affix sits inside the field's recess rather than beside it, so the group
+     still reads as a single surface. */
+
+  .nv-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+  }
+
+  .nv-input-group__affix {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    padding-inline: var(--nv-control-padding-md);
+    color: var(--nv-color-text-tertiary);
+    font-size: var(--nv-font-size-sm);
+    pointer-events: none;
+  }
+
+  .nv-input-group__affix:first-child {
+    inset-inline-start: 0;
+  }
+
+  .nv-input-group__affix:last-child {
+    inset-inline-end: 0;
+  }
+
+  .nv-input-group__affix:first-child ~ .nv-input {
+    padding-inline-start: calc(var(--nv-control-padding-md) * 2 + 1em);
+  }
+
+  .nv-input:has(~ .nv-input-group__affix:last-child) {
+    padding-inline-end: calc(var(--nv-control-padding-md) * 2 + 1em);
+  }
+
+  /* Interactive affixes — a clear button, a reveal toggle — opt back in. */
+  .nv-input-group__affix > * {
+    pointer-events: auto;
+  }
+
+  /* --- Select ----------------------------------------------------------------------
+     <div class="nv-select"><select class="nv-input">…</select></div> */
+
+  .nv-select {
+    position: relative;
+    display: flex;
+    inline-size: 100%;
+  }
+
+  .nv-select > .nv-input {
+    padding-inline-end: calc(var(--nv-control-padding-md) * 2 + 0.5em);
+    cursor: pointer;
+  }
+
+  .nv-select::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: var(--nv-control-padding-md);
+    inset-block-start: 50%;
+    inline-size: 0.45em;
+    block-size: 0.45em;
+    margin-block-start: -0.28em;
+    border-inline-end: 1.5px solid var(--nv-color-text-tertiary);
+    border-block-end: 1.5px solid var(--nv-color-text-tertiary);
+    rotate: 45deg;
+    pointer-events: none;
+  }
+
+  /* --- Checkbox and radio ------------------------------------------------------------ */
+
+  .nv-checkbox,
+  .nv-radio {
+    position: relative;
+    flex: none;
+    inline-size: var(--nv-space-5);
+    block-size: var(--nv-space-5);
+    margin: 0;
+    background-color: var(--nv-color-surface-inset);
+    border: var(--nv-border-width) solid var(--nv-color-border-strong);
+    border-radius: var(--nv-radius-xs);
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+    cursor: pointer;
+    appearance: none;
+    transition: var(--nv-transition-control);
+  }
+
+  .nv-radio {
+    border-radius: var(--nv-radius-full);
+  }
+
+  .nv-checkbox:checked,
+  .nv-radio:checked,
+  .nv-checkbox:indeterminate {
+    background-color: var(--nv-color-accent);
+    background-image: var(--nv-sheen-filled);
+    border-color: transparent;
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  }
+
+  /* The marks are always present, at zero size and zero opacity, so checking a
+     box grows the tick out of its centre instead of stamping it there. A mark
+     that only exists in the :checked state has nothing to animate from. */
+
+  .nv-checkbox::after,
+  .nv-radio::after,
+  .nv-checkbox::before {
+    content: "";
+    position: absolute;
+    opacity: 0;
+    scale: 0;
+    transition:
+      opacity var(--nv-duration-fast) var(--nv-ease-standard),
+      scale var(--nv-duration-quick) var(--nv-ease-spring);
+  }
+
+  /* The tick is drawn from two borders so it scales with the control and needs
+     no asset. */
+  .nv-checkbox::after {
+    inset-block-start: 45%;
+    inset-inline-start: 50%;
+    inline-size: 0.28em;
+    block-size: 0.55em;
+    translate: -50% -50%;
+    rotate: 45deg;
+    border-inline-end: 2px solid var(--nv-color-on-accent);
+    border-block-end: 2px solid var(--nv-color-on-accent);
+  }
+
+  .nv-checkbox:checked:not(:indeterminate)::after {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* Indeterminate is its own mark rather than a variation of the tick: the two
+     have to be able to cross over each other when the state changes. */
+  .nv-checkbox::before {
+    inset: 50% 25% auto;
+    translate: 0 -50%;
+    block-size: 2px;
+    background-color: var(--nv-color-on-accent);
+    border-radius: var(--nv-radius-full);
+  }
+
+  .nv-checkbox:indeterminate::before {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .nv-radio::after {
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    inline-size: 0.4em;
+    block-size: 0.4em;
+    background-color: var(--nv-color-on-accent);
+    border-radius: var(--nv-radius-full);
+  }
+
+  .nv-radio:checked::after {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .nv-checkbox:disabled,
+  .nv-radio:disabled {
+    background-color: var(--nv-color-background-subtle);
+    border-color: var(--nv-color-border);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* --- Switch --------------------------------------------------------------------------
+     The track is a slot cut into the surface and the thumb is a knob riding in
+     it: the physical relationship does the explaining, so the control reads as
+     on or off without a label. The slot stays recessed when it fills with color
+     — switching on lights the slot, it does not raise it. */
+
+  .nv-switch {
+    --_track-inline: calc(var(--nv-space-6) * 1.5);
+    --_track-block: var(--nv-space-6);
+    --_thumb: calc(var(--_track-block) - 6px);
+    --_inset: 2px;
+    --_travel: calc(
+      var(--_track-inline) - var(--_thumb) - var(--_inset) * 2 -
+      var(--nv-border-width) * 2
+    );
+
+    position: relative;
+    flex: none;
+    inline-size: var(--_track-inline);
+    block-size: var(--_track-block);
+    margin: 0;
+    background-color: var(--nv-color-surface-inset);
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+    cursor: pointer;
+    appearance: none;
+    transition: var(--nv-transition-control);
+  }
+
+  .nv-switch::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: var(--_inset);
+    inline-size: var(--_thumb);
+    block-size: var(--_thumb);
+    translate: 0 -50%;
+    background-color: var(--nv-color-knob);
+    background-image: var(--nv-sheen-knob);
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-outline), var(--nv-elevation-2);
+    transition:
+      translate var(--nv-duration-travel) var(--nv-ease-emphasized),
+      background-color var(--nv-duration-fast) var(--nv-ease-standard);
+  }
+
+  .nv-switch:checked {
+    background-color: var(--nv-color-accent);
+    border-color: transparent;
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-outline);
+  }
+
+  .nv-switch:checked::after {
+    translate: var(--_travel) -50%;
+  }
+
+  .nv-switch:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  /* --- Inline control + label --------------------------------------------------------- */
+
+  .nv-choice {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2-5);
+    font: var(--nv-font-body);
+    cursor: pointer;
+  }
+
+  .nv-choice:has(:disabled) {
+    color: var(--nv-color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  /* translate has no logical equivalent, so the thumb's direction is flipped
+     explicitly rather than travelling the wrong way in RTL. */
+  .nv-switch:checked:dir(rtl)::after {
+    translate: calc(var(--_travel) * -1) -50%;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Card
+     --------------------------------------------------------------------------
+       .nv-card                     resting surface, elevation 1
+       .nv-card--elevated           separated from its context, elevation 2
+       .nv-card--inset              recessed into its parent
+       .nv-card--frosted            over imagery or scrolling content
+       .nv-card--interactive        the whole card is one target
+       .nv-card__header / __body / __footer / __media
+
+     A card is a container, not a look. If a card needs a shadow that is not on
+     the elevation scale, the answer is a different elevation — not a different
+     shadow.
+     ========================================================================== */
+
+  .nv-card {
+    --_bg: var(--nv-color-surface);
+    --_border: var(--nv-color-border-subtle);
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+    --_sheen: var(--nv-sheen-surface);
+    --_padding: var(--nv-space-5);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+
+    background-color: var(--_bg);
+    background-image: var(--_sheen);
+    color: var(--nv-color-text-primary);
+    border: var(--nv-border-width) solid var(--_border);
+    border-radius: var(--nv-radius-lg);
+    box-shadow: var(--_shadow);
+
+    /* Children are clipped to the corner radius so media and inset regions
+       cannot square off the card. */
+    overflow: hidden;
+    transition: var(--nv-transition-surface);
+  }
+
+  .nv-card--elevated {
+    --_bg: var(--nv-color-surface-elevated);
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+  }
+
+  .nv-card--floating {
+    --_bg: var(--nv-color-surface-elevated);
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+  }
+
+  .nv-card--inset {
+    --_bg: var(--nv-color-surface-inset);
+    --_shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+    --_sheen: none;
+    --_border: var(--nv-color-border-subtle);
+  }
+
+  .nv-card--frosted {
+    --_bg: var(--nv-material-frosted-bg);
+    --_border: var(--nv-material-frosted-border);
+    --_shadow: var(--nv-material-frosted-shadow);
+    --_sheen: none;
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+  }
+
+  .nv-card--flush {
+    --_padding: 0;
+  }
+
+  /* --- Interactive ------------------------------------------------------------
+     Rises on hover and sinks on press, exactly like a button — one physical
+     language for anything that responds to a pointer. */
+
+  .nv-card--interactive {
+    cursor: pointer;
+    text-align: start;
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .nv-card--interactive:hover {
+      box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+      translate: 0 calc(var(--nv-lift-hover) * 2);
+    }
+  }
+
+  .nv-card--interactive:active {
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+    translate: 0 var(--nv-press-depth);
+    transition-duration: var(--nv-duration-instant);
+  }
+
+  .nv-card--interactive:focus-visible {
+    outline: none;
+    box-shadow: var(--_shadow), var(--nv-focus-ring);
+  }
+
+  /* Cards whose whole area is clickable via a link inside: the link's target is
+     stretched over the card, so the markup stays semantic and only the link text
+     is announced. */
+  .nv-card__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  /* --- Parts ------------------------------------------------------------------- */
+
+  .nv-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--nv-space-4);
+    padding: var(--_padding);
+    padding-block-end: var(--nv-space-3);
+  }
+
+  .nv-card__title {
+    font: var(--nv-font-title);
+    letter-spacing: var(--nv-letter-spacing-tight);
+    margin: 0;
+  }
+
+  .nv-card__subtitle {
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-secondary);
+    margin-block-start: var(--nv-space-1);
+  }
+
+  .nv-card__body {
+    flex: 1;
+    padding: var(--_padding);
+    color: var(--nv-color-text-secondary);
+    font: var(--nv-font-body);
+  }
+
+  /* A header already opened the block, so the body should not open it again. */
+  .nv-card__header + .nv-card__body {
+    padding-block-start: 0;
+  }
+
+  .nv-card__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+    padding: var(--_padding);
+    padding-block-start: var(--nv-space-3);
+    border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    margin-block-start: auto;
+  }
+
+  .nv-card__footer--plain {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .nv-card__media {
+    display: block;
+    inline-size: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background-color: var(--nv-color-surface-inset);
+  }
+
+  /* --- Group ---------------------------------------------------------------------
+     Equal-height cards on one rhythm, collapsing to a single column without a
+     media query. */
+
+  .nv-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    gap: var(--nv-space-4);
+    align-items: stretch;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Dialog
+     --------------------------------------------------------------------------
+     Built on the native <dialog> element, so focus trapping, the top layer,
+     Escape-to-close and inertness come from the platform rather than from
+     script.
+
+       <dialog class="nv-dialog"> … </dialog>      opened with .showModal()
+       .nv-dialog--sheet                           enters from the block end
+       .nv-dialog--wide | --compact                width
+       .nv-dialog__header / __body / __footer / __close
+
+     The dialog is the system's highest material: elevation 4 over a blurred
+     scrim. It enters by rising and settling, and leaves the way it came — the
+     motion is what tells the user the surface was always there, above the page.
+     ========================================================================== */
+
+  .nv-dialog {
+    --_width: 30rem;
+    --_padding: var(--nv-space-6);
+
+    inline-size: min(var(--_width), calc(100vw - var(--nv-space-8)));
+    max-block-size: min(42rem, calc(100svh - var(--nv-space-12)));
+    padding: 0;
+
+    background-color: var(--nv-color-surface-elevated);
+    background-image: var(--nv-sheen-surface);
+    color: var(--nv-color-text-primary);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-xl);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-4);
+
+    overflow: hidden;
+
+    /* Closed state. [open] below is the resting state; @starting-style replays
+       these values for the entrance. */
+    /* A dialog should look as though it came from the control that opened it.
+       nv.openDialog() sets --nv-origin to that control's position relative to
+       the dialog, so the entrance scale expands away from the trigger rather
+       than from the middle of the screen. Centred when nothing sets it. */
+    transform-origin: var(--nv-origin, 50% 50%);
+
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 var(--nv-travel-md);
+
+    transition:
+      opacity var(--nv-duration-normal) var(--nv-ease-standard),
+      scale var(--nv-duration-normal) var(--nv-ease-standard),
+      translate var(--nv-duration-normal) var(--nv-ease-standard),
+      display var(--nv-duration-normal) allow-discrete,
+      overlay var(--nv-duration-normal) allow-discrete;
+  }
+
+  .nv-dialog[open] {
+    opacity: 1;
+    scale: 1;
+    translate: 0;
+    transition-timing-function: var(--nv-ease-entrance);
+  }
+
+  @starting-style {
+    .nv-dialog[open] {
+      opacity: 0;
+      scale: 0.97;
+      translate: 0 var(--nv-travel-md);
+    }
+  }
+
+  .nv-dialog::backdrop {
+    background-color: var(--nv-color-scrim);
+    backdrop-filter: var(--nv-backdrop-scrim);
+    -webkit-backdrop-filter: var(--nv-backdrop-scrim);
+    opacity: 0;
+    transition:
+      opacity var(--nv-duration-normal) var(--nv-ease-standard),
+      display var(--nv-duration-normal) allow-discrete,
+      overlay var(--nv-duration-normal) allow-discrete;
+  }
+
+  .nv-dialog[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .nv-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* showModal() does not stop the page behind from scrolling. */
+  html:has(.nv-dialog:modal) {
+    overflow: hidden;
+  }
+
+  /* --- Widths -------------------------------------------------------------------- */
+
+  .nv-dialog--compact { --_width: 24rem; }
+  .nv-dialog--wide { --_width: 44rem; }
+
+  /* --- Sheet ----------------------------------------------------------------------
+     Anchored to the block end and full width. On small screens this is usually
+     the right form for anything with more than two actions. */
+
+  .nv-dialog--sheet {
+    --_width: 34rem;
+
+    /* Flush to the viewport edges — a sheet with side gaps and square bottom
+       corners reads as a mistake rather than as a sheet. */
+    inline-size: min(var(--_width), 100vw);
+    max-block-size: min(46rem, calc(100svh - var(--nv-space-10)));
+    margin-block-end: 0;
+    margin-block-start: auto;
+    border-start-start-radius: var(--nv-radius-xl);
+    border-start-end-radius: var(--nv-radius-xl);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    scale: 1;
+    translate: 0 var(--nv-travel-lg);
+  }
+
+  @starting-style {
+    .nv-dialog--sheet[open] {
+      scale: 1;
+      translate: 0 var(--nv-travel-lg);
+    }
+  }
+
+  /* --- Parts ------------------------------------------------------------------------ */
+
+  .nv-dialog__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--nv-space-4);
+    padding: var(--_padding);
+    padding-block-end: var(--nv-space-3);
+  }
+
+  .nv-dialog__title {
+    font: var(--nv-font-heading);
+    font-size: var(--nv-font-size-xl);
+    letter-spacing: var(--nv-letter-spacing-tight);
+    margin: 0;
+  }
+
+  .nv-dialog__description {
+    font: var(--nv-font-body);
+    color: var(--nv-color-text-secondary);
+    margin-block-start: var(--nv-space-2);
+  }
+
+  .nv-dialog__body {
+    padding: var(--_padding);
+    padding-block: var(--nv-space-2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    color: var(--nv-color-text-secondary);
+  }
+
+  .nv-dialog__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--nv-space-2);
+    padding: var(--_padding);
+    padding-block-start: var(--nv-space-4);
+  }
+
+  /* A footer over scrollable content needs its own ground: the inset tint and
+     hairline tell the user there is more above it. */
+  .nv-dialog__footer--divided {
+    background-color: var(--nv-color-background-subtle);
+    border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  }
+
+  .nv-dialog__close {
+    flex: none;
+    margin: calc(var(--nv-space-1) * -1);
+  }
+
+  /* A dialog laid out as a column keeps its header and footer fixed while only
+     the body scrolls. */
+  .nv-dialog:has(.nv-dialog__body) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nv-dialog:not([open]) {
+    display: none;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Navigation
+     --------------------------------------------------------------------------
+       .nv-nav                      horizontal bar, frosted, sticky by default
+       .nv-nav--vertical            sidebar
+       .nv-nav--plain               solid instead of frosted
+       .nv-nav__brand / __list / __item / __section / __spacer
+       .nv-nav-tabs                 in-page tab strip with a sliding indicator
+
+     Navigation is chrome: it sits above content rather than in it. That is why
+     the bar is frosted and bevelled — the blur is not decoration, it is the
+     signal that content is passing underneath. A sidebar that scrolls with the page is not
+     chrome, so .nv-nav--vertical drops the translucency by default.
+     ========================================================================== */
+
+  .nv-nav {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-4);
+    padding: var(--nv-space-2) var(--nv-space-4);
+    min-block-size: var(--nv-control-height-lg);
+
+    background-color: var(--nv-material-frosted-bg);
+    border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+
+    /* The travelling selection marker sits behind its item at z-index -1; the
+       bar has to be its own stacking context or the marker would fall behind
+       the bar's background and disappear. */
+    isolation: isolate;
+    box-shadow: var(--nv-bevel);
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+    transition: var(--nv-transition-surface);
+  }
+
+  /* The bar only earns a shadow once something is behind it. Set data-scrolled
+     from the application on scroll. */
+  .nv-nav[data-scrolled] {
+    box-shadow: var(--nv-bevel), var(--nv-elevation-2);
+    transition: box-shadow var(--nv-duration-normal) var(--nv-ease-standard);
+  }
+
+  .nv-nav--plain {
+    background-color: var(--nv-color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nv-nav--static {
+    position: static;
+  }
+
+  /* A navigation group used inside content rather than as page chrome: no bar,
+     no border, no blur — just the items and their travelling selection. */
+  .nv-nav--inline {
+    position: static;
+    display: inline-flex;
+    min-block-size: 0;
+    padding: var(--nv-space-1);
+
+    background-color: transparent;
+    border-block-end: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nv-nav__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+    font: var(--nv-font-title);
+    letter-spacing: var(--nv-letter-spacing-tight);
+    color: var(--nv-color-text-primary);
+    text-decoration: none;
+    padding-inline: var(--nv-space-1);
+  }
+
+  .nv-nav__list {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-inline-size: 0;
+  }
+
+  .nv-nav__spacer {
+    flex: 1;
+  }
+
+  /* --- Item --------------------------------------------------------------------
+     Items are flat until they are touched. The active item is the only one with
+     material, which keeps the bar quiet while still answering "where am I". */
+
+  .nv-nav__item {
+    /* Rides above a travelling marker once niveus.js has given it a name. */
+    view-transition-class: nv-carried;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+    padding: var(--nv-space-2) var(--nv-space-3);
+    min-block-size: var(--nv-control-height-md);
+
+    border: var(--nv-border-width) solid transparent;
+    border-radius: var(--nv-radius-md);
+    background-color: transparent;
+
+    color: var(--nv-color-text-secondary);
+    font: var(--nv-font-label);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: var(--nv-transition-control);
+  }
+
+  @media (hover: hover) {
+    .nv-nav__item:hover {
+      background-color: var(--nv-color-surface-hover);
+      color: var(--nv-color-text-primary);
+    }
+  }
+
+  .nv-nav__item:active {
+    background-color: var(--nv-color-surface-active);
+    box-shadow: var(--nv-elevation-inset-sm);
+    transition-duration: var(--nv-duration-instant);
+  }
+
+  .nv-nav__item:focus-visible {
+    outline: none;
+    box-shadow: var(--nv-focus-ring);
+  }
+
+  /* Selection is a material that *moves*. The emphasis lives in a pseudo-element
+     rather than on the item itself, and carries a view-transition-name: when the
+     selection changes inside a transition, the browser interpolates the marker's
+     old box into its new one, so the highlight slides from the previous item to
+     the next instead of blinking out and in somewhere else.
+
+     Only one item in a group may be selected at a time — that is what keeps the
+     name unique. A page with several selection groups must give each its own
+     --nv-selection-name, or the duplicate name aborts the transition. */
+
+  /* Selection changes color and gains material — but not weight. Bolding the
+     selected item re-measures its text, which reflows every item beside it on
+     each change, and makes the old and new labels cross-fade against each other
+     at different widths. The pill is the cue; the weight was costing a flicker
+     for nothing. */
+  .nv-nav__item[aria-current],
+  .nv-nav__item--active,
+  .nv-nav__item[aria-selected="true"] {
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-nav__item[aria-current]::before,
+  .nv-nav__item--active::before,
+  .nv-nav__item[aria-selected="true"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    background-color: var(--nv-color-surface-elevated);
+    background-image: var(--nv-sheen-raised);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: inherit;
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+    view-transition-class: nv-travelling;
+  }
+
+  /* The marker is named only while its own group is changing (niveus.js sets
+     data-nv-travelling for the length of the transition). A permanent name
+     would lift every marker on the page out of the page snapshot on every
+     transition, theme changes included. */
+  [data-nv-travelling] .nv-nav__item[aria-current]::before,
+  [data-nv-travelling] .nv-nav__item--active::before,
+  [data-nv-travelling] .nv-nav__item[aria-selected="true"]::before {
+    view-transition-name: var(--nv-selection-name);
+  }
+
+  /* Hovering an already-selected item should not restate the emphasis. */
+  @media (hover: hover) {
+    .nv-nav__item[aria-current]:hover,
+    .nv-nav__item--active:hover,
+    .nv-nav__item[aria-selected="true"]:hover {
+      background-color: transparent;
+    }
+  }
+
+  .nv-nav__item[aria-disabled="true"] {
+    color: var(--nv-color-text-disabled);
+    pointer-events: none;
+  }
+
+  .nv-nav__icon {
+    inline-size: 1.15em;
+    block-size: 1.15em;
+    flex: none;
+    opacity: 0.85;
+  }
+
+  .nv-nav__badge {
+    margin-inline-start: auto;
+    padding-inline: var(--nv-space-1-5);
+    min-inline-size: var(--nv-space-5);
+    block-size: var(--nv-space-5);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--nv-color-accent-subtle);
+    color: var(--nv-color-accent-text);
+    border-radius: var(--nv-radius-full);
+    font: var(--nv-font-caption);
+    font-size: var(--nv-font-size-2xs);
+    font-weight: var(--nv-font-weight-semibold);
+  }
+
+  /* --- Vertical ------------------------------------------------------------------ */
+
+  .nv-nav--vertical {
+    position: sticky;
+    inset-block-start: 0;
+
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--nv-space-1);
+    inline-size: 15rem;
+    block-size: 100svh;
+    padding: var(--nv-space-4) var(--nv-space-3);
+
+    background-color: var(--nv-color-background-subtle);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-block-end: 0;
+    border-inline-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    box-shadow: none;
+    overflow-y: auto;
+  }
+
+  .nv-nav--vertical .nv-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--nv-space-0-5);
+  }
+
+  .nv-nav--vertical .nv-nav__item {
+    justify-content: flex-start;
+  }
+
+  .nv-nav--vertical .nv-nav__brand {
+    padding: var(--nv-space-2) var(--nv-space-3);
+    margin-block-end: var(--nv-space-3);
+  }
+
+  /* Engraved, like .nv-overline: a section marks a region, it is not read. */
+  .nv-nav__section {
+    padding: var(--nv-space-4) var(--nv-space-3) var(--nv-space-1-5);
+    font: var(--nv-font-engraved);
+    letter-spacing: var(--nv-letter-spacing-engraved);
+    text-transform: uppercase;
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .nv-nav__section:first-child {
+    padding-block-start: 0;
+  }
+
+  /* --- Tabs ------------------------------------------------------------------------
+     For switching views inside a page, not for moving between pages. The strip
+     itself is inset, so the selected tab reads as lifted out of the track. */
+
+  .nv-nav-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nv-space-0-5);
+    padding: var(--nv-space-1);
+
+    background-color: var(--nv-color-surface-inset);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-md);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+    overflow-x: auto;
+    scrollbar-width: none;
+    isolation: isolate;
+  }
+
+  .nv-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nv-nav-tabs .nv-nav__item {
+    border-radius: var(--nv-radius-sm);
+    min-block-size: var(--nv-control-height-sm);
+    padding-block: var(--nv-space-1);
+  }
+
+  /* Tabs are a selection group of their own, so they get their own marker name;
+     sharing the navigation bar's would mean two visible elements with the same
+     view-transition-name. */
+  .nv-nav-tabs {
+    --nv-selection-name: nv-tabs-selection;
+  }
+
+  .nv-nav-tabs .nv-nav__item[aria-selected="true"]::before {
+    border-radius: var(--nv-radius-sm);
+  }
+
+  /* --- Panels ----------------------------------------------------------------------
+     Switching tabs should feel like moving through one surface rather than
+     swapping the interface. nv.selectTab() gives the outgoing and incoming
+     panels one shared name for the length of the change, so they hand over
+     inside the same box — and slide with the direction of travel. The class is
+     what picks up the content animation in continuity.css. */
+  .nv-tab-panel {
+    view-transition-class: nv-content;
+  }
+
+  /* --- Breadcrumbs -------------------------------------------------------------------- */
+
+  .nv-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .nv-breadcrumbs li + li::before {
+    content: "/";
+    margin-inline-end: var(--nv-space-2);
+    color: var(--nv-color-border-strong);
+  }
+
+  .nv-breadcrumbs a {
+    color: var(--nv-color-text-secondary);
+    text-decoration: none;
+  }
+
+  .nv-breadcrumbs a:hover {
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-breadcrumbs [aria-current] {
+    color: var(--nv-color-text-primary);
+    font-weight: var(--nv-font-weight-medium);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Menu
+     --------------------------------------------------------------------------
+       <button class="nv-button nv-menu-trigger" popovertarget="actions"
+               style="--nv-anchor: --actions">Actions</button>
+
+       <div class="nv-menu" popover id="actions" style="--nv-anchor: --actions">
+         <button class="nv-menu__item">Rename</button>
+         <hr class="nv-menu__separator">
+         <button class="nv-menu__item nv-menu__item--danger">Delete</button>
+       </div>
+
+     A menu has a spatial relationship with the control that opened it: anchor
+     positioning ties it to the trigger, and it scales out of the trigger's edge
+     rather than appearing somewhere unrelated. Both sides name the same anchor
+     through --nv-anchor, so the pair stays obvious in the markup.
+
+     Light dismiss, Escape, and top-layer stacking come from the popover
+     attribute — none of it is scripted.
+     ========================================================================== */
+
+  .nv-menu-trigger {
+    anchor-name: var(--nv-anchor);
+  }
+
+  .nv-menu {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: var(--nv-space-1);
+
+    min-inline-size: 12rem;
+    max-inline-size: min(20rem, calc(100vw - var(--nv-space-8)));
+    max-block-size: min(24rem, calc(100svh - var(--nv-space-12)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    /* Below the trigger, aligned to its inline-start edge, flipping to whichever
+       side has room. */
+    position-anchor: var(--nv-anchor);
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    margin-block-start: var(--nv-space-2);
+
+    background-color: var(--nv-material-frosted-bg);
+    border: var(--nv-border-width) solid var(--nv-material-frosted-border);
+    border-radius: var(--nv-radius-lg);
+    box-shadow: var(--nv-material-frosted-shadow);
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+    color: var(--nv-color-text-primary);
+
+    /* Grows from the edge nearest the trigger. */
+    transform-origin: center block-start;
+
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 calc(var(--nv-travel-sm) * -1);
+    transition:
+      opacity var(--nv-duration-quick) var(--nv-ease-standard),
+      scale var(--nv-duration-quick) var(--nv-ease-entrance),
+      translate var(--nv-duration-quick) var(--nv-ease-entrance),
+      display var(--nv-duration-quick) allow-discrete,
+      overlay var(--nv-duration-quick) allow-discrete;
+  }
+
+  .nv-menu:popover-open {
+    opacity: 1;
+    scale: 1;
+    translate: 0;
+  }
+
+  @starting-style {
+    .nv-menu:popover-open {
+      opacity: 0;
+      scale: 0.96;
+      translate: 0 calc(var(--nv-travel-sm) * -1);
+    }
+  }
+
+  /* Without anchor positioning the menu cannot know where its trigger is, so it
+     falls back to the popover's own centring rather than landing somewhere
+     arbitrary. The relationship is lost; the usability is not. */
+  @supports not (anchor-name: --nv-test) {
+    .nv-menu {
+      inset: 0;
+      margin: auto;
+      transform-origin: center;
+    }
+  }
+
+  /* --- Items -------------------------------------------------------------------- */
+
+  .nv-menu__item {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2-5);
+    inline-size: 100%;
+    padding: var(--nv-space-2) var(--nv-space-2-5);
+
+    background-color: transparent;
+    border: 0;
+    border-radius: var(--nv-radius-sm);
+    color: var(--nv-color-text-secondary);
+    font: var(--nv-font-label);
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: var(--nv-transition-colors);
+  }
+
+  @media (hover: hover) {
+    .nv-menu__item:hover:not(:disabled, [aria-disabled="true"]) {
+      background-color: var(--nv-color-surface-hover);
+      color: var(--nv-color-text-primary);
+    }
+  }
+
+  .nv-menu__item:focus-visible {
+    outline: none;
+    background-color: var(--nv-color-surface-hover);
+    color: var(--nv-color-text-primary);
+    box-shadow: var(--nv-focus-ring);
+  }
+
+  .nv-menu__item--danger {
+    color: var(--nv-color-danger-text);
+  }
+
+  @media (hover: hover) {
+    .nv-menu__item--danger:hover:not(:disabled, [aria-disabled="true"]) {
+      background-color: var(--nv-color-danger-subtle);
+      color: var(--nv-color-danger-text);
+    }
+  }
+
+  .nv-menu__item:disabled,
+  .nv-menu__item[aria-disabled="true"] {
+    color: var(--nv-color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  .nv-menu__item[aria-checked="true"]::before {
+    content: "";
+    inline-size: 0.28em;
+    block-size: 0.55em;
+    margin-inline-end: var(--nv-space-1);
+    translate: 0 -0.12em;
+    rotate: 45deg;
+    border-inline-end: 2px solid var(--nv-color-accent);
+    border-block-end: 2px solid var(--nv-color-accent);
+  }
+
+  .nv-menu__shortcut {
+    margin-inline-start: auto;
+    padding-inline-start: var(--nv-space-4);
+    color: var(--nv-color-text-tertiary);
+    font: var(--nv-font-caption);
+  }
+
+  .nv-menu__separator {
+    border: 0;
+    border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    margin: var(--nv-space-1) 0;
+  }
+
+  .nv-menu__label {
+    padding: var(--nv-space-2) var(--nv-space-2-5) var(--nv-space-1);
+    font: var(--nv-font-caption);
+    font-weight: var(--nv-font-weight-semibold);
+    letter-spacing: var(--nv-letter-spacing-wider);
+    text-transform: uppercase;
+    color: var(--nv-color-text-tertiary);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Disclosure
+     --------------------------------------------------------------------------
+       <details class="nv-disclosure">
+         <summary class="nv-disclosure__summary"> … </summary>
+         <div class="nv-disclosure__body"> … </div>
+       </details>
+
+     Content expands out of the row that revealed it, at the position it already
+     occupies, rather than appearing at full height. The height animates because
+     the continuity layer turns on `interpolate-size`, which is what lets
+     block-size: auto take part in a transition — no measurement, no script, and
+     no wrapper whose height has to be kept in sync.
+
+     .nv-collapse in continuity.css covers the same relationship for markup that
+     cannot be a <details>.
+     ========================================================================== */
+
+  .nv-disclosure {
+    --_padding: var(--nv-space-4);
+
+    background-color: var(--nv-color-surface);
+    background-image: var(--nv-sheen-surface);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-lg);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+    transition: var(--nv-transition-surface);
+  }
+
+  .nv-disclosure--plain {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .nv-disclosure__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-3);
+    padding: var(--nv-space-3) var(--_padding);
+
+    font: var(--nv-font-label);
+    color: var(--nv-color-text-primary);
+    border-radius: inherit;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition: var(--nv-transition-colors);
+  }
+
+  /* Both spellings are needed to suppress the native marker. */
+  .nv-disclosure__summary::marker,
+  .nv-disclosure__summary::-webkit-details-marker {
+    display: none;
+    content: "";
+  }
+
+  @media (hover: hover) {
+    .nv-disclosure__summary:hover {
+      background-color: var(--nv-color-surface-hover);
+    }
+  }
+
+  .nv-disclosure__summary:focus-visible {
+    outline: none;
+    box-shadow: var(--nv-focus-ring);
+  }
+
+  /* The chevron turns rather than swapping to a different glyph — the rotation
+     is what says "this is the same control in its other state". */
+  .nv-disclosure__chevron {
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    margin-inline-start: auto;
+    margin-block-start: -0.2em;
+    flex: none;
+
+    border-inline-end: 1.5px solid var(--nv-color-text-tertiary);
+    border-block-end: 1.5px solid var(--nv-color-text-tertiary);
+    rotate: 45deg;
+    transition: rotate var(--nv-duration-normal) var(--nv-ease-standard);
+  }
+
+  .nv-disclosure[open] .nv-disclosure__chevron {
+    rotate: 225deg;
+    margin-block-start: 0.15em;
+  }
+
+  .nv-disclosure__body {
+    padding: 0 var(--_padding) var(--_padding);
+    color: var(--nv-color-text-secondary);
+    font: var(--nv-font-body);
+  }
+
+  /* The element the browser creates for a <details> body. Transitioning
+     content-visibility as a discrete property is what keeps the content
+     rendered while it collapses, instead of vanishing on the first frame. */
+  .nv-disclosure::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size var(--nv-duration-expand) var(--nv-ease-standard),
+      opacity var(--nv-duration-expand) var(--nv-ease-standard),
+      content-visibility var(--nv-duration-expand) allow-discrete;
+  }
+
+  .nv-disclosure[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  /* Stacked disclosures read as one control surface, so only the outer corners
+     round and neighbours share a single hairline. */
+  .nv-disclosure-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The negative margin collapses each pair of adjacent borders into a single
+     hairline, so neighbours are separated once rather than twice. */
+  .nv-disclosure-group > .nv-disclosure:not(:first-child) {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    margin-block-start: calc(var(--nv-border-width) * -1);
+  }
+
+  .nv-disclosure-group > .nv-disclosure:not(:last-child) {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Scroller
+     --------------------------------------------------------------------------
+       <div class="nv-scroller-frame" data-nv-scroller>
+         <div class="nv-scroller"> …cards… </div>
+         <button class="nv-button nv-button--icon" data-nv-scroll="prev">…</button>
+         <button class="nv-button nv-button--icon" data-nv-scroll="next">…</button>
+       </div>
+
+     A row of content that continues past its frame. Two things make that
+     readable rather than merely clipped: the edges fade, so the row visibly runs
+     under them instead of being cut, and snapping lands each item at the same
+     place every time — so moving left and right returns you to positions you
+     have already seen rather than to arbitrary offsets.
+
+     Scrolling works with no script at all: wheel, trackpad, touch and keyboard
+     are the browser's. The buttons are an affordance for pointers that have no
+     horizontal axis, and niveus.js wires them.
+     ========================================================================== */
+
+  .nv-scroller-frame {
+    position: relative;
+  }
+
+  .nv-scroller {
+    --nv-scroller-item: 18rem;
+    --nv-scroller-fade: var(--nv-space-8);
+
+    display: flex;
+    gap: var(--nv-space-4);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+
+    /* Room for items to lift on hover without being clipped by the scroll box. */
+    padding-block: var(--nv-space-2);
+
+    scroll-snap-type: inline mandatory;
+    scroll-padding-inline: var(--nv-space-1);
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+
+    /* The row runs under its own edges rather than stopping at them — but only
+       on the side where there is actually more to see. A fade at an end the row
+       has already reached is a lie about the content. niveus.js marks the ends;
+       with no script both sides fade, which is the safe default. */
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--nv-scroller-fade),
+      black calc(100% - var(--nv-scroller-fade)),
+      transparent
+    );
+  }
+
+  .nv-scroller-frame[data-nv-at-start] .nv-scroller {
+    mask-image: linear-gradient(
+      to right,
+      black calc(100% - var(--nv-scroller-fade)),
+      transparent
+    );
+  }
+
+  .nv-scroller-frame[data-nv-at-end] .nv-scroller {
+    mask-image: linear-gradient(to right, transparent, black var(--nv-scroller-fade));
+  }
+
+  .nv-scroller-frame[data-nv-at-start][data-nv-at-end] .nv-scroller {
+    mask-image: none;
+  }
+
+  .nv-scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nv-scroller > * {
+    flex: 0 0 auto;
+    inline-size: min(var(--nv-scroller-item), 78%);
+    scroll-snap-align: start;
+  }
+
+  /* Items that should size to their content rather than to the track. */
+  .nv-scroller--auto > * {
+    inline-size: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nv-scroller {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* --- Controls ------------------------------------------------------------
+     Centred on the row's block axis and pulled half outside it, so they read as
+     belonging to the frame rather than floating over the content. */
+
+  .nv-scroller-frame [data-nv-scroll] {
+    position: absolute;
+    inset-block-start: 50%;
+    z-index: 1;
+
+    /* Read by .nv-button--float, which keeps it through hover and press. */
+    --nv-button-offset: 0 -50%;
+  }
+
+  /* Belt and braces: the frame knows these controls float, so their centring
+     survives even if the markup forgets --float. */
+  .nv-scroller-frame [data-nv-scroll],
+  .nv-scroller-frame [data-nv-scroll]:hover,
+  .nv-scroller-frame [data-nv-scroll]:active {
+    translate: var(--nv-button-offset);
+  }
+
+  .nv-scroller-frame [data-nv-scroll="prev"] {
+    inset-inline-start: calc(var(--nv-space-4) * -1);
+  }
+
+  .nv-scroller-frame [data-nv-scroll="next"] {
+    inset-inline-end: calc(var(--nv-space-4) * -1);
+  }
+
+  /* At either end the control has nothing left to do, and says so. */
+  .nv-scroller-frame [data-nv-scroll]:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (hover: none) {
+    .nv-scroller-frame [data-nv-scroll] {
+      display: none;
+    }
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Bed
+     --------------------------------------------------------------------------
+       <div class="nv-bed"> … </div>
+
+     A bed is ground that is visibly *not* ordinary background. Where a card says
+     "this content belongs together", a bed says "what sits here is different in
+     kind" — a feature being shown off, a preview, a sandbox, an empty state, a
+     region under explanation.
+
+     It reads that way because of what it does to the materials on top of it: the
+     hatch and the soft color blooms give translucent surfaces something to be
+     translucent *against*, and give shadows something to fall on. A frosted panel
+     over a flat grey proves nothing; over a bed it is obvious.
+
+     That is also the rule for using one. A bed is for regions the user should
+     look *at*. Put content they need to work *through* on a plain surface —
+     patterning behind a form or a table is noise, and the calm is the point.
+
+     Everything it is made of derives from the accent, so it follows the brand.
+     Set --nv-bed-tint to lead with a different color.
+     ========================================================================== */
+
+  .nv-bed {
+    --nv-bed-tint: var(--nv-color-accent);
+    --_bloom: 16%;
+    --_hatch: var(--nv-color-border-subtle);
+
+    position: relative;
+    padding: var(--nv-space-6);
+
+    background-color: var(--nv-color-background-subtle);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-xl);
+
+    /* The hatch sits over the blooms, and both sit under the content: three
+       background layers rather than a pseudo-element, so nothing has to be
+       lifted out of the way. */
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        var(--_hatch) 0 2px,
+        transparent 2px 14px
+      ),
+      radial-gradient(
+        60% 80% at 15% 20%,
+        color-mix(in oklab, var(--nv-bed-tint) var(--_bloom), transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        50% 70% at 85% 25%,
+        color-mix(in oklab, var(--nv-color-danger) calc(var(--_bloom) * 0.7), transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        70% 90% at 50% 100%,
+        color-mix(in oklab, var(--nv-color-success) calc(var(--_bloom) * 0.7), transparent),
+        transparent 70%
+      );
+
+    overflow: hidden;
+    isolation: isolate;
+    transition: var(--nv-transition-surface);
+  }
+
+  /* Just the ground, no weather: for grouping a region without drawing the eye
+     to it. */
+  .nv-bed--quiet {
+    --_bloom: 8%;
+    --_hatch: transparent;
+  }
+
+  .nv-bed--vivid {
+    --_bloom: 26%;
+  }
+
+  /* One color instead of three — a bed that belongs to a single state. */
+  .nv-bed--single {
+    background-image:
+      repeating-linear-gradient(45deg, var(--_hatch) 0 2px, transparent 2px 14px),
+      radial-gradient(
+        80% 100% at 30% 0%,
+        color-mix(in oklab, var(--nv-bed-tint) var(--_bloom), transparent),
+        transparent 75%
+      );
+  }
+
+  .nv-bed--flush {
+    border-radius: 0;
+    border-inline: 0;
+  }
+
+  .nv-bed__label {
+    display: block;
+    margin-block-end: var(--nv-space-4);
+    font: var(--nv-font-caption);
+    font-weight: var(--nv-font-weight-semibold);
+    letter-spacing: var(--nv-letter-spacing-wider);
+    text-transform: uppercase;
+    color: var(--nv-color-text-tertiary);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Badge
+     --------------------------------------------------------------------------
+       <span class="nv-badge nv-badge--success">In stock</span>
+       <span class="nv-badge nv-badge--danger nv-badge--solid">3 failing</span>
+       <span class="nv-badge"><span class="nv-badge__dot"></span>Draft</span>
+
+     A small, non-interactive statement of state. Subtle by default, because a
+     badge is almost always beside something more important than itself; --solid
+     is for the one badge in a view that must be seen before anything else.
+
+     If it can be clicked it is not a badge — that is a button, probably
+     .nv-button--pill --sm.
+     ========================================================================== */
+
+  .nv-badge {
+    --_bg: var(--nv-color-surface-inset);
+    --_fg: var(--nv-color-text-secondary);
+    --_border: var(--nv-color-border);
+    --_solid-bg: var(--nv-color-text-secondary);
+    --_solid-fg: var(--nv-color-surface);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nv-space-1-5);
+
+    block-size: var(--nv-space-5);
+    padding-inline: var(--nv-space-2);
+
+    background-color: var(--_bg);
+    color: var(--_fg);
+    border: var(--nv-border-width) solid var(--_border);
+    border-radius: var(--nv-radius-full);
+
+    font: var(--nv-font-caption);
+    font-weight: var(--nv-font-weight-semibold);
+    white-space: nowrap;
+    transition: var(--nv-transition-colors);
+  }
+
+  .nv-badge--accent {
+    --_bg: var(--nv-color-accent-subtle);
+    --_fg: var(--nv-color-accent-text);
+    --_border: var(--nv-color-accent-border);
+    --_solid-bg: var(--nv-color-accent);
+    --_solid-fg: var(--nv-color-on-accent);
+  }
+
+  .nv-badge--success {
+    --_bg: var(--nv-color-success-subtle);
+    --_fg: var(--nv-color-success-text);
+    --_border: var(--nv-color-success-border);
+    --_solid-bg: var(--nv-color-success);
+    --_solid-fg: var(--nv-color-on-success);
+  }
+
+  .nv-badge--warning {
+    --_bg: var(--nv-color-warning-subtle);
+    --_fg: var(--nv-color-warning-text);
+    --_border: var(--nv-color-warning-border);
+    --_solid-bg: var(--nv-color-warning);
+    --_solid-fg: var(--nv-color-on-warning);
+  }
+
+  .nv-badge--danger {
+    --_bg: var(--nv-color-danger-subtle);
+    --_fg: var(--nv-color-danger-text);
+    --_border: var(--nv-color-danger-border);
+    --_solid-bg: var(--nv-color-danger);
+    --_solid-fg: var(--nv-color-on-danger);
+  }
+
+  /* Declared after the colors so it wins for --_bg; the color modifier is still
+     what decides which solid pair it reads. */
+  .nv-badge--solid {
+    --_bg: var(--_solid-bg);
+    --_fg: var(--_solid-fg);
+    --_border: transparent;
+    background-image: var(--nv-sheen-filled);
+    box-shadow: var(--nv-highlight-top);
+  }
+
+  .nv-badge--square {
+    border-radius: var(--nv-radius-xs);
+  }
+
+  /* Counts read better without a border, and with room for two digits. */
+  .nv-badge--count {
+    min-inline-size: var(--nv-space-5);
+    padding-inline: var(--nv-space-1-5);
+    justify-content: center;
+    border-color: transparent;
+    font-size: var(--nv-font-size-2xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nv-badge__dot {
+    inline-size: var(--nv-space-1-5);
+    block-size: var(--nv-space-1-5);
+    border-radius: var(--nv-radius-full);
+    background-color: currentColor;
+    flex: none;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Table
+     --------------------------------------------------------------------------
+       <div class="nv-table-frame">
+         <table class="nv-table"> … </table>
+       </div>
+
+     Rows of the same kind of thing. The frame handles the overflow, because a
+     table is the one component that legitimately refuses to get narrower — it
+     scrolls sideways inside its frame rather than forcing the page to.
+
+     Numbers belong in .nv-table__number: aligned to the end and set in tabular
+     figures, so columns of digits line up and can be compared by eye.
+     ========================================================================== */
+
+  .nv-table-frame {
+    inline-size: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  .nv-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font: var(--nv-font-body);
+    text-align: start;
+  }
+
+  .nv-table th {
+    padding: var(--nv-space-2-5) var(--nv-space-4);
+    font: var(--nv-font-caption);
+    font-weight: var(--nv-font-weight-semibold);
+    letter-spacing: var(--nv-letter-spacing-wide);
+    color: var(--nv-color-text-tertiary);
+    text-align: start;
+    white-space: nowrap;
+    border-block-end: var(--nv-border-width) solid var(--nv-color-border);
+  }
+
+  .nv-table td {
+    padding: var(--nv-space-3) var(--nv-space-4);
+    color: var(--nv-color-text-secondary);
+    border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    vertical-align: middle;
+  }
+
+  /* The first cell in a row names it, so it carries the reading weight. */
+  .nv-table td:first-child {
+    color: var(--nv-color-text-primary);
+    font-weight: var(--nv-font-weight-medium);
+  }
+
+  .nv-table tbody tr:last-child td {
+    border-block-end: 0;
+  }
+
+  @media (hover: hover) {
+    .nv-table tbody tr {
+      transition: var(--nv-transition-colors);
+    }
+
+    .nv-table tbody tr:hover {
+      background-color: var(--nv-color-surface-hover);
+    }
+  }
+
+  .nv-table__number {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nv-table__actions {
+    inline-size: 1%;
+    white-space: nowrap;
+    text-align: end;
+  }
+
+  .nv-table--compact th {
+    padding-block: var(--nv-space-2);
+  }
+
+  .nv-table--compact td {
+    padding-block: var(--nv-space-2);
+  }
+
+  /* Rows that lead somewhere. Same physical language as an interactive card:
+     it responds to a pointer, so it must look like it can be pressed. */
+  .nv-table--interactive tbody tr {
+    cursor: pointer;
+  }
+
+  .nv-table--interactive tbody tr:focus-visible {
+    outline: none;
+    box-shadow: var(--nv-focus-ring);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Window
+     --------------------------------------------------------------------------
+       .nv-window                   a framed application window
+       .nv-window--inactive         a window that does not have focus
+       .nv-window__titlebar         controls · title · trailing actions
+       .nv-window__controls         the three lights, at the start of the bar
+       .nv-window__control          one light: --close, --minimize or --zoom
+       .nv-window__title            the window's name, centered on the bar
+       .nv-window__actions          trailing slot for a few ghost buttons
+       .nv-window__body             the content area
+
+     <div class="nv-window">
+       <div class="nv-window__titlebar">
+         <div class="nv-window__controls">
+           <button class="nv-window__control nv-window__control--close" aria-label="Close"></button>
+           <button class="nv-window__control nv-window__control--minimize" aria-label="Minimize"></button>
+           <button class="nv-window__control nv-window__control--zoom" aria-label="Zoom"></button>
+         </div>
+         <span class="nv-window__title">Settings</span>
+       </div>
+       <div class="nv-window__body">…</div>
+     </div>
+
+     A window is a solid object: the content it holds never sits on glass. Its
+     titlebar is a raised strip lit like a control, and the controls are three
+     lights at its start — close, minimize, zoom — always in that order and in
+     those colors, because people find them by position and color before they
+     read anything. Their glyphs appear only while the pointer is over the
+     group. An inactive window greys its lights and steps back one elevation,
+     and the lights regain their color the moment they are hovered.
+     ========================================================================== */
+
+  .nv-window {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+
+    background-color: var(--nv-color-surface);
+    color: var(--nv-color-text-primary);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-xl);
+    box-shadow: var(--nv-highlight-top), var(--nv-outline), var(--nv-elevation-4);
+
+    overflow: hidden;
+    transition: var(--nv-transition-surface);
+  }
+
+  .nv-window--inactive {
+    box-shadow: var(--nv-highlight-top), var(--nv-outline), var(--nv-elevation-3);
+  }
+
+  /* --- Titlebar ---------------------------------------------------------------
+     Three columns with the outer two sharing the slack, so the title stays on
+     the window's center line whatever the controls and actions measure. */
+
+  .nv-window__titlebar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--nv-space-3);
+    min-block-size: var(--nv-control-height-lg);
+    padding-inline: var(--nv-space-4);
+
+    background-color: var(--nv-color-surface-elevated);
+    background-image: var(--nv-sheen-raised);
+    border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    box-shadow: var(--nv-highlight-top);
+    user-select: none;
+  }
+
+  .nv-window__title {
+    grid-column: 2;
+    min-inline-size: 0;
+    overflow: hidden;
+    font: var(--nv-font-label);
+    font-weight: var(--nv-font-weight-semibold);
+    color: var(--nv-color-text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nv-window--inactive .nv-window__title {
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .nv-window__actions {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-1);
+  }
+
+  /* --- Controls ----------------------------------------------------------------- */
+
+  .nv-window__controls {
+    grid-column: 1;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-2);
+  }
+
+  .nv-window__control {
+    --_light: var(--nv-color-window-close);
+    --_c: var(--_light);
+
+    position: relative;
+    flex: none;
+    inline-size: var(--nv-space-3);
+    block-size: var(--nv-space-3);
+    margin: 0;
+    padding: 0;
+
+    background-color: var(--_c);
+    background-image: var(--nv-sheen-filled);
+    border: 0;
+    border-radius: var(--nv-radius-full);
+    box-shadow: inset 0 0 0 var(--nv-border-width) var(--nv-color-window-control-ring);
+
+    cursor: pointer;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: var(--nv-transition-colors);
+  }
+
+  .nv-window__control--minimize { --_light: var(--nv-color-window-minimize); }
+  .nv-window__control--zoom { --_light: var(--nv-color-window-zoom); }
+
+  /* The glyph is two bars drawn from the light's center: crossed for close, one
+     for minimize, a plus for zoom. They are always present and fade in, so the
+     whole group reveals at once instead of one glyph at a time. */
+  .nv-window__control::before,
+  .nv-window__control::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 55%;
+    block-size: calc(var(--nv-border-width) * 1.5);
+    translate: -50% -50%;
+    background-color: var(--nv-color-window-glyph);
+    border-radius: var(--nv-radius-full);
+    opacity: 0;
+    transition: opacity var(--nv-duration-fast) var(--nv-ease-standard);
+  }
+
+  .nv-window__control--close::before { rotate: 45deg; }
+  .nv-window__control--close::after { rotate: -45deg; }
+  .nv-window__control--minimize::after { display: none; }
+  .nv-window__control--zoom::after { rotate: 90deg; }
+
+  .nv-window__controls:hover .nv-window__control::before,
+  .nv-window__controls:hover .nv-window__control::after,
+  .nv-window__controls:focus-within .nv-window__control::before,
+  .nv-window__controls:focus-within .nv-window__control::after {
+    opacity: 1;
+  }
+
+  .nv-window__control:active {
+    background-image: none;
+    box-shadow:
+      inset 0 0 0 var(--nv-border-width) var(--nv-color-window-control-ring),
+      var(--nv-elevation-inset-sm);
+  }
+
+  .nv-window__control:focus-visible {
+    outline: none;
+    box-shadow:
+      inset 0 0 0 var(--nv-border-width) var(--nv-color-window-control-ring),
+      var(--nv-focus-ring);
+  }
+
+  .nv-window--inactive .nv-window__control {
+    --_c: var(--nv-color-window-inactive);
+  }
+
+  .nv-window--inactive .nv-window__controls:hover .nv-window__control {
+    --_c: var(--_light);
+  }
+
+  /* --- Body --------------------------------------------------------------------- */
+
+  .nv-window__body {
+    flex: 1;
+    min-block-size: 0;
+    overflow: auto;
+  }
+}
+
+/* --- Utilities ----------------------------------------------------------------- */
+@layer niveus.utilities {
+  /* ==========================================================================
+     Niveus — Utilities
+     --------------------------------------------------------------------------
+     A deliberately short list. Utilities exist for the handful of patterns that
+     appear in every application and have exactly one correct implementation —
+     not as a general-purpose styling language. Anything that needs a second
+     utility to look right is a component.
+     ========================================================================== */
+
+  /* Content for assistive technology only. Not display:none, which removes it
+     from the accessibility tree as well. */
+  .nv-visually-hidden:not(:focus):not(:active) {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .nv-container {
+    inline-size: 100%;
+    max-inline-size: var(--nv-layout-max-width);
+    margin-inline: auto;
+    padding-inline: var(--nv-layout-gutter);
+  }
+
+  /* Vertical rhythm between siblings, on the spacing scale. */
+  .nv-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-4);
+  }
+
+  .nv-stack--tight { gap: var(--nv-space-2); }
+  .nv-stack--loose { gap: var(--nv-space-6); }
+
+  /* A row that wraps instead of overflowing. */
+  .nv-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--nv-space-3);
+  }
+
+  .nv-cluster--tight { gap: var(--nv-space-2); }
+  .nv-cluster--between { justify-content: space-between; }
+
+  .nv-truncate {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Long-form text at a readable measure. */
+  .nv-prose {
+    max-inline-size: var(--nv-measure);
+    line-height: var(--nv-line-height-relaxed);
+    color: var(--nv-color-text-secondary);
+  }
+}

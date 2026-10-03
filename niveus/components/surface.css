@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Niveus — Surface
+   --------------------------------------------------------------------------
+   The material vocabulary, expressed as classes. Every other component is
+   built from these; applications use them directly for anything the system
+   does not ship as a named component.
+
+     .nv-surface                  a container using the solid material
+     .nv-material-{type}          apply a material to any element
+     .nv-elevation-{0..5}         apply a depth level to any element
+
+   A material and an elevation are independent: .nv-material-solid
+   .nv-elevation-3 is a legitimate combination. What is not legitimate is a
+   raw box-shadow that belongs to neither scale.
+   ========================================================================== */
+
+.nv-surface {
+  background-color: var(--nv-color-surface);
+  color: var(--nv-color-text-primary);
+  border: var(--nv-border-width) solid var(--nv-color-border);
+  border-radius: var(--nv-radius-lg);
+  transition: var(--nv-transition-surface);
+}
+
+/* --- Materials ------------------------------------------------------------- */
+
+.nv-material-solid {
+  background-color: var(--nv-material-solid-bg);
+  border: var(--nv-border-width) solid var(--nv-material-solid-border);
+  box-shadow: var(--nv-material-solid-shadow);
+  backdrop-filter: none;
+}
+
+.nv-material-elevated {
+  background-color: var(--nv-material-elevated-bg);
+  border: var(--nv-border-width) solid var(--nv-material-elevated-border);
+  box-shadow: var(--nv-material-elevated-shadow);
+  backdrop-filter: none;
+}
+
+.nv-material-inset {
+  background-color: var(--nv-material-inset-bg);
+  border: var(--nv-border-width) solid var(--nv-material-inset-border);
+  box-shadow: var(--nv-material-inset-shadow);
+  backdrop-filter: none;
+}
+
+.nv-material-frosted {
+  background-color: var(--nv-material-frosted-bg);
+  border: var(--nv-border-width) solid var(--nv-material-frosted-border);
+  box-shadow: var(--nv-material-frosted-shadow);
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+}
+
+.nv-material-glass {
+  background-color: var(--nv-material-glass-bg);
+  border: var(--nv-border-width) solid var(--nv-material-glass-border);
+  box-shadow: var(--nv-material-glass-shadow);
+  backdrop-filter: var(--nv-backdrop-glass);
+  -webkit-backdrop-filter: var(--nv-backdrop-glass);
+}
+
+/* --- Elevation -------------------------------------------------------------
+   Elevation utilities carry three things at once, because a lifted surface is
+   never only a shadow: the shadow itself, the highlight along its top edge,
+   and — on a dark canvas, where a shadow has nothing left to darken — a tint
+   that lets more light reach the surface the higher it sits. The tint is
+   transparent in light appearance, so the two read as one scale. */
+
+.nv-elevation-0 { box-shadow: var(--nv-elevation-0); }
+
+.nv-elevation-1 {
+  box-shadow: var(--nv-highlight-top), var(--nv-elevation-1);
+  background-image: linear-gradient(var(--nv-color-elevation-tint-1) 0 0);
+}
+
+.nv-elevation-2 {
+  box-shadow: var(--nv-highlight-top), var(--nv-elevation-2);
+  background-image: linear-gradient(var(--nv-color-elevation-tint-2) 0 0);
+}
+
+.nv-elevation-3 {
+  box-shadow: var(--nv-highlight-top), var(--nv-elevation-3);
+  background-image: linear-gradient(var(--nv-color-elevation-tint-3) 0 0);
+}
+
+.nv-elevation-4 {
+  box-shadow: var(--nv-highlight-top), var(--nv-elevation-4);
+  background-image: linear-gradient(var(--nv-color-elevation-tint-4) 0 0);
+}
+
+.nv-elevation-5 {
+  box-shadow: var(--nv-highlight-top-strong), var(--nv-elevation-5);
+  background-image: linear-gradient(var(--nv-color-elevation-tint-5) 0 0);
+}
+
+.nv-elevation-inset-sm { box-shadow: var(--nv-elevation-inset-sm); }
+.nv-elevation-inset-md { box-shadow: var(--nv-elevation-inset-md); }
+.nv-elevation-inset-lg { box-shadow: var(--nv-elevation-inset-lg); }
+
+/* --- Divider ---------------------------------------------------------------- */
+
+.nv-divider {
+  border: 0;
+  border-top: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  margin-block: var(--nv-space-4);
+}
+
+.nv-divider--vertical {
+  border-top: 0;
+  border-left: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  margin-block: 0;
+  margin-inline: var(--nv-space-4);
+  align-self: stretch;
+}

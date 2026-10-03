@@ -1,0 +1,296 @@
+/* ==========================================================================
+   Niveus — Button
+   --------------------------------------------------------------------------
+     .nv-button                   secondary by default — a raised surface
+     .nv-button--primary          the single affirmative action in a view
+     .nv-button--ghost            low-emphasis, no material until hovered
+     .nv-button--danger           destructive, and only when it is
+     .nv-button--frosted          for use over imagery or frosted chrome
+     .nv-button--sm | --lg        36px by default
+     .nv-button--icon             square, for a lone icon (needs a label)
+     .nv-button--block            fills its container
+
+   A button is a key: a bevelled face with light falling across it, a contact
+   line where it meets the surface, and a press that sinks it into an inset.
+
+   Every variant is defined purely by reassigning the private --_* properties
+   below. Interaction — the lift on hover, the sink on press, the focus ring —
+   lives once in the base rule, so a new variant can never drift from the way
+   the rest of the system responds to a pointer.
+   ========================================================================== */
+
+.nv-button {
+  /* Variant surface, overridden per modifier. */
+  --_bg: var(--nv-color-surface-elevated);
+  --_bg-hover: var(--nv-color-surface-hover);
+  --_bg-active: var(--nv-color-surface-active);
+  --_fg: var(--nv-color-text-primary);
+  --_border: var(--nv-color-border);
+  --_sheen: var(--nv-sheen-raised);
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+  --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+  --_shadow-active: var(--nv-elevation-inset-sm), var(--nv-outline);
+
+  /* Size, overridden per size modifier. */
+  --_height: var(--nv-control-height-md);
+  --_padding: var(--nv-control-padding-md);
+  --_gap: var(--nv-control-gap-md);
+  --_font-size: var(--nv-font-size-sm);
+  --_radius: var(--nv-radius-md);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  block-size: var(--_height);
+  padding-inline: var(--_padding);
+  border: var(--nv-border-width) solid var(--_border);
+  border-radius: var(--_radius);
+
+  background-color: var(--_bg);
+  background-image: var(--_sheen);
+  color: var(--_fg);
+  box-shadow: var(--_shadow);
+
+  font-family: var(--nv-font-family-sans);
+  font-size: var(--_font-size);
+  font-weight: var(--nv-font-weight-medium);
+  line-height: var(--nv-line-height-snug);
+  letter-spacing: var(--nv-letter-spacing-normal);
+  white-space: nowrap;
+  text-decoration: none;
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: var(--nv-transition-control);
+}
+
+/* A control smaller than the minimum target still gets a full-size hit area:
+   the pseudo-element grows outward without changing the visual size. */
+.nv-button::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  inline-size: max(100%, var(--nv-target-min));
+  block-size: max(100%, var(--nv-target-min));
+}
+
+@media (hover: hover) {
+  .nv-button:hover:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--_bg-hover);
+    box-shadow: var(--_shadow-hover);
+    translate: 0 var(--nv-lift-hover);
+  }
+}
+
+/* Pressed, the face is pushed below the light: the sheen goes and the inset
+   takes over. */
+.nv-button:active:not(:disabled, [aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+  background-image: none;
+  box-shadow: var(--_shadow-active);
+  translate: 0 var(--nv-press-depth);
+  transition-duration: var(--nv-duration-instant);
+}
+
+.nv-button:focus-visible {
+  outline: none;
+  box-shadow: var(--_shadow), var(--nv-focus-ring);
+}
+
+.nv-button:disabled,
+.nv-button[aria-disabled="true"] {
+  background-color: var(--nv-color-surface-inset);
+  background-image: none;
+  color: var(--nv-color-text-disabled);
+  border-color: var(--nv-color-border-subtle);
+  box-shadow: none;
+  translate: none;
+  cursor: not-allowed;
+}
+
+/* --- Variants --------------------------------------------------------------- */
+
+.nv-button--primary {
+  --_bg: var(--nv-color-accent);
+  --_bg-hover: var(--nv-color-accent-hover);
+  --_bg-active: var(--nv-color-accent-active);
+  --_fg: var(--nv-color-on-accent);
+  --_border: transparent;
+  --_sheen: var(--nv-sheen-filled);
+  font-weight: var(--nv-font-weight-semibold);
+}
+
+.nv-button--danger {
+  --_bg: var(--nv-color-danger);
+  --_bg-hover: var(--nv-color-danger-hover);
+  --_bg-active: var(--nv-color-danger-active);
+  --_fg: var(--nv-color-on-danger);
+  --_border: transparent;
+  --_sheen: var(--nv-sheen-filled);
+  --nv-color-focus-ring: var(--nv-color-danger-border);
+  font-weight: var(--nv-font-weight-semibold);
+}
+
+.nv-button--ghost {
+  --_bg: transparent;
+  --_bg-hover: var(--nv-color-surface-hover);
+  --_bg-active: var(--nv-color-surface-active);
+  --_fg: var(--nv-color-text-secondary);
+  --_border: transparent;
+  --_sheen: none;
+  --_shadow: none;
+  --_shadow-hover: none;
+  --_shadow-active: var(--nv-elevation-inset-sm);
+}
+
+@media (hover: hover) {
+  .nv-button--ghost:hover:not(:disabled, [aria-disabled="true"]) {
+    color: var(--nv-color-text-primary);
+    translate: none; /* nothing to lift — a ghost has no material to raise */
+  }
+}
+
+.nv-button--subtle {
+  --_bg: var(--nv-color-accent-subtle);
+  --_bg-hover: var(--nv-color-accent-subtle-hover);
+  --_bg-active: var(--nv-color-accent-subtle-hover);
+  --_fg: var(--nv-color-accent-text);
+  --_border: var(--nv-color-accent-border);
+  --_sheen: none;
+  --_shadow: none;
+  --_shadow-hover: var(--nv-elevation-1);
+}
+
+.nv-button--frosted {
+  --_bg: var(--nv-material-glass-bg);
+  --_bg-hover: var(--nv-material-frosted-bg);
+  --_bg-active: var(--nv-material-frosted-bg);
+  --_border: var(--nv-material-glass-border);
+  --_sheen: none;
+  backdrop-filter: var(--nv-backdrop-glass);
+  -webkit-backdrop-filter: var(--nv-backdrop-glass);
+}
+
+/* --- Sizes ------------------------------------------------------------------- */
+
+.nv-button--sm {
+  --_height: var(--nv-control-height-sm);
+  --_padding: var(--nv-control-padding-sm);
+  --_gap: var(--nv-control-gap-sm);
+  --_font-size: var(--nv-font-size-xs);
+  --_radius: var(--nv-radius-sm);
+}
+
+.nv-button--lg {
+  --_height: var(--nv-control-height-lg);
+  --_padding: var(--nv-control-padding-lg);
+  --_gap: var(--nv-control-gap-lg);
+  --_font-size: var(--nv-font-size-md);
+}
+
+.nv-button--icon {
+  --_padding: 0;
+  inline-size: var(--_height);
+}
+
+.nv-button--pill {
+  --_radius: var(--nv-radius-full);
+}
+
+.nv-button--block {
+  display: flex;
+  inline-size: 100%;
+}
+
+/* --- Floating ------------------------------------------------------------------
+   A control that sits *over* content rather than in the flow: a carousel arrow,
+   a floating action. Two things change.
+
+   It is already off the surface, so there is nothing to lift it from — it grows
+   instead. And it is almost always positioned with `translate`, which the hover
+   lift would overwrite, throwing the button half its own height down the page
+   the moment a pointer touched it. --nv-button-offset carries that positioning
+   through every state. */
+
+.nv-button--float {
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+  --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-4);
+  --_shadow-active: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+
+  translate: var(--nv-button-offset, 0 0);
+}
+
+@media (hover: hover) {
+  .nv-button--float:hover:not(:disabled, [aria-disabled="true"]) {
+    translate: var(--nv-button-offset, 0 0);
+    scale: 1.06;
+  }
+}
+
+.nv-button--float:active:not(:disabled, [aria-disabled="true"]) {
+  translate: var(--nv-button-offset, 0 0);
+  scale: 0.97;
+}
+
+/* --- Parts --------------------------------------------------------------------- */
+
+.nv-button__icon {
+  inline-size: 1em;
+  block-size: 1em;
+  font-size: 1.15em;
+  opacity: 0.9;
+}
+
+/* Busy: the label stays in place to keep the button from resizing mid-action,
+   and the spinner replaces it. */
+.nv-button[aria-busy="true"] {
+  color: transparent;
+  pointer-events: none;
+}
+
+.nv-button[aria-busy="true"]::before {
+  content: "";
+  position: absolute;
+  inline-size: 1em;
+  block-size: 1em;
+  border: 2px solid var(--_fg);
+  border-block-start-color: transparent;
+  border-radius: var(--nv-radius-full);
+  animation: nv-spin var(--nv-duration-slower) var(--nv-ease-linear) infinite;
+}
+
+@keyframes nv-spin {
+  to { rotate: 1turn; }
+}
+
+/* --- Group ---------------------------------------------------------------------
+   Segmented controls: buttons share an edge, so only the outer corners round
+   and the shared border is not drawn twice. */
+
+.nv-button-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nv-button-group > .nv-button:not(:first-child) {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  margin-inline-start: calc(var(--nv-border-width) * -1);
+}
+
+.nv-button-group > .nv-button:not(:last-child) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.nv-button-group > .nv-button:hover,
+.nv-button-group > .nv-button:focus-visible {
+  z-index: 1;
+  translate: none;
+}

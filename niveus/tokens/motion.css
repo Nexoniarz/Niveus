@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Niveus — Motion
+   --------------------------------------------------------------------------
+   Motion explains state and spatial relationship. It is short enough to feel
+   immediate and eased enough to feel physical.
+
+   Rule of thumb: the smaller the element, the faster it moves. A button's
+   hover is 120ms; a dialog's entrance is 240ms.
+   ========================================================================== */
+
+:root {
+  /* --- Duration ------------------------------------------------------------ */
+  --nv-duration-instant: 0ms;
+  --nv-duration-fast: 120ms; /*   hover, press, color change */
+  --nv-duration-quick: 160ms; /*  small elements entering */
+  --nv-duration-normal: 220ms; /* popovers, menus, expansion */
+  --nv-duration-slow: 320ms; /*   dialogs, sheets, large surfaces */
+  --nv-duration-slower: 480ms; /* full-screen transitions */
+
+  /* --- Easing ---------------------------------------------------------------
+     `standard` covers almost everything. Entrance decelerates into place, exit
+     accelerates away, and `spring` is reserved for confirmations — never for
+     anything a user triggers repeatedly. */
+  --nv-ease-standard: cubic-bezier(0.2, 0.05, 0, 1);
+  --nv-ease-entrance: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --nv-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --nv-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --nv-ease-linear: linear;
+
+  /* --- Continuity -------------------------------------------------------------
+     Durations for changes the user is meant to *follow*, not merely notice.
+     They are longer than an interaction response because the eye has further
+     to travel: emphasis crossing a navigation bar, a panel growing open, a
+     whole surface changing appearance. */
+  --nv-duration-travel: 260ms; /* emphasis moving from one element to another */
+  --nv-duration-expand: 280ms; /* content growing out of, or back into, place */
+  --nv-duration-theme: 400ms; /*  the entire surface changing appearance */
+
+  /* Leaves quickly, lands softly. The right curve for something travelling a
+     distance the user is meant to follow with their eye. */
+  --nv-ease-emphasized: cubic-bezier(0.32, 0.04, 0.06, 1);
+
+  /* --- Composites ------------------------------------------------------------
+     `translate` and `scale` are listed rather than `transform`, because the
+     components animate the individual properties — a transition on `transform`
+     does not cover them, and the movement snaps. */
+  --nv-transition-colors:
+    color var(--nv-duration-fast) var(--nv-ease-standard),
+    background-color var(--nv-duration-fast) var(--nv-ease-standard),
+    border-color var(--nv-duration-fast) var(--nv-ease-standard);
+  --nv-transition-depth:
+    box-shadow var(--nv-duration-fast) var(--nv-ease-standard),
+    translate var(--nv-duration-fast) var(--nv-ease-standard),
+    scale var(--nv-duration-fast) var(--nv-ease-standard);
+  --nv-transition-control:
+    color var(--nv-duration-fast) var(--nv-ease-standard),
+    background-color var(--nv-duration-fast) var(--nv-ease-standard),
+    border-color var(--nv-duration-fast) var(--nv-ease-standard),
+    box-shadow var(--nv-duration-fast) var(--nv-ease-standard),
+    translate var(--nv-duration-fast) var(--nv-ease-standard),
+    scale var(--nv-duration-fast) var(--nv-ease-standard);
+
+  /* Containers: the same as depth, plus the colors, so a surface glides into
+     its new appearance when the theme changes instead of snapping. */
+  --nv-transition-surface:
+    color var(--nv-duration-fast) var(--nv-ease-standard),
+    background-color var(--nv-duration-fast) var(--nv-ease-standard),
+    border-color var(--nv-duration-fast) var(--nv-ease-standard),
+    box-shadow var(--nv-duration-fast) var(--nv-ease-standard),
+    translate var(--nv-duration-fast) var(--nv-ease-standard),
+    scale var(--nv-duration-fast) var(--nv-ease-standard);
+
+  --nv-transition-expand:
+    block-size var(--nv-duration-expand) var(--nv-ease-standard),
+    grid-template-rows var(--nv-duration-expand) var(--nv-ease-standard),
+    opacity var(--nv-duration-expand) var(--nv-ease-standard);
+
+  /* --- Displacement ----------------------------------------------------------
+     How far things move. Presses sink by 1px; surfaces enter from 8px away. */
+  --nv-lift-hover: -1px;
+  --nv-press-depth: 1px;
+  --nv-travel-sm: 4px;
+  --nv-travel-md: 8px;
+  --nv-travel-lg: 16px;
+}
+
+/* Reduced motion is a system-wide contract, not a per-component opt-in: cut
+   duration to near-zero and neutralise displacement, but keep transitions
+   alive so state changes still resolve rather than snapping mid-flight. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --nv-duration-fast: 1ms;
+    --nv-duration-quick: 1ms;
+    --nv-duration-normal: 1ms;
+    --nv-duration-slow: 1ms;
+    --nv-duration-slower: 1ms;
+    --nv-duration-travel: 1ms;
+    --nv-duration-expand: 1ms;
+    --nv-duration-theme: 1ms;
+    --nv-ease-spring: var(--nv-ease-standard);
+    --nv-lift-hover: 0px;
+    --nv-press-depth: 0px;
+    --nv-travel-sm: 0px;
+    --nv-travel-md: 0px;
+    --nv-travel-lg: 0px;
+  }
+}

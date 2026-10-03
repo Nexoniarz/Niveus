@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Niveus — Elevation
+   --------------------------------------------------------------------------
+   Depth is a scale, not a free choice. Each level describes one relationship
+   between a surface and what sits behind it:
+
+     0  flush        painted on the canvas, no separation
+     1  resting      cards, list rows, static panels
+     2  raised       buttons, controls, anything that reacts to a pointer
+     3  floating     popovers, menus, dropdowns, tooltips
+     4  lifted       dialogs, sheets, detached panels
+     5  overlay      the topmost layer, used sparingly
+
+   Every level is built from the same three shadow colors so depth stays
+   consistent between appearances: an ambient contact shadow that keeps the
+   edge crisp, a soft penumbra for the spread, and an umbra that only appears
+   once a surface is genuinely far from the canvas.
+   ========================================================================== */
+
+:root {
+  --nv-elevation-0: none;
+
+  --nv-elevation-1:
+    0 1px 1px var(--nv-color-shadow-ambient),
+    0 1px 3px -1px var(--nv-color-shadow-penumbra);
+
+  --nv-elevation-2:
+    0 1px 1px var(--nv-color-shadow-ambient),
+    0 2px 4px -1px var(--nv-color-shadow-penumbra),
+    0 4px 8px -4px var(--nv-color-shadow-umbra);
+
+  --nv-elevation-3:
+    0 1px 1px var(--nv-color-shadow-ambient),
+    0 4px 8px -2px var(--nv-color-shadow-penumbra),
+    0 10px 20px -6px var(--nv-color-shadow-umbra);
+
+  --nv-elevation-4:
+    0 1px 2px var(--nv-color-shadow-ambient),
+    0 8px 16px -4px var(--nv-color-shadow-penumbra),
+    0 20px 40px -10px var(--nv-color-shadow-umbra);
+
+  --nv-elevation-5:
+    0 1px 2px var(--nv-color-shadow-ambient),
+    0 14px 28px -6px var(--nv-color-shadow-penumbra),
+    0 32px 64px -14px var(--nv-color-shadow-umbra);
+
+  /* --- Inset ---------------------------------------------------------------
+     Recessed surfaces: fields, wells, tracks, pressed controls. */
+  --nv-elevation-inset-sm: inset 0 1px 2px var(--nv-color-shadow-inset);
+  --nv-elevation-inset-md:
+    inset 0 1px 1px var(--nv-color-shadow-inset),
+    inset 0 2px 5px -1px var(--nv-color-shadow-inset);
+  --nv-elevation-inset-lg:
+    inset 0 2px 3px var(--nv-color-shadow-inset),
+    inset 0 6px 12px -3px var(--nv-color-shadow-inset);
+
+  /* --- Highlight -----------------------------------------------------------
+     The thin catch of light along the top edge of a raised surface. This is
+     what makes Niveus read as material rather than as a rectangle with a
+     shadow. Always paired with an elevation, never used alone. */
+  --nv-highlight-top: inset 0 1px 0 var(--nv-color-highlight);
+  --nv-highlight-top-strong: inset 0 1px 0 var(--nv-color-highlight-strong);
+  --nv-highlight-edge:
+    inset 0 1px 0 var(--nv-color-highlight),
+    inset 0 0 0 1px var(--nv-color-border-subtle);
+
+  /* --- Bevel -----------------------------------------------------------------
+     The highlight's other half. A raised face is lit along its top edge and
+     shaded along its bottom one; together they are the bevel, and the bevel is
+     what makes a Niveus control look like something a finger could press.
+     Raised controls and surfaces take the full bevel; the highlight alone is
+     for things that sit flush. */
+  --nv-lowlight-bottom: inset 0 -1px 0 var(--nv-color-lowlight);
+  --nv-bevel:
+    inset 0 1px 0 var(--nv-color-highlight),
+    inset 0 -1px 0 var(--nv-color-lowlight);
+
+  /* --- Outline ---------------------------------------------------------------
+     The contact line: a hairline just outside a raised surface, where it meets
+     whatever it rests on. In dark it is near-black and does most of the
+     separating; in light it only softens the border beside it. */
+  --nv-outline: 0 0 0 1px var(--nv-color-outline);
+
+  /* --- Ledge -----------------------------------------------------------------
+     A recess catches light on its *lower* lip, the edge facing the viewer.
+     Paired with an inset shadow, it turns a field from a dark rectangle into
+     a well cut into the surface. */
+  --nv-ledge: 0 1px 0 var(--nv-color-highlight);
+
+  /* --- Focus ---------------------------------------------------------------
+     A contrast ring sits under the accent ring so focus stays visible on both
+     light and dark surfaces, and on accent-filled controls. */
+  --nv-focus-ring-width: 3px;
+  --nv-focus-ring:
+    0 0 0 1px var(--nv-color-focus-ring-contrast),
+    0 0 0 calc(1px + var(--nv-focus-ring-width)) var(--nv-color-focus-ring);
+}

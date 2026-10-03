@@ -1,0 +1,63 @@
+/* ==========================================================================
+   Niveus — a tactile, adaptive interface language.
+   Made by Nexoniarz.
+   --------------------------------------------------------------------------
+   The single entry point. An application links this file and nothing else:
+
+     <link rel="stylesheet" href="niveus/niveus.css">
+     <script src="niveus/niveus.js"></script>   — optional, see below
+     <html data-theme="dark">        — or omit data-theme to follow the system
+
+   niveus.js is not required for anything to render. It exists only so state
+   changes can be *continuous*: it wraps an update in a view transition so the
+   browser can animate between the two states. Without it, every component
+   still works — changes simply arrive rather than travel.
+
+   Everything ships inside the `niveus` cascade layer, so unlayered application
+   styles always win without needing !important or selector escalation. The
+   sub-layers are ordered below; that statement is what fixes their precedence,
+   independently of the order the files happen to load in.
+   ========================================================================== */
+
+@layer niveus.tokens, niveus.theme, niveus.base, niveus.continuity,
+  niveus.components, niveus.utilities;
+
+/* --- Fonts: the faces Niveus ships, so it reads the same everywhere ---------- */
+@import url("fonts.css");
+
+/* --- Tokens: the values, appearance-agnostic ------------------------------- */
+@import url("tokens/color.css") layer(niveus.tokens);
+@import url("tokens/typography.css") layer(niveus.tokens);
+@import url("tokens/spacing.css") layer(niveus.tokens);
+@import url("tokens/radius.css") layer(niveus.tokens);
+@import url("tokens/elevation.css") layer(niveus.tokens);
+@import url("tokens/motion.css") layer(niveus.tokens);
+@import url("tokens/materials.css") layer(niveus.tokens);
+
+/* --- Themes: what those values become in each appearance -------------------- */
+@import url("themes/light.css") layer(niveus.theme);
+@import url("themes/dark.css") layer(niveus.theme);
+
+/* --- Base: elements, before any component ----------------------------------- */
+@import url("base.css") layer(niveus.base);
+
+/* --- Continuity: how one state becomes the next ----------------------------- */
+@import url("continuity.css") layer(niveus.continuity);
+
+/* --- Components -------------------------------------------------------------- */
+@import url("components/surface.css") layer(niveus.components);
+@import url("components/button.css") layer(niveus.components);
+@import url("components/input.css") layer(niveus.components);
+@import url("components/card.css") layer(niveus.components);
+@import url("components/dialog.css") layer(niveus.components);
+@import url("components/navigation.css") layer(niveus.components);
+@import url("components/menu.css") layer(niveus.components);
+@import url("components/disclosure.css") layer(niveus.components);
+@import url("components/scroller.css") layer(niveus.components);
+@import url("components/bed.css") layer(niveus.components);
+@import url("components/badge.css") layer(niveus.components);
+@import url("components/table.css") layer(niveus.components);
+@import url("components/window.css") layer(niveus.components);
+
+/* --- Utilities ----------------------------------------------------------------- */
+@import url("utilities.css") layer(niveus.utilities);

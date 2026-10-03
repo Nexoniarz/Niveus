@@ -1,0 +1,260 @@
+/* ==========================================================================
+   Niveus — Color
+   --------------------------------------------------------------------------
+   Two levels of tokens live here:
+
+   1. Palette      Raw, appearance-agnostic values. Never referenced by
+                   components. Prefixed --nv-palette-*.
+
+   2. Semantic     The roles components actually consume (background, surface,
+                   text-primary, accent, danger, …). Each role resolves with
+                   light-dark(), pulling its value from the matching appearance
+                   file: themes/light.css (--nv-light-*) or themes/dark.css
+                   (--nv-dark-*).
+
+   The appearance is chosen by `color-scheme`, which themes/*.css bind to the
+   [data-theme] attribute. A component therefore never knows — and must never
+   ask — which appearance is active.
+   ========================================================================== */
+
+/* ==========================================================================
+   Brand
+   --------------------------------------------------------------------------
+   The whole color system has one input. Set --nv-brand and the accent, its
+   hover and active states, the text that lands on it, the focus ring, the
+   selection highlight, the tint in the greys and the lean of the status colors
+   are all re-derived from it — in both appearances, with no second value to
+   keep in sync.
+
+     :root { --nv-brand: #d92e3f; }
+
+   Set it on any element with [data-nv-brand] to re-brand a subtree.
+   ========================================================================== */
+
+:root {
+  --nv-brand: #4f6cff;
+
+  /* How much of the brand bleeds into the greys. Enough that the neutrals
+     belong to the same family as the accent; not enough to read as colored.
+     0% gives strictly neutral greys. */
+  --nv-brand-tint: 4%;
+
+  /* How far the status colors lean towards the brand. Red still reads as
+     danger and green still reads as success — they just stop looking borrowed
+     from another system. 0% keeps them literal. */
+  --nv-brand-harmony: 12%;
+
+  /* Where "too mid-toned to carry a label" begins, and how far either side a
+     color is pushed to escape it. Raising the pivot sends more brands dark
+     (white labels); lowering it sends more of them light (dark labels). */
+  --nv-contrast-pivot: 0.7;
+  --nv-contrast-dark: 0.53;
+  --nv-contrast-light: 0.78;
+}
+
+:root {
+  /* --- Neutral ----------------------------------------------------------
+     Warm graphite to warm paper. A grey that leans very slightly towards
+     yellow reads as a material (metal, enamel, paper); a grey that leans blue
+     reads as a screen. The lean is small enough that the brand tint still
+     decides the family. */
+  --nv-palette-neutral-0: #ffffff;
+  --nv-palette-neutral-25: #fcfcfb;
+  --nv-palette-neutral-50: #f8f8f6;
+  --nv-palette-neutral-100: #f2f1ee;
+  --nv-palette-neutral-150: #eae9e5;
+  --nv-palette-neutral-200: #e1e0db;
+  --nv-palette-neutral-300: #cfcec8;
+  --nv-palette-neutral-400: #aeada7;
+  --nv-palette-neutral-500: #87867f;
+  --nv-palette-neutral-600: #63625d;
+  --nv-palette-neutral-700: #4a4945;
+  --nv-palette-neutral-800: #343337;
+  --nv-palette-neutral-850: #2a2a2d;
+  --nv-palette-neutral-900: #1d1d20;
+  --nv-palette-neutral-925: #18181a;
+  --nv-palette-neutral-950: #131315;
+  --nv-palette-neutral-975: #0e0e10;
+  --nv-palette-neutral-1000: #08080a;
+
+  /* --- Window controls ----------------------------------------------------
+     The three lights at the start of a titlebar. They are the one place the
+     system uses fixed colors instead of the brand: their meaning is learned
+     from position and color together, and re-coloring them would unteach it. */
+  --nv-palette-window-close: #ff5f57;
+  --nv-palette-window-minimize: #febc2e;
+  --nv-palette-window-zoom: #28c840;
+
+  /* --- Accent (indigo) --------------------------------------------------- */
+  --nv-palette-accent-50: #eef2ff;
+  --nv-palette-accent-100: #dfe6ff;
+  --nv-palette-accent-200: #c4d0ff;
+  --nv-palette-accent-300: #9fb3ff;
+  --nv-palette-accent-400: #7691ff;
+  --nv-palette-accent-500: #4f6cff;
+  --nv-palette-accent-600: #3f5cf0;
+  --nv-palette-accent-700: #3450d6;
+  --nv-palette-accent-800: #2a3fa8;
+  --nv-palette-accent-900: #22347f;
+
+  /* --- Success (green) --------------------------------------------------- */
+  --nv-palette-success-50: #e8f9ef;
+  --nv-palette-success-100: #ccf0dc;
+  --nv-palette-success-200: #9ee2bc;
+  --nv-palette-success-300: #62cd96;
+  --nv-palette-success-400: #33b478;
+  --nv-palette-success-500: #189a60;
+  --nv-palette-success-600: #0f7d4d;
+  --nv-palette-success-700: #0c6440;
+  --nv-palette-success-800: #0a5034;
+  --nv-palette-success-900: #08412b;
+
+  /* --- Warning (amber) --------------------------------------------------- */
+  --nv-palette-warning-50: #fff6e6;
+  --nv-palette-warning-100: #ffe9c2;
+  --nv-palette-warning-200: #ffd68d;
+  --nv-palette-warning-300: #fbbe52;
+  --nv-palette-warning-400: #eda520;
+  --nv-palette-warning-500: #cf8809;
+  --nv-palette-warning-600: #a96d05;
+  --nv-palette-warning-700: #855505;
+  --nv-palette-warning-800: #6a4406;
+  --nv-palette-warning-900: #563806;
+
+  /* --- Danger (red) ------------------------------------------------------ */
+  --nv-palette-danger-50: #ffeff1;
+  --nv-palette-danger-100: #ffdbde;
+  --nv-palette-danger-200: #ffb9bf;
+  --nv-palette-danger-300: #ff8b96;
+  --nv-palette-danger-400: #f95b6c;
+  --nv-palette-danger-500: #e2334a;
+  --nv-palette-danger-600: #c01f36;
+  --nv-palette-danger-700: #9c172b;
+  --nv-palette-danger-800: #7e1524;
+  --nv-palette-danger-900: #67141f;
+}
+
+/* ==========================================================================
+   Semantic roles
+   ========================================================================== */
+
+/* The subtree selector has to be repeated here, not just on the theme files:
+   var() inside a custom property is substituted where that property is
+   *declared*, so a --nv-color-* declared only on :root would bake in the root
+   brand and inherit the result unchanged. Re-declaring on [data-nv-brand]
+   re-runs the substitution against the subtree's own brand. */
+:root,
+[data-nv-brand] {
+  /* --- Canvas and surfaces ----------------------------------------------- */
+  --nv-color-background: light-dark(var(--nv-light-background), var(--nv-dark-background));
+  --nv-color-background-subtle: light-dark(var(--nv-light-background-subtle), var(--nv-dark-background-subtle));
+  --nv-color-surface: light-dark(var(--nv-light-surface), var(--nv-dark-surface));
+  --nv-color-surface-elevated: light-dark(var(--nv-light-surface-elevated), var(--nv-dark-surface-elevated));
+  --nv-color-surface-inset: light-dark(var(--nv-light-surface-inset), var(--nv-dark-surface-inset));
+  --nv-color-surface-hover: light-dark(var(--nv-light-surface-hover), var(--nv-dark-surface-hover));
+  --nv-color-surface-active: light-dark(var(--nv-light-surface-active), var(--nv-dark-surface-active));
+  --nv-color-scrim: light-dark(var(--nv-light-scrim), var(--nv-dark-scrim));
+
+  /* --- Text --------------------------------------------------------------- */
+  --nv-color-text-primary: light-dark(var(--nv-light-text-primary), var(--nv-dark-text-primary));
+  --nv-color-text-secondary: light-dark(var(--nv-light-text-secondary), var(--nv-dark-text-secondary));
+  --nv-color-text-tertiary: light-dark(var(--nv-light-text-tertiary), var(--nv-dark-text-tertiary));
+  --nv-color-text-disabled: light-dark(var(--nv-light-text-disabled), var(--nv-dark-text-disabled));
+  --nv-color-text-inverted: light-dark(var(--nv-light-text-inverted), var(--nv-dark-text-inverted));
+
+  /* --- Borders ------------------------------------------------------------ */
+  --nv-color-border-subtle: light-dark(var(--nv-light-border-subtle), var(--nv-dark-border-subtle));
+  --nv-color-border: light-dark(var(--nv-light-border), var(--nv-dark-border));
+  --nv-color-border-strong: light-dark(var(--nv-light-border-strong), var(--nv-dark-border-strong));
+
+  /* --- Accent ------------------------------------------------------------- */
+  --nv-color-accent: light-dark(var(--nv-light-accent), var(--nv-dark-accent));
+  --nv-color-accent-hover: light-dark(var(--nv-light-accent-hover), var(--nv-dark-accent-hover));
+  --nv-color-accent-active: light-dark(var(--nv-light-accent-active), var(--nv-dark-accent-active));
+  --nv-color-accent-subtle: light-dark(var(--nv-light-accent-subtle), var(--nv-dark-accent-subtle));
+  --nv-color-accent-subtle-hover: light-dark(var(--nv-light-accent-subtle-hover), var(--nv-dark-accent-subtle-hover));
+  --nv-color-accent-border: light-dark(var(--nv-light-accent-border), var(--nv-dark-accent-border));
+  --nv-color-accent-text: light-dark(var(--nv-light-accent-text), var(--nv-dark-accent-text));
+  --nv-color-on-accent: light-dark(var(--nv-light-on-accent), var(--nv-dark-on-accent));
+
+  /* --- Success ------------------------------------------------------------ */
+  --nv-color-success: light-dark(var(--nv-light-success), var(--nv-dark-success));
+  --nv-color-success-hover: light-dark(var(--nv-light-success-hover), var(--nv-dark-success-hover));
+  --nv-color-success-subtle: light-dark(var(--nv-light-success-subtle), var(--nv-dark-success-subtle));
+  --nv-color-success-border: light-dark(var(--nv-light-success-border), var(--nv-dark-success-border));
+  --nv-color-success-text: light-dark(var(--nv-light-success-text), var(--nv-dark-success-text));
+  --nv-color-on-success: light-dark(var(--nv-light-on-success), var(--nv-dark-on-success));
+
+  /* --- Warning ------------------------------------------------------------ */
+  --nv-color-warning: light-dark(var(--nv-light-warning), var(--nv-dark-warning));
+  --nv-color-warning-hover: light-dark(var(--nv-light-warning-hover), var(--nv-dark-warning-hover));
+  --nv-color-warning-subtle: light-dark(var(--nv-light-warning-subtle), var(--nv-dark-warning-subtle));
+  --nv-color-warning-border: light-dark(var(--nv-light-warning-border), var(--nv-dark-warning-border));
+  --nv-color-warning-text: light-dark(var(--nv-light-warning-text), var(--nv-dark-warning-text));
+  --nv-color-on-warning: light-dark(var(--nv-light-on-warning), var(--nv-dark-on-warning));
+
+  /* --- Danger ------------------------------------------------------------- */
+  --nv-color-danger: light-dark(var(--nv-light-danger), var(--nv-dark-danger));
+  --nv-color-danger-hover: light-dark(var(--nv-light-danger-hover), var(--nv-dark-danger-hover));
+  --nv-color-danger-active: light-dark(var(--nv-light-danger-active), var(--nv-dark-danger-active));
+  --nv-color-danger-subtle: light-dark(var(--nv-light-danger-subtle), var(--nv-dark-danger-subtle));
+  --nv-color-danger-border: light-dark(var(--nv-light-danger-border), var(--nv-dark-danger-border));
+  --nv-color-danger-text: light-dark(var(--nv-light-danger-text), var(--nv-dark-danger-text));
+  --nv-color-on-danger: light-dark(var(--nv-light-on-danger), var(--nv-dark-on-danger));
+
+  /* --- Depth and material ------------------------------------------------- */
+  --nv-color-shadow-ambient: light-dark(var(--nv-light-shadow-ambient), var(--nv-dark-shadow-ambient));
+  --nv-color-shadow-penumbra: light-dark(var(--nv-light-shadow-penumbra), var(--nv-dark-shadow-penumbra));
+  --nv-color-shadow-umbra: light-dark(var(--nv-light-shadow-umbra), var(--nv-dark-shadow-umbra));
+  --nv-color-shadow-inset: light-dark(var(--nv-light-shadow-inset), var(--nv-dark-shadow-inset));
+  --nv-color-highlight: light-dark(var(--nv-light-highlight), var(--nv-dark-highlight));
+  --nv-color-highlight-strong: light-dark(var(--nv-light-highlight-strong), var(--nv-dark-highlight-strong));
+
+  /* The bevel's other half: the shade along a raised surface's bottom edge,
+     and the contact line around anything that sits on another surface. Light
+     along the top and shade along the bottom is what makes a control read as
+     something pressable instead of a painted rectangle. */
+  --nv-color-lowlight: light-dark(var(--nv-light-lowlight), var(--nv-dark-lowlight));
+  --nv-color-outline: light-dark(var(--nv-light-outline), var(--nv-dark-outline));
+
+  /* Sheen: the light falling across a raised face, top to bottom. The plain
+     pair is for neutral controls and surfaces; the strong pair is for filled
+     color (primary buttons, checked marks), where it has to read through a
+     saturated fill. Both are laid over a surface's own color, never instead
+     of it. */
+  --nv-color-sheen-top: light-dark(var(--nv-light-sheen-top), var(--nv-dark-sheen-top));
+  --nv-color-sheen-bottom: light-dark(var(--nv-light-sheen-bottom), var(--nv-dark-sheen-bottom));
+  --nv-color-sheen-strong-top: light-dark(var(--nv-light-sheen-strong-top), var(--nv-dark-sheen-strong-top));
+  --nv-color-sheen-strong-bottom: light-dark(var(--nv-light-sheen-strong-bottom), var(--nv-dark-sheen-strong-bottom));
+
+  /* A knob: the thumb of a switch or a slider. It stays light in both
+     appearances, the way a physical knob does not change color with the room. */
+  --nv-color-knob: light-dark(var(--nv-light-knob), var(--nv-dark-knob));
+  --nv-color-knob-shade: light-dark(var(--nv-light-knob-shade), var(--nv-dark-knob-shade));
+
+  /* Elevation tint: on a dark canvas a shadow has nothing to darken, so a
+     raised surface also has to gain light. Transparent in light, where the
+     shadow does all the work. */
+  --nv-color-elevation-tint-1: light-dark(var(--nv-light-elevation-tint-1), var(--nv-dark-elevation-tint-1));
+  --nv-color-elevation-tint-2: light-dark(var(--nv-light-elevation-tint-2), var(--nv-dark-elevation-tint-2));
+  --nv-color-elevation-tint-3: light-dark(var(--nv-light-elevation-tint-3), var(--nv-dark-elevation-tint-3));
+  --nv-color-elevation-tint-4: light-dark(var(--nv-light-elevation-tint-4), var(--nv-dark-elevation-tint-4));
+  --nv-color-elevation-tint-5: light-dark(var(--nv-light-elevation-tint-5), var(--nv-dark-elevation-tint-5));
+
+  --nv-color-material-frosted: light-dark(var(--nv-light-material-frosted), var(--nv-dark-material-frosted));
+  --nv-color-material-glass: light-dark(var(--nv-light-material-glass), var(--nv-dark-material-glass));
+  --nv-color-material-border: light-dark(var(--nv-light-material-border), var(--nv-dark-material-border));
+
+  /* --- Window controls ------------------------------------------------------- */
+  --nv-color-window-close: light-dark(var(--nv-light-window-close), var(--nv-dark-window-close));
+  --nv-color-window-minimize: light-dark(var(--nv-light-window-minimize), var(--nv-dark-window-minimize));
+  --nv-color-window-zoom: light-dark(var(--nv-light-window-zoom), var(--nv-dark-window-zoom));
+  --nv-color-window-inactive: light-dark(var(--nv-light-window-inactive), var(--nv-dark-window-inactive));
+  --nv-color-window-control-ring: light-dark(var(--nv-light-window-control-ring), var(--nv-dark-window-control-ring));
+  --nv-color-window-glyph: light-dark(var(--nv-light-window-glyph), var(--nv-dark-window-glyph));
+
+  /* --- Interaction --------------------------------------------------------- */
+  --nv-color-focus-ring: light-dark(var(--nv-light-focus-ring), var(--nv-dark-focus-ring));
+  --nv-color-focus-ring-contrast: light-dark(var(--nv-light-focus-ring-contrast), var(--nv-dark-focus-ring-contrast));
+  --nv-color-selection: light-dark(var(--nv-light-selection), var(--nv-dark-selection));
+}

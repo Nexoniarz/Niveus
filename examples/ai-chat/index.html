@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen Chat — an AI chat app built with Niveus</title>
+
+<link rel="stylesheet" href="../../dist/niveus.css">
+<script src="../../niveus/niveus.js" defer></script>
+<link rel="stylesheet" href="app.css">
+
+<script>
+  try {
+    var saved = localStorage.getItem("lumen-theme");
+    if (saved && saved !== "system") document.documentElement.setAttribute("data-theme", saved);
+  } catch (error) {}
+</script>
+
+<style>
+  :root { --nv-brand: #6d5efc; }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ================================================================== -->
+  <aside class="app__sidebar" style="--nv-selection-name: nv-chat-threads">
+    <a class="nv-nav__brand" href="#" style="padding-inline: var(--nv-space-2)">
+      <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 3v18M3 12h18M6 6l12 12M18 6L6 18" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Lumen
+    </a>
+
+    <button class="nv-button nv-button--block" id="new-thread">
+      <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      New conversation
+    </button>
+
+    <nav class="app__threads" aria-label="Conversations">
+      <span class="nv-nav__section">Today</span>
+      <ul class="nv-nav__list" id="threads" data-nv-travel>
+        <li>
+          <button class="nv-nav__item" data-thread="latency" aria-current="page">
+            <span class="thread__title">Checkout latency after #4412</span>
+            <span class="thread__meta">12 messages</span>
+          </button>
+        </li>
+        <li>
+          <button class="nv-nav__item" data-thread="migration">
+            <span class="thread__title">Postgres 15 migration plan</span>
+            <span class="thread__meta">4 messages</span>
+          </button>
+        </li>
+      </ul>
+
+      <span class="nv-nav__section">Earlier</span>
+      <ul class="nv-nav__list">
+        <li>
+          <button class="nv-nav__item" data-thread="audit">
+            <span class="thread__title">Dependency audit — Q3</span>
+            <span class="thread__meta">31 messages</span>
+          </button>
+        </li>
+        <li>
+          <button class="nv-nav__item" data-thread="onboarding">
+            <span class="thread__title">Why does billing own the cart?</span>
+            <span class="thread__meta">8 messages</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <hr class="nv-divider" style="margin-block: var(--nv-space-2)">
+
+    <button class="nv-nav__item nv-menu-trigger" popovertarget="account-menu"
+            style="--nv-anchor: --account">
+      <span class="avatar avatar--user" aria-hidden="true">RK</span>
+      <span class="thread__title">Robin Kade</span>
+    </button>
+
+    <div class="nv-menu" popover id="account-menu" style="--nv-anchor: --account">
+      <span class="nv-menu__label">Robin Kade</span>
+      <button class="nv-menu__item" data-nv-dialog="settings">
+        Settings<span class="nv-menu__shortcut">⌘,</span>
+      </button>
+      <button class="nv-menu__item">Keyboard shortcuts</button>
+      <hr class="nv-menu__separator">
+      <button class="nv-menu__item nv-menu__item--danger">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- ================================================================== -->
+  <main class="app__main">
+
+    <nav class="nv-nav nv-nav--static" aria-label="Conversation">
+      <h1 class="nv-title nv-truncate" id="thread-heading">Checkout latency after #4412</h1>
+
+      <span class="nv-nav__spacer"></span>
+
+      <button class="nv-button nv-button--sm nv-menu-trigger" popovertarget="model-menu"
+              style="--nv-anchor: --model">
+        <span id="model-label">Lumen 2</span>
+        <span class="nv-disclosure__chevron" aria-hidden="true"
+              style="margin-inline-start: var(--nv-space-1)"></span>
+      </button>
+
+      <div class="nv-menu" popover id="model-menu" style="--nv-anchor: --model">
+        <span class="nv-menu__label">Model</span>
+        <button class="nv-menu__item" aria-checked="true" data-model="Lumen 2">
+          Lumen 2<span class="nv-menu__shortcut">Balanced</span>
+        </button>
+        <button class="nv-menu__item" data-model="Lumen 2 Pro">
+          Lumen 2 Pro<span class="nv-menu__shortcut">Deeper</span>
+        </button>
+        <button class="nv-menu__item" data-model="Lumen Mini">
+          Lumen Mini<span class="nv-menu__shortcut">Fastest</span>
+        </button>
+      </div>
+
+      <button class="nv-button nv-button--sm nv-button--ghost">Share</button>
+      <button class="nv-button nv-button--sm nv-button--ghost nv-button--icon"
+              data-nv-dialog="settings" aria-label="Settings">
+        <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 3v2.2M12 18.8V21M21 12h-2.2M5.2 12H3M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2L5.6 5.6"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </nav>
+
+    <div class="app__transcript" id="transcript-scroll">
+      <div class="transcript nv-continuous" id="transcript">
+        <!-- rendered from the thread data below -->
+      </div>
+    </div>
+
+    <div class="composer">
+      <form class="composer__inner" id="composer">
+        <div class="composer__row">
+          <button class="nv-button nv-button--lg nv-button--icon" type="button" aria-label="Attach">
+            <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M18 11l-6.5 6.5a4 4 0 01-5.6-5.6l7-7a2.8 2.8 0 013.9 4L9.6 16a1.6 1.6 0 01-2.3-2.3l6.2-6.2"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <label class="nv-visually-hidden" for="prompt">Message Lumen</label>
+          <textarea class="nv-input" id="prompt" rows="1"
+                    placeholder="Ask about this codebase…"></textarea>
+
+          <button class="nv-button nv-button--lg nv-button--primary nv-button--icon"
+                  type="submit" aria-label="Send">
+            <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="composer__hints">
+          <label class="nv-choice nv-caption">
+            <input class="nv-switch" type="checkbox" checked>
+            Search the repository
+          </label>
+          <label class="nv-choice nv-caption">
+            <input class="nv-switch" type="checkbox">
+            Propose changes
+          </label>
+          <span class="nv-nav__spacer"></span>
+          <span class="nv-caption">Enter to send · Shift + Enter for a new line</span>
+        </div>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<!-- ==================================================================== -->
+<dialog class="nv-dialog nv-dialog--wide" id="settings" aria-labelledby="settings-title">
+  <div class="nv-dialog__header">
+    <div>
+      <h2 class="nv-dialog__title" id="settings-title">Settings</h2>
+      <p class="nv-dialog__description">Applies to this workspace.</p>
+    </div>
+    <button class="nv-button nv-button--ghost nv-button--icon nv-dialog__close"
+            aria-label="Close" data-nv-close>
+      <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="nv-dialog__body">
+    <div class="nv-nav-tabs" role="tablist" data-nv-tabs aria-label="Settings sections"
+         style="--nv-selection-name: nv-chat-settings-tabs">
+      <button class="nv-nav__item" role="tab" id="tab-general"
+              aria-controls="panel-general" aria-selected="true">General</button>
+      <button class="nv-nav__item" role="tab" id="tab-model"
+              aria-controls="panel-model" aria-selected="false" tabindex="-1">Model</button>
+      <button class="nv-nav__item" role="tab" id="tab-privacy"
+              aria-controls="panel-privacy" aria-selected="false" tabindex="-1">Privacy</button>
+    </div>
+
+    <div class="nv-tab-panel" id="panel-general" role="tabpanel" aria-labelledby="tab-general"
+         style="padding-block-start: var(--nv-space-5)">
+      <div class="nv-stack">
+        <div class="nv-field">
+          <label class="nv-field__label" for="ws-name">Workspace name</label>
+          <input class="nv-input" id="ws-name" value="Northwire Platform">
+        </div>
+
+        <div class="nv-field">
+          <span class="nv-field__label">Appearance</span>
+          <div class="nv-button-group" role="group" aria-label="Appearance">
+            <button class="nv-button nv-button--sm" data-nv-theme="light" aria-pressed="false">Light</button>
+            <button class="nv-button nv-button--sm" data-nv-theme="dark" aria-pressed="false">Dark</button>
+            <button class="nv-button nv-button--sm" data-nv-theme="system" aria-pressed="true">System</button>
+          </div>
+          <span class="nv-field__hint">The whole interface cross-fades between the two.</span>
+        </div>
+
+        <label class="nv-choice">
+          <input class="nv-switch" type="checkbox" checked>
+          Send on Enter
+        </label>
+      </div>
+    </div>
+
+    <div class="nv-tab-panel" id="panel-model" role="tabpanel" aria-labelledby="tab-model"
+         style="padding-block-start: var(--nv-space-5)" hidden>
+      <div class="nv-stack">
+        <div class="nv-field">
+          <label class="nv-field__label" for="default-model">Default model</label>
+          <div class="nv-select">
+            <select class="nv-input" id="default-model">
+              <option selected>Lumen 2 — balanced</option>
+              <option>Lumen 2 Pro — deeper reasoning</option>
+              <option>Lumen Mini — fastest</option>
+            </select>
+          </div>
+          <span class="nv-field__hint">Individual conversations can override this.</span>
+        </div>
+
+        <div class="nv-field">
+          <label class="nv-field__label" for="context">Context window</label>
+          <div class="nv-input-group">
+            <input class="nv-input" id="context" value="200000">
+            <span class="nv-input-group__affix">tokens</span>
+          </div>
+        </div>
+
+        <label class="nv-choice">
+          <input class="nv-checkbox" type="checkbox" checked>
+          Cite sources in every answer
+        </label>
+      </div>
+    </div>
+
+    <div class="nv-tab-panel" id="panel-privacy" role="tabpanel" aria-labelledby="tab-privacy"
+         style="padding-block-start: var(--nv-space-5)" hidden>
+      <div class="nv-stack">
+        <div class="nv-bed nv-bed--quiet nv-bed--single">
+          <p class="nv-body">
+            Repository contents are used to answer this workspace's questions
+            and nothing else.
+          </p>
+        </div>
+
+        <label class="nv-choice">
+          <input class="nv-switch" type="checkbox">
+          Keep transcripts after 30 days
+        </label>
+
+        <div class="nv-field">
+          <span class="nv-field__label">Danger zone</span>
+          <div class="nv-cluster">
+            <button class="nv-button nv-button--danger nv-button--sm">Delete all conversations</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nv-dialog__footer nv-dialog__footer--divided">
+    <button class="nv-button" data-nv-close>Cancel</button>
+    <button class="nv-button nv-button--primary" data-nv-close>Save changes</button>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.addEventListener("nv:theme", (event) => {
+      try { localStorage.setItem("lumen-theme", event.detail.theme); } catch {}
+    });
+    nv.syncThemeControls(document.documentElement.getAttribute("data-theme") || "system");
+
+    /* ------------------------------------------------------------------
+       Canned content. A real client would fetch this; what matters here is
+       that switching threads is a content change inside one surface, so it
+       goes through nv.transition() and cross-fades in place.
+       ------------------------------------------------------------------ */
+    const threads = {
+      latency: {
+        title: "Checkout latency after #4412",
+        messages: [
+          { from: "user", html: "Why did checkout latency double after Tuesday's deploy?" },
+          { from: "agent", html:
+            `<p>The <code class="nv-code">pricing</code> service began resolving tax rules
+             per line item instead of per cart in <code class="nv-code">#4412</code>.
+             Carts with more than two items take the slow path.</p>
+             <div class="nv-cluster nv-cluster--tight">
+               <span class="nv-badge nv-badge--warning">p95 +118%</span>
+               <span class="nv-badge">3 files</span>
+               <span class="nv-badge">pricing/tax.ts</span>
+             </div>` },
+          { from: "user", html: "Show me the hot path." },
+          { from: "agent", html:
+            `<p>Here is the loop that moved:</p>
+             <code class="code-block nv-code">for (const line of cart.lines) {
+  // was: resolved once per cart
+  const rules = await taxRules.resolve(line.destination);
+  line.tax = rules.apply(line);
+}</code>
+             <p><code class="nv-code">taxRules.resolve</code> is a network call. Hoisting
+             it above the loop restores the previous shape.</p>` },
+        ],
+      },
+      migration: {
+        title: "Postgres 15 migration plan",
+        messages: [
+          { from: "user", html: "What breaks if we go to Postgres 15 next sprint?" },
+          { from: "agent", html:
+            `<p>Two things in this codebase, and one in the deploy pipeline.</p>
+             <div class="nv-cluster nv-cluster--tight">
+               <span class="nv-badge nv-badge--danger">1 blocking</span>
+               <span class="nv-badge nv-badge--warning">2 to review</span>
+             </div>
+             <p>The blocking one is the <code class="nv-code">reporting</code> service's use
+             of implicit integer casts in <code class="nv-code">?column?</code> aliases,
+             removed in 15.</p>` },
+        ],
+      },
+      audit: {
+        title: "Dependency audit — Q3",
+        messages: [
+          { from: "user", html: "Which advisories actually reach our code?" },
+          { from: "agent", html:
+            `<p>Four of the thirty-one. The rest are in transitive packages whose
+             affected entry points you never call.</p>
+             <div class="nv-cluster nv-cluster--tight">
+               <span class="nv-badge nv-badge--danger">2 high</span>
+               <span class="nv-badge nv-badge--warning">2 moderate</span>
+               <span class="nv-badge nv-badge--success">27 unreachable</span>
+             </div>` },
+        ],
+      },
+      onboarding: {
+        title: "Why does billing own the cart?",
+        messages: [
+          { from: "user", html: "Why does billing own the cart model?" },
+          { from: "agent", html:
+            `<p>It did not, until <code class="nv-code">#2180</code> moved it there so
+             promotions could be priced in one place. The commit message and the
+             review thread both say this was meant to be temporary.</p>` },
+        ],
+      },
+    };
+
+    const transcript = document.getElementById("transcript");
+    const scroller = document.getElementById("transcript-scroll");
+    const heading = document.getElementById("thread-heading");
+
+    function messageHTML(message) {
+      const isUser = message.from === "user";
+      return `
+        <div class="message message--from-${message.from}">
+          <span class="avatar avatar--${isUser ? "user" : "agent"}" aria-hidden="true">${isUser ? "RK" : "L"}</span>
+          <div class="message__body">${message.html}</div>
+        </div>`;
+    }
+
+    function render(key) {
+      const thread = threads[key];
+      heading.textContent = thread.title;
+      transcript.innerHTML = thread.messages.map(messageHTML).join("");
+    }
+
+    render("latency");
+
+    /* Switching threads: the selection travels in the sidebar and the
+       transcript cross-fades, because both are one state change. */
+    const list = document.getElementById("threads");
+    document.querySelectorAll("[data-thread]").forEach((item) => {
+      item.addEventListener("click", () => {
+        if (item.hasAttribute("aria-current")) return;
+        nv.transition(() => {
+          document.querySelectorAll("[data-thread][aria-current]")
+            .forEach((el) => el.removeAttribute("aria-current"));
+          item.setAttribute("aria-current", "page");
+          render(item.dataset.thread);
+        }, { scope: list });
+        scroller.scrollTop = 0;
+      });
+    });
+
+    /* Choosing a model updates the menu's own checked state. */
+    document.querySelectorAll("[data-model]").forEach((option) => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-model]").forEach((other) => {
+          other.setAttribute("aria-checked", String(other === option));
+        });
+        document.getElementById("model-label").textContent = option.dataset.model;
+        document.getElementById("model-menu").hidePopover();
+      });
+    });
+
+    /* Sending: append, show that something is happening, then answer. The
+       point is the states, not the reply. */
+    const form = document.getElementById("composer");
+    const prompt = document.getElementById("prompt");
+
+    function append(html) {
+      transcript.insertAdjacentHTML("beforeend", html);
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = prompt.value.trim();
+      if (!text) return;
+
+      append(messageHTML({ from: "user", html: text.replace(/[<>&]/g, (c) =>
+        ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c])) }));
+      prompt.value = "";
+
+      append(`<div class="message message--from-agent" id="pending">
+                <span class="avatar avatar--agent" aria-hidden="true">L</span>
+                <div class="message__body">
+                  <span class="thinking" role="status" aria-label="Thinking">
+                    <span></span><span></span><span></span>
+                  </span>
+                </div>
+              </div>`);
+
+      setTimeout(() => {
+        document.getElementById("pending")?.remove();
+        append(messageHTML({ from: "agent", html:
+          `<p>This example has no model behind it — it exists to show the states
+           a chat interface moves through: the message landing, something
+           visibly happening, and the answer arriving in the same column.</p>` }));
+      }, 1400);
+    });
+
+    prompt.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    document.getElementById("new-thread").addEventListener("click", () => {
+      nv.transition(() => {
+        document.querySelectorAll("[data-thread][aria-current]")
+          .forEach((el) => el.removeAttribute("aria-current"));
+        heading.textContent = "New conversation";
+        transcript.innerHTML = `
+          <div class="nv-bed nv-bed--quiet" style="text-align: center">
+            <p class="nv-title">Ask about this codebase</p>
+            <p class="nv-caption" style="margin-block-start: var(--nv-space-2)">
+              Lumen has indexed 1,284 files across 3 repositories.
+            </p>
+          </div>`;
+      });
+      prompt.focus();
+    });
+  });
+</script>
+</body>
+</html>

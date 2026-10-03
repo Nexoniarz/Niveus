@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Lumen Chat — app layout
+   --------------------------------------------------------------------------
+   Layout only. The shell is a two-column grid pinned to the viewport, with
+   exactly one scrolling region; everything visual comes from Niveus.
+
+   The avatars below are the one place this app extends the system rather than
+   consuming it — and even then they are built from tokens, not from values
+   invented here. That is the correct way to extend: new shapes, old language.
+   ========================================================================== */
+
+html, body {
+  block-size: 100%;
+}
+
+body {
+  overflow: hidden; /* the transcript scrolls, the page does not */
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 17rem 1fr;
+  block-size: 100svh;
+}
+
+@media (max-width: 52rem) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .app__sidebar {
+    display: none;
+  }
+}
+
+/* --- Sidebar ---------------------------------------------------------------- */
+
+.app__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-3);
+  min-block-size: 0;
+  padding: var(--nv-space-4) var(--nv-space-3);
+  background-color: var(--nv-color-background-subtle);
+  border-inline-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+}
+
+.app__threads {
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+  margin-inline: calc(var(--nv-space-1) * -1);
+  padding-inline: var(--nv-space-1);
+}
+
+.thread__title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread__meta {
+  display: block;
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-tertiary);
+  font-weight: var(--nv-font-weight-regular);
+}
+
+/* This sidebar is a plain aside rather than .nv-nav--vertical, so the list
+   keeps its default row direction until told otherwise. */
+.app__threads .nv-nav__list {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--nv-space-0-5);
+}
+
+/* A nav item holding two lines needs to stop centring them. */
+.app__threads .nv-nav__item {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0;
+  min-inline-size: 0;
+}
+
+/* --- Main ------------------------------------------------------------------- */
+
+.app__main {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
+.app__transcript {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--nv-space-6) var(--nv-layout-gutter);
+}
+
+.transcript {
+  max-inline-size: 48rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-6);
+}
+
+/* --- Messages ---------------------------------------------------------------- */
+
+.message {
+  display: flex;
+  gap: var(--nv-space-3);
+  align-items: flex-start;
+}
+
+.message--from-user {
+  flex-direction: row-reverse;
+}
+
+.message__body {
+  max-inline-size: 42rem;
+  min-inline-size: 0;
+}
+
+.message--from-user .message__body {
+  padding: var(--nv-space-3) var(--nv-space-4);
+  background-color: var(--nv-color-accent-subtle);
+  border: var(--nv-border-width) solid var(--nv-color-accent-border);
+  border-radius: var(--nv-radius-lg);
+  border-end-end-radius: var(--nv-radius-xs);
+  color: var(--nv-color-text-primary);
+}
+
+.message__body > * + * {
+  margin-block-start: var(--nv-space-3);
+}
+
+.avatar {
+  inline-size: var(--nv-space-8);
+  block-size: var(--nv-space-8);
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: var(--nv-radius-full);
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-semibold);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  box-shadow: var(--nv-highlight-top), var(--nv-elevation-1);
+}
+
+.avatar--agent {
+  background-color: var(--nv-color-accent);
+  color: var(--nv-color-on-accent);
+  border-color: transparent;
+}
+
+.avatar--user {
+  background-color: var(--nv-color-surface-elevated);
+  color: var(--nv-color-text-secondary);
+}
+
+.code-block {
+  display: block;
+  padding: var(--nv-space-4);
+  border-radius: var(--nv-radius-md);
+  background-color: var(--nv-color-surface-inset);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  box-shadow: var(--nv-elevation-inset-sm);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* The three dots while an answer is still arriving. */
+.thinking {
+  display: inline-flex;
+  gap: var(--nv-space-1);
+  align-items: center;
+  padding-block: var(--nv-space-2);
+}
+
+.thinking span {
+  inline-size: var(--nv-space-1-5);
+  block-size: var(--nv-space-1-5);
+  border-radius: var(--nv-radius-full);
+  background-color: var(--nv-color-text-tertiary);
+  animation: thinking 1.2s var(--nv-ease-standard) infinite;
+}
+
+.thinking span:nth-child(2) { animation-delay: 0.15s; }
+.thinking span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes thinking {
+  0%, 60%, 100% { opacity: 0.25; translate: 0 0; }
+  30% { opacity: 1; translate: 0 calc(var(--nv-travel-sm) * -0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking span { animation: none; opacity: 0.5; }
+}
+
+/* --- Composer ----------------------------------------------------------------- */
+
+.composer {
+  padding: var(--nv-space-4) var(--nv-layout-gutter) var(--nv-space-5);
+  border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  background-color: var(--nv-color-background);
+}
+
+.composer__inner {
+  max-inline-size: 48rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-2-5);
+}
+
+.composer__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--nv-space-2);
+}
+
+.composer__row .nv-input {
+  min-block-size: var(--nv-control-height-lg);
+  max-block-size: 9rem;
+}
+
+.composer__hints {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--nv-space-4);
+}

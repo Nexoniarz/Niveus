@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Niveus — Badge
+   --------------------------------------------------------------------------
+     <span class="nv-badge nv-badge--success">In stock</span>
+     <span class="nv-badge nv-badge--danger nv-badge--solid">3 failing</span>
+     <span class="nv-badge"><span class="nv-badge__dot"></span>Draft</span>
+
+   A small, non-interactive statement of state. Subtle by default, because a
+   badge is almost always beside something more important than itself; --solid
+   is for the one badge in a view that must be seen before anything else.
+
+   If it can be clicked it is not a badge — that is a button, probably
+   .nv-button--pill --sm.
+   ========================================================================== */
+
+.nv-badge {
+  --_bg: var(--nv-color-surface-inset);
+  --_fg: var(--nv-color-text-secondary);
+  --_border: var(--nv-color-border);
+  --_solid-bg: var(--nv-color-text-secondary);
+  --_solid-fg: var(--nv-color-surface);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nv-space-1-5);
+
+  block-size: var(--nv-space-5);
+  padding-inline: var(--nv-space-2);
+
+  background-color: var(--_bg);
+  color: var(--_fg);
+  border: var(--nv-border-width) solid var(--_border);
+  border-radius: var(--nv-radius-full);
+
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-semibold);
+  white-space: nowrap;
+  transition: var(--nv-transition-colors);
+}
+
+.nv-badge--accent {
+  --_bg: var(--nv-color-accent-subtle);
+  --_fg: var(--nv-color-accent-text);
+  --_border: var(--nv-color-accent-border);
+  --_solid-bg: var(--nv-color-accent);
+  --_solid-fg: var(--nv-color-on-accent);
+}
+
+.nv-badge--success {
+  --_bg: var(--nv-color-success-subtle);
+  --_fg: var(--nv-color-success-text);
+  --_border: var(--nv-color-success-border);
+  --_solid-bg: var(--nv-color-success);
+  --_solid-fg: var(--nv-color-on-success);
+}
+
+.nv-badge--warning {
+  --_bg: var(--nv-color-warning-subtle);
+  --_fg: var(--nv-color-warning-text);
+  --_border: var(--nv-color-warning-border);
+  --_solid-bg: var(--nv-color-warning);
+  --_solid-fg: var(--nv-color-on-warning);
+}
+
+.nv-badge--danger {
+  --_bg: var(--nv-color-danger-subtle);
+  --_fg: var(--nv-color-danger-text);
+  --_border: var(--nv-color-danger-border);
+  --_solid-bg: var(--nv-color-danger);
+  --_solid-fg: var(--nv-color-on-danger);
+}
+
+/* Declared after the colors so it wins for --_bg; the color modifier is still
+   what decides which solid pair it reads. */
+.nv-badge--solid {
+  --_bg: var(--_solid-bg);
+  --_fg: var(--_solid-fg);
+  --_border: transparent;
+  background-image: var(--nv-sheen-filled);
+  box-shadow: var(--nv-highlight-top);
+}
+
+.nv-badge--square {
+  border-radius: var(--nv-radius-xs);
+}
+
+/* Counts read better without a border, and with room for two digits. */
+.nv-badge--count {
+  min-inline-size: var(--nv-space-5);
+  padding-inline: var(--nv-space-1-5);
+  justify-content: center;
+  border-color: transparent;
+  font-size: var(--nv-font-size-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.nv-badge__dot {
+  inline-size: var(--nv-space-1-5);
+  block-size: var(--nv-space-1-5);
+  border-radius: var(--nv-radius-full);
+  background-color: currentColor;
+  flex: none;
+}

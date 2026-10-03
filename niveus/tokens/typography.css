@@ -1,0 +1,82 @@
+/* ==========================================================================
+   Niveus — Typography
+   --------------------------------------------------------------------------
+   One type scale, used everywhere. Sizes are in rem so they respect the user's
+   browser font size; line heights are unitless so they inherit correctly.
+   ========================================================================== */
+
+:root {
+  /* --- Families ----------------------------------------------------------- */
+  /* Both ship with Niveus (fonts.css); the rest of each stack only covers the
+     moment before they load, or a context that cannot load them. */
+  --nv-font-family-sans:
+    "Instrument Sans", "Inter var", "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --nv-font-family-mono:
+    "JetBrains Mono", "SF Mono", "IBM Plex Mono", ui-monospace, "Menlo",
+    "Consolas", monospace;
+
+  /* --- Size scale ---------------------------------------------------------- */
+  --nv-font-size-2xs: 0.6875rem; /* 11px — dense metadata, never body text */
+  --nv-font-size-xs: 0.75rem; /*  12px */
+  --nv-font-size-sm: 0.8125rem; /* 13px */
+  --nv-font-size-md: 0.9375rem; /* 15px — default body size */
+  --nv-font-size-lg: 1.0625rem; /* 17px */
+  --nv-font-size-xl: 1.25rem; /*  20px */
+  --nv-font-size-2xl: 1.5rem; /*   24px */
+  --nv-font-size-3xl: 1.875rem; /* 30px */
+  --nv-font-size-4xl: 2.375rem; /* 38px */
+  --nv-font-size-5xl: 3rem; /*     48px */
+
+  /* --- Weight -------------------------------------------------------------- */
+  --nv-font-weight-regular: 400;
+  --nv-font-weight-medium: 500;
+  --nv-font-weight-semibold: 600;
+  --nv-font-weight-bold: 700;
+
+  /* --- Line height --------------------------------------------------------- */
+  --nv-line-height-tight: 1.18; /* display and large headings */
+  --nv-line-height-snug: 1.32; /*  headings, single-line controls */
+  --nv-line-height-normal: 1.5; /* body copy */
+  --nv-line-height-relaxed: 1.68; /* long-form reading */
+
+  /* --- Letter spacing -------------------------------------------------------
+     Large text needs negative tracking to stay optically even; small caps-ish
+     labels need positive tracking to stay readable. */
+  --nv-letter-spacing-tighter: -0.022em;
+  --nv-letter-spacing-tight: -0.012em;
+  --nv-letter-spacing-normal: 0em;
+  --nv-letter-spacing-wide: 0.02em;
+  --nv-letter-spacing-wider: 0.06em;
+  /* Engraved labels: small mono capitals, spaced like markings on a panel. */
+  --nv-letter-spacing-engraved: 0.1em;
+
+  /* --- Composite roles ------------------------------------------------------
+     Applied as classes in base.css (.nv-display, .nv-heading, …). Kept as
+     tokens so applications can compose their own elements from the same
+     values instead of guessing. */
+  --nv-font-display: var(--nv-font-weight-semibold) var(--nv-font-size-4xl) /
+    var(--nv-line-height-tight) var(--nv-font-family-sans);
+  --nv-font-heading: var(--nv-font-weight-semibold) var(--nv-font-size-2xl) /
+    var(--nv-line-height-snug) var(--nv-font-family-sans);
+  --nv-font-title: var(--nv-font-weight-semibold) var(--nv-font-size-lg) /
+    var(--nv-line-height-snug) var(--nv-font-family-sans);
+  --nv-font-body: var(--nv-font-weight-regular) var(--nv-font-size-md) /
+    var(--nv-line-height-normal) var(--nv-font-family-sans);
+  --nv-font-label: var(--nv-font-weight-medium) var(--nv-font-size-sm) /
+    var(--nv-line-height-snug) var(--nv-font-family-sans);
+  --nv-font-caption: var(--nv-font-weight-regular) var(--nv-font-size-xs) /
+    var(--nv-line-height-normal) var(--nv-font-family-sans);
+  --nv-font-code: var(--nv-font-weight-regular) var(--nv-font-size-sm) /
+    var(--nv-line-height-normal) var(--nv-font-family-mono);
+  /* The engraved label: section markers, the clock, anything that names a
+     region rather than being read. Paired with uppercase and the engraved
+     tracking (see .nv-overline in base.css). */
+  --nv-font-engraved: var(--nv-font-weight-medium) var(--nv-font-size-2xs) /
+    var(--nv-line-height-snug) var(--nv-font-family-mono);
+
+  /* --- Measure --------------------------------------------------------------- */
+  --nv-measure-narrow: 44ch;
+  --nv-measure: 68ch;
+  --nv-measure-wide: 82ch;
+}

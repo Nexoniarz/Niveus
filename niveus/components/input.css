@@ -1,0 +1,407 @@
+/* ==========================================================================
+   Niveus — Input
+   --------------------------------------------------------------------------
+     .nv-field                    label + control + hint, correctly spaced
+     .nv-input                    text input, textarea and select
+     .nv-input-group              control with a leading or trailing affix
+     .nv-select                   wrapper that supplies the chevron
+     .nv-checkbox / .nv-radio     custom marks on the native controls
+     .nv-switch                   binary control with an inset track
+
+   Inputs are the system's inset material: they read as wells cut into the
+   surface that holds them — shaded inside, lit along the lower lip — which is
+   what distinguishes a place to type from a thing to press. On focus the recess stays — only the ring and border change,
+   so the field never appears to jump forward.
+   ========================================================================== */
+
+.nv-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-1-5);
+  min-inline-size: 0;
+}
+
+.nv-field__label {
+  font: var(--nv-font-label);
+  color: var(--nv-color-text-primary);
+}
+
+.nv-field__label[data-optional]::after {
+  content: " " attr(data-optional);
+  color: var(--nv-color-text-tertiary);
+  font-weight: var(--nv-font-weight-regular);
+}
+
+.nv-field__hint {
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-secondary);
+}
+
+.nv-field__error {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-1-5);
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-medium);
+  color: var(--nv-color-danger-text);
+}
+
+/* --- Control ----------------------------------------------------------------- */
+
+.nv-input {
+  --_height: var(--nv-control-height-md);
+  --_padding: var(--nv-control-padding-md);
+  --_font-size: var(--nv-font-size-md);
+  --_radius: var(--nv-radius-md);
+  --_border: var(--nv-color-border);
+
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: var(--_height);
+  padding-inline: var(--_padding);
+
+  background-color: var(--nv-color-surface-inset);
+  color: var(--nv-color-text-primary);
+  border: var(--nv-border-width) solid var(--_border);
+  border-radius: var(--_radius);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+
+  font-family: var(--nv-font-family-sans);
+  font-size: var(--_font-size);
+  line-height: var(--nv-line-height-snug);
+  transition: var(--nv-transition-control);
+  appearance: none;
+}
+
+.nv-input::placeholder {
+  color: var(--nv-color-text-tertiary);
+}
+
+@media (hover: hover) {
+  .nv-input:hover:not(:disabled, [readonly]) {
+    --_border: var(--nv-color-border-strong);
+  }
+}
+
+.nv-input:focus-visible,
+.nv-input:focus {
+  outline: none;
+  --_border: var(--nv-color-accent);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-focus-ring);
+}
+
+.nv-input[aria-invalid="true"] {
+  --_border: var(--nv-color-danger);
+  --nv-color-focus-ring: var(--nv-color-danger-border);
+}
+
+.nv-input:disabled {
+  background-color: var(--nv-color-background-subtle);
+  color: var(--nv-color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.nv-input[readonly] {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* Multi-line controls grow, so height becomes a minimum and the block padding
+   has to be stated explicitly. */
+textarea.nv-input {
+  block-size: auto;
+  min-block-size: calc(var(--nv-control-height-lg) * 2);
+  padding-block: var(--nv-space-2-5);
+  line-height: var(--nv-line-height-normal);
+}
+
+.nv-input--sm {
+  --_height: var(--nv-control-height-sm);
+  --_padding: var(--nv-control-padding-sm);
+  --_font-size: var(--nv-font-size-sm);
+  --_radius: var(--nv-radius-sm);
+}
+
+/* A color well: the swatch fills the control, so the value is the control. */
+.nv-input--color {
+  inline-size: var(--nv-control-height-md);
+  padding: var(--nv-space-1);
+  cursor: pointer;
+}
+
+.nv-input--color::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.nv-input--color::-webkit-color-swatch,
+.nv-input--color::-moz-color-swatch {
+  border: var(--nv-border-width) solid var(--nv-color-border);
+  border-radius: calc(var(--nv-radius-md) - var(--nv-space-1));
+}
+
+.nv-input--lg {
+  --_height: var(--nv-control-height-lg);
+  --_padding: var(--nv-control-padding-lg);
+  --_font-size: var(--nv-font-size-lg);
+}
+
+/* --- Affixes -------------------------------------------------------------------
+   <div class="nv-input-group">
+     <span class="nv-input-group__affix">@</span>
+     <input class="nv-input">
+   </div>
+   The affix sits inside the field's recess rather than beside it, so the group
+   still reads as a single surface. */
+
+.nv-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+}
+
+.nv-input-group__affix {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--nv-control-padding-md);
+  color: var(--nv-color-text-tertiary);
+  font-size: var(--nv-font-size-sm);
+  pointer-events: none;
+}
+
+.nv-input-group__affix:first-child {
+  inset-inline-start: 0;
+}
+
+.nv-input-group__affix:last-child {
+  inset-inline-end: 0;
+}
+
+.nv-input-group__affix:first-child ~ .nv-input {
+  padding-inline-start: calc(var(--nv-control-padding-md) * 2 + 1em);
+}
+
+.nv-input:has(~ .nv-input-group__affix:last-child) {
+  padding-inline-end: calc(var(--nv-control-padding-md) * 2 + 1em);
+}
+
+/* Interactive affixes — a clear button, a reveal toggle — opt back in. */
+.nv-input-group__affix > * {
+  pointer-events: auto;
+}
+
+/* --- Select ----------------------------------------------------------------------
+   <div class="nv-select"><select class="nv-input">…</select></div> */
+
+.nv-select {
+  position: relative;
+  display: flex;
+  inline-size: 100%;
+}
+
+.nv-select > .nv-input {
+  padding-inline-end: calc(var(--nv-control-padding-md) * 2 + 0.5em);
+  cursor: pointer;
+}
+
+.nv-select::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: var(--nv-control-padding-md);
+  inset-block-start: 50%;
+  inline-size: 0.45em;
+  block-size: 0.45em;
+  margin-block-start: -0.28em;
+  border-inline-end: 1.5px solid var(--nv-color-text-tertiary);
+  border-block-end: 1.5px solid var(--nv-color-text-tertiary);
+  rotate: 45deg;
+  pointer-events: none;
+}
+
+/* --- Checkbox and radio ------------------------------------------------------------ */
+
+.nv-checkbox,
+.nv-radio {
+  position: relative;
+  flex: none;
+  inline-size: var(--nv-space-5);
+  block-size: var(--nv-space-5);
+  margin: 0;
+  background-color: var(--nv-color-surface-inset);
+  border: var(--nv-border-width) solid var(--nv-color-border-strong);
+  border-radius: var(--nv-radius-xs);
+  box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+  cursor: pointer;
+  appearance: none;
+  transition: var(--nv-transition-control);
+}
+
+.nv-radio {
+  border-radius: var(--nv-radius-full);
+}
+
+.nv-checkbox:checked,
+.nv-radio:checked,
+.nv-checkbox:indeterminate {
+  background-color: var(--nv-color-accent);
+  background-image: var(--nv-sheen-filled);
+  border-color: transparent;
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+}
+
+/* The marks are always present, at zero size and zero opacity, so checking a
+   box grows the tick out of its centre instead of stamping it there. A mark
+   that only exists in the :checked state has nothing to animate from. */
+
+.nv-checkbox::after,
+.nv-radio::after,
+.nv-checkbox::before {
+  content: "";
+  position: absolute;
+  opacity: 0;
+  scale: 0;
+  transition:
+    opacity var(--nv-duration-fast) var(--nv-ease-standard),
+    scale var(--nv-duration-quick) var(--nv-ease-spring);
+}
+
+/* The tick is drawn from two borders so it scales with the control and needs
+   no asset. */
+.nv-checkbox::after {
+  inset-block-start: 45%;
+  inset-inline-start: 50%;
+  inline-size: 0.28em;
+  block-size: 0.55em;
+  translate: -50% -50%;
+  rotate: 45deg;
+  border-inline-end: 2px solid var(--nv-color-on-accent);
+  border-block-end: 2px solid var(--nv-color-on-accent);
+}
+
+.nv-checkbox:checked:not(:indeterminate)::after {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Indeterminate is its own mark rather than a variation of the tick: the two
+   have to be able to cross over each other when the state changes. */
+.nv-checkbox::before {
+  inset: 50% 25% auto;
+  translate: 0 -50%;
+  block-size: 2px;
+  background-color: var(--nv-color-on-accent);
+  border-radius: var(--nv-radius-full);
+}
+
+.nv-checkbox:indeterminate::before {
+  opacity: 1;
+  scale: 1;
+}
+
+.nv-radio::after {
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  inline-size: 0.4em;
+  block-size: 0.4em;
+  background-color: var(--nv-color-on-accent);
+  border-radius: var(--nv-radius-full);
+}
+
+.nv-radio:checked::after {
+  opacity: 1;
+  scale: 1;
+}
+
+.nv-checkbox:disabled,
+.nv-radio:disabled {
+  background-color: var(--nv-color-background-subtle);
+  border-color: var(--nv-color-border);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* --- Switch --------------------------------------------------------------------------
+   The track is a slot cut into the surface and the thumb is a knob riding in
+   it: the physical relationship does the explaining, so the control reads as
+   on or off without a label. The slot stays recessed when it fills with color
+   — switching on lights the slot, it does not raise it. */
+
+.nv-switch {
+  --_track-inline: calc(var(--nv-space-6) * 1.5);
+  --_track-block: var(--nv-space-6);
+  --_thumb: calc(var(--_track-block) - 6px);
+  --_inset: 2px;
+  --_travel: calc(
+    var(--_track-inline) - var(--_thumb) - var(--_inset) * 2 -
+    var(--nv-border-width) * 2
+  );
+
+  position: relative;
+  flex: none;
+  inline-size: var(--_track-inline);
+  block-size: var(--_track-block);
+  margin: 0;
+  background-color: var(--nv-color-surface-inset);
+  border: var(--nv-border-width) solid var(--nv-color-border);
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+  cursor: pointer;
+  appearance: none;
+  transition: var(--nv-transition-control);
+}
+
+.nv-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--_inset);
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  translate: 0 -50%;
+  background-color: var(--nv-color-knob);
+  background-image: var(--nv-sheen-knob);
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-outline), var(--nv-elevation-2);
+  transition:
+    translate var(--nv-duration-travel) var(--nv-ease-emphasized),
+    background-color var(--nv-duration-fast) var(--nv-ease-standard);
+}
+
+.nv-switch:checked {
+  background-color: var(--nv-color-accent);
+  border-color: transparent;
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-outline);
+}
+
+.nv-switch:checked::after {
+  translate: var(--_travel) -50%;
+}
+
+.nv-switch:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* --- Inline control + label --------------------------------------------------------- */
+
+.nv-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2-5);
+  font: var(--nv-font-body);
+  cursor: pointer;
+}
+
+.nv-choice:has(:disabled) {
+  color: var(--nv-color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* translate has no logical equivalent, so the thumb's direction is flipped
+   explicitly rather than travelling the wrong way in RTL. */
+.nv-switch:checked:dir(rtl)::after {
+  translate: calc(var(--_travel) * -1) -50%;
+}

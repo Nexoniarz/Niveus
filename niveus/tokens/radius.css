@@ -1,0 +1,24 @@
+/* ==========================================================================
+   Niveus — Radius
+   --------------------------------------------------------------------------
+   Corner softness carries as much of the Niveus character as shadow does.
+   Radii grow with the surface: controls stay modest and machined, containers
+   get noticeably rounder — a window or a popover is a soft object, a button
+   is a key — and only pills, knobs and avatars go fully round.
+   ========================================================================== */
+
+:root {
+  --nv-radius-none: 0;
+  --nv-radius-xs: 0.25rem; /*   4px — tags, swatches, nested chips */
+  --nv-radius-sm: 0.5rem; /*    8px — small controls, menu items */
+  --nv-radius-md: 0.625rem; /* 10px — buttons, inputs, default control radius */
+  --nv-radius-lg: 0.875rem; /* 14px — cards, panels, menus */
+  --nv-radius-xl: 1.25rem; /*  20px — windows, dialogs, sheets, popovers */
+  --nv-radius-2xl: 1.5rem; /*  24px — docks, hero surfaces */
+  --nv-radius-full: 999rem; /*      — pills, avatars, switches */
+
+  /* Nested radius: an inner surface inset by N should be N smaller than its
+     parent, or the corners read as off-center. */
+  --nv-radius-nested-md: calc(var(--nv-radius-lg) - var(--nv-space-2));
+  --nv-radius-nested-lg: calc(var(--nv-radius-xl) - var(--nv-space-3));
+}

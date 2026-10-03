@@ -1,0 +1,101 @@
+/* ==========================================================================
+   Niveus — Bed
+   --------------------------------------------------------------------------
+     <div class="nv-bed"> … </div>
+
+   A bed is ground that is visibly *not* ordinary background. Where a card says
+   "this content belongs together", a bed says "what sits here is different in
+   kind" — a feature being shown off, a preview, a sandbox, an empty state, a
+   region under explanation.
+
+   It reads that way because of what it does to the materials on top of it: the
+   hatch and the soft color blooms give translucent surfaces something to be
+   translucent *against*, and give shadows something to fall on. A frosted panel
+   over a flat grey proves nothing; over a bed it is obvious.
+
+   That is also the rule for using one. A bed is for regions the user should
+   look *at*. Put content they need to work *through* on a plain surface —
+   patterning behind a form or a table is noise, and the calm is the point.
+
+   Everything it is made of derives from the accent, so it follows the brand.
+   Set --nv-bed-tint to lead with a different color.
+   ========================================================================== */
+
+.nv-bed {
+  --nv-bed-tint: var(--nv-color-accent);
+  --_bloom: 16%;
+  --_hatch: var(--nv-color-border-subtle);
+
+  position: relative;
+  padding: var(--nv-space-6);
+
+  background-color: var(--nv-color-background-subtle);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: var(--nv-radius-xl);
+
+  /* The hatch sits over the blooms, and both sit under the content: three
+     background layers rather than a pseudo-element, so nothing has to be
+     lifted out of the way. */
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--_hatch) 0 2px,
+      transparent 2px 14px
+    ),
+    radial-gradient(
+      60% 80% at 15% 20%,
+      color-mix(in oklab, var(--nv-bed-tint) var(--_bloom), transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 70% at 85% 25%,
+      color-mix(in oklab, var(--nv-color-danger) calc(var(--_bloom) * 0.7), transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      70% 90% at 50% 100%,
+      color-mix(in oklab, var(--nv-color-success) calc(var(--_bloom) * 0.7), transparent),
+      transparent 70%
+    );
+
+  overflow: hidden;
+  isolation: isolate;
+  transition: var(--nv-transition-surface);
+}
+
+/* Just the ground, no weather: for grouping a region without drawing the eye
+   to it. */
+.nv-bed--quiet {
+  --_bloom: 8%;
+  --_hatch: transparent;
+}
+
+.nv-bed--vivid {
+  --_bloom: 26%;
+}
+
+/* One color instead of three — a bed that belongs to a single state. */
+.nv-bed--single {
+  background-image:
+    repeating-linear-gradient(45deg, var(--_hatch) 0 2px, transparent 2px 14px),
+    radial-gradient(
+      80% 100% at 30% 0%,
+      color-mix(in oklab, var(--nv-bed-tint) var(--_bloom), transparent),
+      transparent 75%
+    );
+}
+
+.nv-bed--flush {
+  border-radius: 0;
+  border-inline: 0;
+}
+
+.nv-bed__label {
+  display: block;
+  margin-block-end: var(--nv-space-4);
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--nv-color-text-tertiary);
+}

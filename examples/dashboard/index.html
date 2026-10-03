@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northwire Ops — a dashboard built with Niveus</title>
+
+<link rel="stylesheet" href="../../dist/niveus.css">
+<script src="../../niveus/niveus.js" defer></script>
+<link rel="stylesheet" href="app.css">
+
+<script>
+  try {
+    var saved = localStorage.getItem("ops-theme");
+    if (saved && saved !== "system") document.documentElement.setAttribute("data-theme", saved);
+  } catch (error) {}
+</script>
+
+<style>
+  :root { --nv-brand: #0d9488; }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="nv-nav nv-nav--vertical app__sidebar" aria-label="Sections"
+         style="--nv-selection-name: nv-ops-sidebar">
+    <a class="nv-nav__brand" href="#">
+      <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 18V9M10 18V5M16 18v-6M22 18H2" stroke="currentColor"
+              stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      Northwire Ops
+    </a>
+
+    <span class="nv-nav__section">Monitor</span>
+    <ul class="nv-nav__list" data-nv-travel="local">
+      <li><a class="nv-nav__item" href="#" aria-current="page">Overview</a></li>
+      <li><a class="nv-nav__item" href="#">Services <span class="nv-nav__badge">6</span></a></li>
+      <li><a class="nv-nav__item" href="#">Incidents <span class="nv-nav__badge">1</span></a></li>
+      <li><a class="nv-nav__item" href="#">Traces</a></li>
+    </ul>
+
+    <span class="nv-nav__section">Manage</span>
+    <ul class="nv-nav__list">
+      <li><a class="nv-nav__item" href="#">Deployments</a></li>
+      <li><a class="nv-nav__item" href="#">On-call</a></li>
+      <li><span class="nv-nav__item" aria-disabled="true">Cost (soon)</span></li>
+    </ul>
+
+    <span class="nv-nav__spacer"></span>
+
+    <div class="nv-bed nv-bed--quiet nv-bed--single" style="padding: var(--nv-space-4)">
+      <p class="nv-label">Retention</p>
+      <p class="nv-caption" style="margin-block: var(--nv-space-1) var(--nv-space-3)">
+        14 of 30 days used.
+      </p>
+      <button class="nv-button nv-button--sm nv-button--primary nv-button--block">Upgrade plan</button>
+    </div>
+  </aside>
+
+  <main class="app__main">
+
+    <nav class="nv-nav nv-nav--static" aria-label="Toolbar">
+      <ol class="nv-breadcrumbs">
+        <li><a href="#">Northwire</a></li>
+        <li><a href="#">Platform</a></li>
+        <li aria-current="page">Overview</li>
+      </ol>
+
+      <span class="nv-nav__spacer"></span>
+
+      <button class="nv-button nv-button--sm nv-menu-trigger" popovertarget="range-menu"
+              style="--nv-anchor: --range">
+        <span id="range-label">Last 24 hours</span>
+        <span class="nv-disclosure__chevron" aria-hidden="true"
+              style="margin-inline-start: var(--nv-space-1)"></span>
+      </button>
+      <div class="nv-menu" popover id="range-menu" style="--nv-anchor: --range">
+        <button class="nv-menu__item" aria-checked="true" data-range="Last 24 hours">Last 24 hours</button>
+        <button class="nv-menu__item" data-range="Last 7 days">Last 7 days</button>
+        <button class="nv-menu__item" data-range="Last 30 days">Last 30 days</button>
+        <hr class="nv-menu__separator">
+        <button class="nv-menu__item" data-range="Custom range">Custom range…</button>
+      </div>
+
+      <button class="nv-button nv-button--sm nv-button--ghost">Export</button>
+
+      <div class="nv-button-group" role="group" aria-label="Appearance">
+        <button class="nv-button nv-button--sm" data-nv-theme="light" aria-pressed="false">Light</button>
+        <button class="nv-button nv-button--sm" data-nv-theme="dark" aria-pressed="false">Dark</button>
+        <button class="nv-button nv-button--sm" data-nv-theme="system" aria-pressed="true">Auto</button>
+      </div>
+    </nav>
+
+    <div class="app__content">
+
+      <div class="page-head">
+        <div>
+          <h1 class="nv-heading">Platform overview</h1>
+          <p class="nv-caption" style="margin-block-start: var(--nv-space-1)">
+            Six services · updated 40 seconds ago
+          </p>
+        </div>
+        <div class="nv-cluster">
+          <span class="nv-badge nv-badge--danger"><span class="nv-badge__dot"></span>1 incident open</span>
+          <button class="nv-button nv-button--sm nv-button--primary" data-nv-dialog="incident">
+            Review incident
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat tiles ------------------------------------------------------ -->
+      <div class="stats">
+        <article class="nv-card"><div class="nv-card__body">
+          <span class="nv-overline">Requests</span>
+          <span class="stat__value">14.2k</span>
+          <span class="nv-badge nv-badge--success">+6.1% vs yesterday</span>
+        </div></article>
+
+        <article class="nv-card"><div class="nv-card__body">
+          <span class="nv-overline">Error rate</span>
+          <span class="stat__value">0.42%</span>
+          <span class="nv-badge nv-badge--danger">+0.29 pts</span>
+        </div></article>
+
+        <article class="nv-card"><div class="nv-card__body">
+          <span class="nv-overline">p95 latency</span>
+          <span class="stat__value">318 ms</span>
+          <span class="nv-badge nv-badge--warning">+118%</span>
+        </div></article>
+
+        <article class="nv-card"><div class="nv-card__body">
+          <span class="nv-overline">Uptime</span>
+          <span class="stat__value">99.71%</span>
+          <span class="nv-badge">30-day window</span>
+        </div></article>
+      </div>
+
+      <!-- Chart ------------------------------------------------------------ -->
+      <article class="nv-card">
+        <div class="nv-card__header">
+          <div>
+            <h2 class="nv-card__title">p95 latency</h2>
+            <p class="nv-card__subtitle">Solid: today · dashed: same day last week</p>
+          </div>
+          <span class="nv-badge nv-badge--warning">Regression at 14:00</span>
+        </div>
+
+        <div class="nv-card__body">
+          <svg class="chart" viewBox="0 0 600 200" preserveAspectRatio="none"
+               role="img" aria-label="p95 latency over 24 hours, rising sharply after 14:00">
+            <defs>
+              <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--nv-color-accent)" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="var(--nv-color-accent)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <g class="chart__grid">
+              <line x1="0" y1="40" x2="600" y2="40"/>
+              <line x1="0" y1="90" x2="600" y2="90"/>
+              <line x1="0" y1="140" x2="600" y2="140"/>
+              <line x1="0" y1="190" x2="600" y2="190"/>
+            </g>
+
+            <path class="chart__area"
+                  d="M0,150 L60,146 L120,152 L180,143 L240,148 L300,140 L360,132 L420,60 L480,44 L540,52 L600,40 L600,190 L0,190 Z"/>
+            <polyline class="chart__line"
+                      points="0,150 60,146 120,152 180,143 240,148 300,140 360,132 420,60 480,44 540,52 600,40"/>
+            <polyline class="chart__line chart__line--compare"
+                      points="0,152 60,149 120,151 180,146 240,150 300,145 360,148 420,143 480,147 540,141 600,145"/>
+          </svg>
+
+          <div class="chart__labels nv-caption">
+            <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>now</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Services and activity -------------------------------------------- -->
+      <div class="split">
+        <article class="nv-card nv-card--flush">
+          <div class="nv-card__header" style="padding: var(--nv-space-5)">
+            <div>
+              <h2 class="nv-card__title">Services</h2>
+              <p class="nv-card__subtitle">Health across the platform</p>
+            </div>
+            <div class="nv-nav-tabs" role="tablist" data-nv-tabs aria-label="Service view"
+                 style="--nv-selection-name: nv-ops-tabs">
+              <button class="nv-nav__item" role="tab" id="tab-all"
+                      aria-controls="panel-all" aria-selected="true">All</button>
+              <button class="nv-nav__item" role="tab" id="tab-attention"
+                      aria-controls="panel-attention" aria-selected="false" tabindex="-1">Needs attention</button>
+            </div>
+          </div>
+
+          <div class="nv-tab-panel" id="panel-all" role="tabpanel" aria-labelledby="tab-all">
+            <div class="nv-table-frame">
+              <table class="nv-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Service</th>
+                    <th scope="col" class="nv-table__number">Uptime</th>
+                    <th scope="col" class="nv-table__number">p95</th>
+                    <th scope="col" class="nv-table__number">req/min</th>
+                    <th scope="col"><span class="nv-visually-hidden">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--success"><span class="nv-badge__dot"></span>Healthy</span>
+                Checkout API
+              </span>
+            </td>
+            <td class="nv-table__number">99.98%</td>
+            <td class="nv-table__number">142 ms</td>
+            <td class="nv-table__number">2.4k</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-1" style="--nv-anchor: --svc1" aria-label="Options for Checkout API">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-1" style="--nv-anchor: --svc1">
+                <span class="nv-menu__label">Checkout API</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--warning"><span class="nv-badge__dot"></span>Degraded</span>
+                Pricing
+              </span>
+            </td>
+            <td class="nv-table__number">99.71%</td>
+            <td class="nv-table__number">318 ms</td>
+            <td class="nv-table__number">1.9k</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-2" style="--nv-anchor: --svc2" aria-label="Options for Pricing">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-2" style="--nv-anchor: --svc2">
+                <span class="nv-menu__label">Pricing</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--success"><span class="nv-badge__dot"></span>Healthy</span>
+                Identity
+              </span>
+            </td>
+            <td class="nv-table__number">99.99%</td>
+            <td class="nv-table__number">88 ms</td>
+            <td class="nv-table__number">6.1k</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-3" style="--nv-anchor: --svc3" aria-label="Options for Identity">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-3" style="--nv-anchor: --svc3">
+                <span class="nv-menu__label">Identity</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--success"><span class="nv-badge__dot"></span>Healthy</span>
+                Search
+              </span>
+            </td>
+            <td class="nv-table__number">99.95%</td>
+            <td class="nv-table__number">204 ms</td>
+            <td class="nv-table__number">3.3k</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-4" style="--nv-anchor: --svc4" aria-label="Options for Search">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-4" style="--nv-anchor: --svc4">
+                <span class="nv-menu__label">Search</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--danger"><span class="nv-badge__dot"></span>Failing</span>
+                Notifications
+              </span>
+            </td>
+            <td class="nv-table__number">97.20%</td>
+            <td class="nv-table__number">—</td>
+            <td class="nv-table__number">0</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-5" style="--nv-anchor: --svc5" aria-label="Options for Notifications">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-5" style="--nv-anchor: --svc5">
+                <span class="nv-menu__label">Notifications</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--success"><span class="nv-badge__dot"></span>Healthy</span>
+                Reporting
+              </span>
+            </td>
+            <td class="nv-table__number">99.90%</td>
+            <td class="nv-table__number">512 ms</td>
+            <td class="nv-table__number">410</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-6" style="--nv-anchor: --svc6" aria-label="Options for Reporting">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-6" style="--nv-anchor: --svc6">
+                <span class="nv-menu__label">Reporting</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="nv-tab-panel" id="panel-attention" role="tabpanel"
+               aria-labelledby="tab-attention" hidden>
+            <div class="nv-table-frame">
+              <table class="nv-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Service</th>
+                    <th scope="col" class="nv-table__number">Uptime</th>
+                    <th scope="col" class="nv-table__number">p95</th>
+                    <th scope="col" class="nv-table__number">req/min</th>
+                    <th scope="col"><span class="nv-visually-hidden">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--warning"><span class="nv-badge__dot"></span>Degraded</span>
+                Pricing
+              </span>
+            </td>
+            <td class="nv-table__number">99.71%</td>
+            <td class="nv-table__number">318 ms</td>
+            <td class="nv-table__number">1.9k</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-2" style="--nv-anchor: --svc2" aria-label="Options for Pricing">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-2" style="--nv-anchor: --svc2">
+                <span class="nv-menu__label">Pricing</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="service-name">
+                <span class="nv-badge nv-badge--danger"><span class="nv-badge__dot"></span>Failing</span>
+                Notifications
+              </span>
+            </td>
+            <td class="nv-table__number">97.20%</td>
+            <td class="nv-table__number">—</td>
+            <td class="nv-table__number">0</td>
+            <td class="nv-table__actions">
+              <button class="nv-button nv-button--ghost nv-button--icon nv-button--sm nv-menu-trigger"
+                      popovertarget="svc-menu-5" style="--nv-anchor: --svc5" aria-label="Options for Notifications">
+                <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+                </svg>
+              </button>
+              <div class="nv-menu" popover id="svc-menu-5" style="--nv-anchor: --svc5">
+                <span class="nv-menu__label">Notifications</span>
+                <button class="nv-menu__item">Open dashboard</button>
+                <button class="nv-menu__item">View logs<span class="nv-menu__shortcut">L</span></button>
+                <hr class="nv-menu__separator">
+                <button class="nv-menu__item nv-menu__item--danger">Restart service</button>
+              </div>
+            </td>
+          </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+        <div class="nv-stack">
+          <article class="nv-card">
+            <div class="nv-card__header">
+              <div><h2 class="nv-card__title">Activity</h2></div>
+            </div>
+            <div class="nv-card__body" style="padding-block-start: 0">
+              <ul class="activity nv-caption">
+                <li>
+                  <span class="activity__mark activity__mark--danger"></span>
+                  <span><strong class="nv-text-primary">Notifications</strong> stopped responding
+                  <span style="display: block">14:12 · alert #881</span></span>
+                </li>
+                <li>
+                  <span class="activity__mark activity__mark--warning"></span>
+                  <span><strong class="nv-text-primary">Pricing</strong> p95 crossed 300 ms
+                  <span style="display: block">14:04 · alert #880</span></span>
+                </li>
+                <li>
+                  <span class="activity__mark activity__mark--accent"></span>
+                  <span><strong class="nv-text-primary">#4412</strong> deployed to production
+                  <span style="display: block">13:58 · by robin</span></span>
+                </li>
+                <li>
+                  <span class="activity__mark activity__mark--success"></span>
+                  <span><strong class="nv-text-primary">Search</strong> recovered
+                  <span style="display: block">09:31 · alert #879</span></span>
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          <div class="nv-disclosure-group">
+            <details class="nv-disclosure" open>
+              <summary class="nv-disclosure__summary">
+                What changed at 14:00?
+                <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="nv-disclosure__body">
+                One deploy landed in the window: <code class="nv-code">#4412</code>,
+                which moved tax resolution inside the cart loop.
+              </div>
+            </details>
+            <details class="nv-disclosure">
+              <summary class="nv-disclosure__summary">
+                Who is on call?
+                <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="nv-disclosure__body">
+                Robin Kade until 18:00, then Sam Oyelaran. Escalation goes to
+                the platform channel after 10 minutes.
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <footer class="nv-cluster nv-cluster--between" style="padding-block-start: var(--nv-space-6)">
+        <span class="nv-caption">Northwire Ops — an example interface built with Niveus.</span>
+        <span class="nv-caption">Made by Nexoniarz</span>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<dialog class="nv-dialog" id="incident" aria-labelledby="incident-title">
+  <div class="nv-dialog__header">
+    <div>
+      <h2 class="nv-dialog__title" id="incident-title">Incident #881</h2>
+      <p class="nv-dialog__description">Notifications stopped responding at 14:12.</p>
+    </div>
+    <button class="nv-button nv-button--ghost nv-button--icon nv-dialog__close"
+            aria-label="Close" data-nv-close>
+      <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="nv-dialog__body">
+    <div class="nv-stack nv-stack--tight">
+      <div class="nv-cluster nv-cluster--tight">
+        <span class="nv-badge nv-badge--danger nv-badge--solid">Sev 2</span>
+        <span class="nv-badge">27 minutes open</span>
+        <span class="nv-badge">Robin Kade</span>
+      </div>
+      <p class="nv-body">
+        The queue consumer exited after the pricing service began timing out,
+        and did not restart because the health check still reported ready.
+      </p>
+      <div class="nv-field">
+        <label class="nv-field__label" for="note">Add a note</label>
+        <textarea class="nv-input" id="note" rows="3"
+                  placeholder="What did you find?"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="nv-dialog__footer nv-dialog__footer--divided">
+    <button class="nv-button" data-nv-close>Close</button>
+    <button class="nv-button nv-button--danger">Page the team</button>
+    <button class="nv-button nv-button--primary" data-nv-close>Acknowledge</button>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.addEventListener("nv:theme", (event) => {
+      try { localStorage.setItem("ops-theme", event.detail.theme); } catch {}
+    });
+    nv.syncThemeControls(document.documentElement.getAttribute("data-theme") || "system");
+
+    const sidebar = document.querySelector('[data-nv-travel="local"]');
+    sidebar.addEventListener("click", (event) => {
+      const item = event.target.closest(".nv-nav__item");
+      if (!item || item.hasAttribute("aria-current")) return;
+      event.preventDefault();
+      nv.transition(() => {
+        sidebar.querySelectorAll("[aria-current]").forEach((el) => el.removeAttribute("aria-current"));
+        item.setAttribute("aria-current", "page");
+      }, { scope: sidebar });
+    });
+
+    document.querySelectorAll("[data-range]").forEach((option) => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-range]").forEach((other) => {
+          other.setAttribute("aria-checked", String(other === option));
+        });
+        document.getElementById("range-label").textContent = option.dataset.range;
+        document.getElementById("range-menu").hidePopover();
+      });
+    });
+  });
+</script>
+</body>
+</html>

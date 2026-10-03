@@ -1,0 +1,186 @@
+/* ==========================================================================
+   Lumen — page layout
+   --------------------------------------------------------------------------
+   Everything in this file is *layout*: where things sit, how wide they get,
+   when they stack. Not one color, shadow, radius, type size or duration is
+   stated here — those all come from Niveus, which is the whole point of the
+   split. If you find yourself writing a hex value in a file like this, the
+   system is missing a token.
+   ========================================================================== */
+
+.shell {
+  max-inline-size: var(--nv-layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--nv-layout-gutter);
+}
+
+.section {
+  padding-block: var(--nv-space-20);
+}
+
+.section__head {
+  max-inline-size: var(--nv-measure);
+  margin-block-end: var(--nv-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-3);
+}
+
+.section__head--center {
+  margin-inline: auto;
+  text-align: center;
+  align-items: center;
+}
+
+/* --- Hero ------------------------------------------------------------------ */
+
+.hero {
+  display: grid;
+  gap: var(--nv-space-12);
+  padding-block: var(--nv-space-16) var(--nv-space-8);
+  align-items: center;
+}
+
+@media (min-width: 62rem) {
+  .hero {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--nv-space-16);
+  }
+}
+
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-5);
+  align-items: flex-start;
+}
+
+.hero__title {
+  font-size: clamp(var(--nv-font-size-4xl), 6vw, var(--nv-font-size-5xl));
+}
+
+/* --- Preview ---------------------------------------------------------------
+   A mock of the product, sitting on a bed so the frosted panel above it has
+   something to be frosted against. */
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-3);
+  max-inline-size: 30rem;
+  margin-inline: auto;
+}
+
+.bubble {
+  padding: var(--nv-space-3) var(--nv-space-4);
+  border-radius: var(--nv-radius-lg);
+  max-inline-size: 85%;
+}
+
+.bubble--from-user {
+  align-self: flex-end;
+  border-end-end-radius: var(--nv-radius-xs);
+}
+
+.bubble--from-agent {
+  align-self: flex-start;
+  border-end-start-radius: var(--nv-radius-xs);
+}
+
+/* --- Logos ------------------------------------------------------------------ */
+
+.logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nv-space-8);
+  justify-content: center;
+  align-items: center;
+  padding-block: var(--nv-space-8);
+  opacity: 0.75;
+}
+
+/* --- Features ---------------------------------------------------------------- */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  gap: var(--nv-space-5);
+}
+
+.feature__icon {
+  inline-size: var(--nv-space-10);
+  block-size: var(--nv-space-10);
+  display: grid;
+  place-items: center;
+  margin-block-end: var(--nv-space-4);
+  border-radius: var(--nv-radius-md);
+  background-color: var(--nv-color-accent-subtle);
+  color: var(--nv-color-accent-text);
+}
+
+.feature__icon svg {
+  inline-size: var(--nv-space-5);
+  block-size: var(--nv-space-5);
+}
+
+/* --- Pricing ------------------------------------------------------------------ */
+
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  gap: var(--nv-space-5);
+  align-items: start;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--nv-space-2);
+  margin-block: var(--nv-space-4);
+}
+
+.price__amount {
+  font-size: var(--nv-font-size-4xl);
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-tighter);
+  color: var(--nv-color-text-primary);
+}
+
+.plan-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-2-5);
+}
+
+.plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nv-space-2-5);
+}
+
+.plan-features svg {
+  inline-size: 1em;
+  block-size: 1em;
+  margin-block-start: 0.25em;
+  flex: none;
+  color: var(--nv-color-success-text);
+}
+
+/* --- Closing ------------------------------------------------------------------- */
+
+.closing {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nv-space-5);
+  padding-block: var(--nv-space-12);
+}
+
+.site-footer {
+  padding-block: var(--nv-space-8) var(--nv-space-12);
+  border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+}

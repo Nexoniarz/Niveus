@@ -1,0 +1,236 @@
+/* ==========================================================================
+   Niveus — Continuity
+   --------------------------------------------------------------------------
+   Every interaction should read as a continuation of the previous state, not
+   as a replacement of it. When something moves, grows, collapses or changes
+   appearance, the change itself should be perceptible: where it came from,
+   where it went, and why.
+
+   This layer holds the cross-cutting machinery that individual components
+   then opt into:
+
+     · one duration and easing for everything the browser animates between
+       two states via a view transition
+     · emphasis that travels between elements instead of disappearing from one
+       and reappearing on another (--nv-selection-name)
+     · direction, so moving forward and moving back do not look identical
+     · appearance changes that cross-fade rather than cut
+
+   The goal is not to animate everything. It is that nothing pops into a new
+   state the user could have watched it reach.
+   ========================================================================== */
+
+:root {
+  /* Lets block-size: auto participate in transitions, which is what allows
+     content to expand from where it already is instead of appearing at full
+     height. Without it, every disclosure in the system would jump. */
+  interpolate-size: allow-keywords;
+
+  /* The default name for travelling emphasis. A page with more than one
+     selection group must give each group its own name — two visible elements
+     sharing a view-transition-name abort the transition entirely. */
+  --nv-selection-name: nv-selection;
+}
+
+/* --- View transitions -------------------------------------------------------
+   Anything the application wraps in document.startViewTransition() inherits
+   the system's travel duration and easing, so a state change animates like
+   the rest of Niveus without the application choosing timings. */
+
+::view-transition-group(*) {
+  animation-duration: var(--nv-duration-travel);
+  animation-timing-function: var(--nv-ease-emphasized);
+}
+
+/* The page behind a travelling element cross-fades quickly — it is context,
+   not the subject of the change, and a slow fade would make the whole
+   interface feel as though it were being replaced. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--nv-duration-quick);
+  animation-timing-function: var(--nv-ease-standard);
+}
+
+/* --- Travelling emphasis -------------------------------------------------------
+   A selection marker moves between two elements, which no single element can
+   transition — so it is captured and interpolated. The problem that creates is
+   layering: transition layers paint above the page snapshot, so a marker that
+   sits *behind* its label at rest would slide over the top of every label it
+   passed, washing the text as it went.
+
+   The fix is to capture the labels too and order the groups explicitly. The
+   marker travels below; the items ride above it, exactly as they do at rest.
+   niveus.js names the items of the group that is changing, and only while it
+   changes — names have to be unique per document, which no stylesheet can
+   guarantee — and every other item simply stays in the page snapshot.
+
+   Because the layering is now correct, the marker needs no trick to stay out of
+   the way: it travels at full opacity, like the solid object it is. */
+
+::view-transition-group(.nv-travelling) {
+  z-index: 0;
+}
+
+/* The marker changes shape as it travels — a short label's pill becomes a
+   long one's. By default the browser scales each snapshot to the group's
+   width and keeps its aspect ratio, so mid-way a 40×26 pill stretched to
+   80px wide is drawn 52px tall, hanging out below its strip. The marker is a
+   plain surface, so its snapshots fill the box instead. */
+::view-transition-old(.nv-travelling),
+::view-transition-new(.nv-travelling) {
+  block-size: 100%;
+}
+
+::view-transition-group(.nv-carried) {
+  z-index: 1;
+}
+
+/* A carried item does not move — only its color changes when selection leaves
+   or arrives. That resolves quickly so the label does not sit half-way between
+   two colors for the length of the travel. */
+::view-transition-old(.nv-carried),
+::view-transition-new(.nv-carried) {
+  animation-duration: var(--nv-duration-fast);
+}
+
+/* --- Appearance ---------------------------------------------------------------
+   A theme change is the one moment the entire surface is the subject, so the
+   root cross-fade slows down and every color arrives together. The attribute
+   is set for the duration of the change by nv.setTheme(). */
+
+:root[data-nv-transition="theme"]::view-transition-old(root),
+:root[data-nv-transition="theme"]::view-transition-new(root) {
+  animation-duration: var(--nv-duration-theme);
+  animation-timing-function: var(--nv-ease-standard);
+}
+
+/* Without the view-transition path — no script, or a browser without the API —
+   surfaces still glide, because their own transitions cover color. */
+
+/* --- Direction ------------------------------------------------------------------
+   Moving forward and moving back should not look the same. The application
+   sets data-nv-direction on the root for the length of the transition; content
+   then leaves towards where the user came from and enters from where they are
+   going. Without a direction, content simply rises into place.
+
+   Content hands over; it does not cross-fade. Two blocks of text at half
+   opacity on top of each other read as a rendering fault, not as motion, so
+   the outgoing content is gone (fast) before the incoming arrives (delayed by
+   that same beat). The box itself never empties for longer than a blink.
+
+   Any element whose content changes in place takes part by carrying the
+   nv-content class: .nv-continuous and .nv-tab-panel both do.
+
+   The box clips what it holds. When a tall panel gives way to a short one,
+   the page around it has already reflowed to the new height, so unclipped
+   outgoing content would spill out below its own card. */
+
+::view-transition-group(.nv-content) {
+  overflow: clip;
+}
+
+::view-transition-old(.nv-content) {
+  animation: nv-fade-out var(--nv-duration-fast) var(--nv-ease-exit) both;
+}
+
+::view-transition-new(.nv-content) {
+  animation:
+    nv-fade-in var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both,
+    nv-rise var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both;
+}
+
+:root[data-nv-direction="forward"]::view-transition-old(.nv-content) {
+  animation:
+    nv-fade-out var(--nv-duration-fast) var(--nv-ease-exit) both,
+    nv-exit-to-start var(--nv-duration-fast) var(--nv-ease-exit) both;
+}
+
+:root[data-nv-direction="forward"]::view-transition-new(.nv-content) {
+  animation:
+    nv-fade-in var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both,
+    nv-enter-from-end var(--nv-duration-normal) var(--nv-ease-emphasized) var(--nv-duration-fast) both;
+}
+
+:root[data-nv-direction="backward"]::view-transition-old(.nv-content) {
+  animation:
+    nv-fade-out var(--nv-duration-fast) var(--nv-ease-exit) both,
+    nv-exit-to-end var(--nv-duration-fast) var(--nv-ease-exit) both;
+}
+
+:root[data-nv-direction="backward"]::view-transition-new(.nv-content) {
+  animation:
+    nv-fade-in var(--nv-duration-normal) var(--nv-ease-entrance) var(--nv-duration-fast) both,
+    nv-enter-from-start var(--nv-duration-normal) var(--nv-ease-emphasized) var(--nv-duration-fast) both;
+}
+
+@keyframes nv-fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes nv-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes nv-rise {
+  from { translate: 0 var(--nv-travel-sm); }
+}
+
+@keyframes nv-enter-from-end {
+  from { translate: var(--nv-travel-lg) 0; }
+}
+
+@keyframes nv-enter-from-start {
+  from { translate: calc(var(--nv-travel-lg) * -1) 0; }
+}
+
+@keyframes nv-exit-to-start {
+  to { translate: calc(var(--nv-travel-md) * -1) 0; }
+}
+
+@keyframes nv-exit-to-end {
+  to { translate: var(--nv-travel-md) 0; }
+}
+
+/* --- Utilities ---------------------------------------------------------------------
+   .nv-continuous marks a region whose content should cross-fade in place when
+   it changes — the "same surface, different content" relationship. */
+
+.nv-continuous {
+  view-transition-name: var(--nv-content-name, nv-content);
+  view-transition-class: nv-content;
+}
+
+/* Collapsible region for markup that is not a <details>. The 0fr -> 1fr grid
+   row is the one technique that animates to an unknown content height in every
+   browser, with no measurement and no script. */
+
+.nv-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows var(--nv-duration-expand) var(--nv-ease-standard),
+    opacity var(--nv-duration-expand) var(--nv-ease-standard);
+  opacity: 0;
+}
+
+.nv-collapse > * {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.nv-collapse[data-open],
+.nv-collapse:not([hidden])[open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* Reduced motion does not mean "no continuity" — a state change still has to
+   resolve rather than be cut mid-way. The token layer already collapses every
+   duration to 1ms; this removes the displacement so nothing slides. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 1ms;
+  }
+}

@@ -1,0 +1,64 @@
+/* ==========================================================================
+   Niveus — Utilities
+   --------------------------------------------------------------------------
+   A deliberately short list. Utilities exist for the handful of patterns that
+   appear in every application and have exactly one correct implementation —
+   not as a general-purpose styling language. Anything that needs a second
+   utility to look right is a component.
+   ========================================================================== */
+
+/* Content for assistive technology only. Not display:none, which removes it
+   from the accessibility tree as well. */
+.nv-visually-hidden:not(:focus):not(:active) {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.nv-container {
+  inline-size: 100%;
+  max-inline-size: var(--nv-layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--nv-layout-gutter);
+}
+
+/* Vertical rhythm between siblings, on the spacing scale. */
+.nv-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-4);
+}
+
+.nv-stack--tight { gap: var(--nv-space-2); }
+.nv-stack--loose { gap: var(--nv-space-6); }
+
+/* A row that wraps instead of overflowing. */
+.nv-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--nv-space-3);
+}
+
+.nv-cluster--tight { gap: var(--nv-space-2); }
+.nv-cluster--between { justify-content: space-between; }
+
+.nv-truncate {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Long-form text at a readable measure. */
+.nv-prose {
+  max-inline-size: var(--nv-measure);
+  line-height: var(--nv-line-height-relaxed);
+  color: var(--nv-color-text-secondary);
+}

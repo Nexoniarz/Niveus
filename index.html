@@ -1,0 +1,1404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Niveus — Design System</title>
+<link rel="stylesheet" href="dist/niveus.css">
+<script src="niveus/niveus.js" defer></script>
+<script>
+  /* Applied before first paint, so the page never renders in the wrong
+     appearance and then corrects itself. */
+  try {
+    var saved = localStorage.getItem("niveus-theme");
+    if (saved && saved !== "system") document.documentElement.setAttribute("data-theme", saved);
+  } catch (error) { /* storage unavailable — follow the system */ }
+</script>
+<style>
+  /* ----------------------------------------------------------------------
+     Page styles for this document only.
+
+     Everything here is layout: where things sit on the page. Nothing here
+     redefines a color, a shadow, a radius or a type size — those all come
+     from Niveus. That constraint is the point of the page.
+     ---------------------------------------------------------------------- */
+
+  .page {
+    max-inline-size: var(--nv-layout-max-width);
+    margin-inline: auto;
+    padding: var(--nv-space-10) var(--nv-layout-gutter) var(--nv-space-24);
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-16);
+  }
+
+  .section__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-2);
+    margin-block-end: var(--nv-space-6);
+    max-inline-size: var(--nv-measure);
+  }
+
+  .hero {
+    padding-block: var(--nv-space-10) var(--nv-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-5);
+    max-inline-size: var(--nv-measure);
+  }
+
+  .specimen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+    gap: var(--nv-space-4);
+  }
+
+  .specimen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-2);
+  }
+
+  .specimen__demo {
+    block-size: 6rem;
+    border-radius: var(--nv-radius-lg);
+    display: grid;
+    place-items: center;
+  }
+
+  .specimen__name {
+    font: var(--nv-font-label);
+  }
+
+  .specimen__note {
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr));
+    gap: var(--nv-space-3);
+  }
+
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-3);
+    padding: var(--nv-space-2);
+    border-radius: var(--nv-radius-md);
+  }
+
+  .swatch__chip {
+    inline-size: var(--nv-space-10);
+    block-size: var(--nv-space-10);
+    flex: none;
+    border-radius: var(--nv-radius-sm);
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    box-shadow: var(--nv-elevation-inset-sm);
+  }
+
+  .swatch__name {
+    font: var(--nv-font-code);
+    font-size: var(--nv-font-size-xs);
+    color: var(--nv-color-text-secondary);
+    overflow-wrap: anywhere;
+  }
+
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--nv-space-6);
+    padding-block: var(--nv-space-3);
+    border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  }
+
+  .type-row:last-child { border-block-end: 0; }
+
+  .type-row__meta {
+    font: var(--nv-font-code);
+    font-size: var(--nv-font-size-xs);
+    color: var(--nv-color-text-tertiary);
+    white-space: nowrap;
+  }
+
+  .panel {
+    padding: var(--nv-space-6);
+    border-radius: var(--nv-radius-lg);
+    background-color: var(--nv-color-surface);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    box-shadow: var(--nv-highlight-top), var(--nv-elevation-1);
+  }
+
+  .demo-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--nv-space-3);
+  }
+
+  .demo-row + .demo-row {
+    margin-block-start: var(--nv-space-5);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    gap: var(--nv-space-5);
+  }
+
+  .layout-demo {
+    display: flex;
+    border-radius: var(--nv-radius-lg);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    overflow: hidden;
+    block-size: 22rem;
+    background-color: var(--nv-color-background);
+  }
+
+  /* The sidebar in the example is scoped to its frame, not to the viewport. */
+  .layout-demo .nv-nav--vertical {
+    position: static;
+    block-size: auto;
+    inline-size: 13rem;
+    flex: none;
+  }
+
+  .layout-demo__content {
+    flex: 1;
+    padding: var(--nv-space-5);
+    overflow-y: auto;
+  }
+
+  .code {
+    display: block;
+    padding: var(--nv-space-4);
+    border-radius: var(--nv-radius-md);
+    background-color: var(--nv-color-surface-inset);
+    box-shadow: var(--nv-elevation-inset-sm);
+    font: var(--nv-font-code);
+    color: var(--nv-color-text-secondary);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .nv-list-row {
+    display: flex;
+    align-items: center;
+    gap: var(--nv-space-4);
+    padding: var(--nv-space-4) var(--nv-space-5);
+  }
+
+  .nv-list-row > :first-child {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .footer {
+    padding-block-start: var(--nv-space-8);
+    border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    color: var(--nv-color-text-tertiary);
+    font: var(--nv-font-caption);
+  }
+</style>
+</head>
+<body>
+
+<nav class="nv-nav" id="topnav" aria-label="Main"
+     style="--nv-selection-name: nv-sel-topnav">
+  <a class="nv-nav__brand" href="#top">
+    <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="6" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 15.5V8.5l8 7v-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Niveus
+  </a>
+
+  <ul class="nv-nav__list" data-nv-travel>
+    <li><a class="nv-nav__item" href="#materials" aria-current="page">Materials</a></li>
+    <li><a class="nv-nav__item" href="#depth">Depth</a></li>
+    <li><a class="nv-nav__item" href="#components">Components</a></li>
+    <li><a class="nv-nav__item" href="#color">Color</a></li>
+    <li><a class="nv-nav__item" href="#continuity">Continuity</a></li>
+    <li><a class="nv-nav__item" href="#patterns">Patterns</a></li>
+    <li><a class="nv-nav__item" href="examples/index.html">Examples</a></li>
+    <li><a class="nv-nav__item" href="REFERENCE.md">Reference</a></li>
+  </ul>
+
+  <span class="nv-nav__spacer"></span>
+
+  <div class="nv-button-group" role="group" aria-label="Appearance">
+    <button class="nv-button nv-button--sm" data-nv-theme="light" aria-pressed="false">Light</button>
+    <button class="nv-button nv-button--sm" data-nv-theme="dark" aria-pressed="false">Dark</button>
+    <button class="nv-button nv-button--sm" data-nv-theme="system" aria-pressed="true">System</button>
+  </div>
+</nav>
+
+<main class="page" id="top">
+
+  <header class="hero">
+    <p class="nv-overline">Design system</p>
+    <h1 class="nv-display">Surfaces you could press.</h1>
+    <p class="nv-prose">
+      Niveus is a tactile, adaptive interface language. Controls are bevelled
+      keys with light falling across them, fields are wells cut into the
+      surface, and glass is kept for the chrome that floats over everything
+      else. The same components carry their hierarchy from light to dark,
+      because nothing below is defined in terms of an appearance — only in
+      terms of a role.
+    </p>
+    <div class="demo-row">
+      <button class="nv-button nv-button--primary nv-button--lg" data-nv-dialog="welcome">
+        See a dialog
+      </button>
+      <a class="nv-button nv-button--lg" href="#components">Browse components</a>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <section id="materials">
+    <div class="section__head">
+      <h2 class="nv-heading">Materials</h2>
+      <p class="nv-prose">
+        A material answers what light does when it hits a surface. Translucency
+        is a tool for chrome that sits over content — it is not a finish to
+        apply everywhere.
+      </p>
+    </div>
+
+    <div class="nv-bed">
+      <div class="specimen-grid">
+        <div class="specimen">
+          <div class="specimen__demo nv-material-solid"></div>
+          <span class="specimen__name">Solid</span>
+          <span class="specimen__note">Content lives here</span>
+        </div>
+        <div class="specimen">
+          <div class="specimen__demo nv-material-elevated"></div>
+          <span class="specimen__name">Elevated</span>
+          <span class="specimen__note">Separated from context</span>
+        </div>
+        <div class="specimen">
+          <div class="specimen__demo nv-material-inset"></div>
+          <span class="specimen__name">Inset</span>
+          <span class="specimen__note">Fields, wells, tracks</span>
+        </div>
+        <div class="specimen">
+          <div class="specimen__demo nv-material-frosted"></div>
+          <span class="specimen__name">Frosted</span>
+          <span class="specimen__note">Bars and toolbars</span>
+        </div>
+        <div class="specimen">
+          <div class="specimen__demo nv-material-glass"></div>
+          <span class="specimen__name">Glass</span>
+          <span class="specimen__note">Contextual layers</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="depth">
+    <div class="section__head">
+      <h2 class="nv-heading">Depth</h2>
+      <p class="nv-prose">
+        Six levels, each describing one relationship between a surface and the
+        canvas. A shadow outside this scale is a shadow that means nothing.
+      </p>
+    </div>
+
+    <div class="specimen-grid">
+      <div class="specimen">
+        <div class="specimen__demo nv-material-solid nv-elevation-0"></div>
+        <span class="specimen__name">0 · Flush</span>
+        <span class="specimen__note">Painted on the canvas</span>
+      </div>
+      <div class="specimen">
+        <div class="specimen__demo nv-material-solid nv-elevation-1"></div>
+        <span class="specimen__name">1 · Resting</span>
+        <span class="specimen__note">Cards, rows, panels</span>
+      </div>
+      <div class="specimen">
+        <div class="specimen__demo nv-material-solid nv-elevation-2"></div>
+        <span class="specimen__name">2 · Raised</span>
+        <span class="specimen__note">Anything that reacts</span>
+      </div>
+      <div class="specimen">
+        <div class="specimen__demo nv-material-solid nv-elevation-3"></div>
+        <span class="specimen__name">3 · Floating</span>
+        <span class="specimen__note">Popovers and menus</span>
+      </div>
+      <div class="specimen">
+        <div class="specimen__demo nv-material-solid nv-elevation-4"></div>
+        <span class="specimen__name">4 · Lifted</span>
+        <span class="specimen__note">Dialogs and sheets</span>
+      </div>
+      <div class="specimen">
+        <div class="specimen__demo nv-material-solid nv-elevation-5"></div>
+        <span class="specimen__name">5 · Overlay</span>
+        <span class="specimen__note">The topmost layer</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="color">
+    <div class="section__head">
+      <h2 class="nv-heading">Color</h2>
+      <p class="nv-prose">
+        The whole system has one input. Set a brand color and the accent, its
+        hover and press states, the text that lands on it, the focus ring, the
+        tint in the greys and the lean of the status colors are all re-derived
+        — in both appearances, with nothing else to set. Try it: the page
+        below is not reloading, and no component knows it happened.
+      </p>
+    </div>
+
+    <div class="nv-stack nv-stack--loose">
+
+      <div class="panel">
+        <div class="demo-row">
+          <label class="nv-choice" for="brand-input">
+            <input class="nv-input nv-input--color" type="color" id="brand-input" value="#4f6cff">
+            Brand
+          </label>
+
+          <span class="nv-divider--vertical" role="presentation"></span>
+
+          <div class="nv-cluster nv-cluster--tight" id="brand-presets">
+            <button class="nv-button nv-button--sm" data-brand="#4f6cff">Indigo</button>
+            <button class="nv-button nv-button--sm" data-brand="#d92e3f">Red</button>
+            <button class="nv-button nv-button--sm" data-brand="#0d9488">Teal</button>
+            <button class="nv-button nv-button--sm" data-brand="#7c3aed">Violet</button>
+            <button class="nv-button nv-button--sm" data-brand="#ffd400">Yellow</button>
+            <button class="nv-button nv-button--sm" data-brand="#1f9d55">Green</button>
+          </div>
+
+          <span class="nv-nav__spacer"></span>
+          <output class="nv-caption nv-code" id="brand-value">#4f6cff</output>
+        </div>
+
+        <div class="demo-row" style="margin-block-start: var(--nv-space-6)">
+          <button class="nv-button nv-button--primary">Confirm</button>
+          <button class="nv-button nv-button--subtle">Subtle</button>
+          <button class="nv-button nv-button--ghost">Ghost</button>
+          <button class="nv-button nv-button--danger">Delete</button>
+          <label class="nv-choice">
+            <input class="nv-switch" type="checkbox" checked>
+            On
+          </label>
+          <label class="nv-choice">
+            <input class="nv-checkbox" type="checkbox" checked>
+            Checked
+          </label>
+          <a href="#color">A link, too</a>
+        </div>
+
+        <p class="nv-caption" style="margin-block-start: var(--nv-space-4)">
+          The label on a filled control is derived, not chosen: below a
+          lightness threshold it resolves to near-white, above it to near-black
+          — so the yellow brand gets dark labels and the violet one light ones.
+          The color is also nudged away from the middle of the range until its
+          own label clears 4.5:1, which is why a mid-tone green arrives slightly
+          deeper than the swatch you picked.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          One page, several brands
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          <code class="nv-code">data-nv-brand</code> re-derives the set for a
+          subtree, so a region can carry its own color without a second theme
+          and without leaving the system.
+        </p>
+
+        <div class="nv-card-grid">
+          <article class="nv-card nv-card--elevated" data-nv-brand style="--nv-brand: #d92e3f">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Incidents</h4>
+                <p class="nv-card__subtitle">Its own brand</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              Same components, same tokens, same spacing. Only the input
+              changed.
+            </div>
+            <div class="nv-card__footer">
+              <button class="nv-button nv-button--sm nv-button--primary">Acknowledge</button>
+              <button class="nv-button nv-button--sm nv-button--ghost">Later</button>
+            </div>
+          </article>
+
+          <article class="nv-card nv-card--elevated" data-nv-brand style="--nv-brand: #0d9488">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Billing</h4>
+                <p class="nv-card__subtitle">Its own brand</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              The greys inside each card carry a trace of its brand, which is
+              what stops the accent from looking stuck on.
+            </div>
+            <div class="nv-card__footer">
+              <button class="nv-button nv-button--sm nv-button--primary">Upgrade</button>
+              <button class="nv-button nv-button--sm nv-button--ghost">Compare</button>
+            </div>
+          </article>
+
+          <article class="nv-card nv-card--elevated" data-nv-brand style="--nv-brand: #ffd400">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Labs</h4>
+                <p class="nv-card__subtitle">Its own brand</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              A light brand flips its own labels to dark. Nothing here asked
+              for that.
+            </div>
+            <div class="nv-card__footer">
+              <button class="nv-button nv-button--sm nv-button--primary">Enable</button>
+              <button class="nv-button nv-button--sm nv-button--ghost">Docs</button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Roles</h3>
+        <div class="swatch-grid" id="swatches"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="type">
+    <div class="section__head">
+      <h2 class="nv-heading">Typography</h2>
+      <p class="nv-prose">
+        One scale, seven roles. Sizes are in rem so the user's own font size is
+        respected; tracking tightens as the type grows.
+      </p>
+    </div>
+
+    <div class="panel">
+      <div class="type-row">
+        <span class="nv-display">Display</span>
+        <span class="type-row__meta">--nv-font-display · 38px</span>
+      </div>
+      <div class="type-row">
+        <span class="nv-heading">Heading</span>
+        <span class="type-row__meta">--nv-font-heading · 24px</span>
+      </div>
+      <div class="type-row">
+        <span class="nv-title">Title</span>
+        <span class="type-row__meta">--nv-font-title · 17px</span>
+      </div>
+      <div class="type-row">
+        <span class="nv-body">Body — the default reading size</span>
+        <span class="type-row__meta">--nv-font-body · 15px</span>
+      </div>
+      <div class="type-row">
+        <span class="nv-label">Label</span>
+        <span class="type-row__meta">--nv-font-label · 13px</span>
+      </div>
+      <div class="type-row">
+        <span class="nv-caption">Caption — secondary and supporting</span>
+        <span class="type-row__meta">--nv-font-caption · 12px</span>
+      </div>
+      <div class="type-row">
+        <span class="nv-overline">Overline</span>
+        <span class="type-row__meta">--nv-font-engraved · mono, uppercase</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="components">
+    <div class="section__head">
+      <h2 class="nv-heading">Components</h2>
+      <p class="nv-prose">
+        Interaction is defined once and inherited by everything: a lift on
+        hover, a sink on press, the same focus ring on every surface.
+      </p>
+    </div>
+
+    <div class="nv-stack nv-stack--loose">
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Button</h3>
+
+        <div class="demo-row">
+          <button class="nv-button nv-button--primary">Primary</button>
+          <button class="nv-button">Secondary</button>
+          <button class="nv-button nv-button--subtle">Subtle</button>
+          <button class="nv-button nv-button--ghost">Ghost</button>
+          <button class="nv-button nv-button--danger">Delete</button>
+          <button class="nv-button" disabled>Disabled</button>
+        </div>
+
+        <div class="demo-row">
+          <button class="nv-button nv-button--sm">Small</button>
+          <button class="nv-button">Medium</button>
+          <button class="nv-button nv-button--lg">Large</button>
+          <button class="nv-button nv-button--pill nv-button--subtle">Pill</button>
+          <button class="nv-button nv-button--icon" aria-label="Add">
+            <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="nv-button nv-button--primary" aria-busy="true">Saving</button>
+        </div>
+
+        <div class="demo-row">
+          <div class="nv-button-group" role="group" aria-label="Alignment">
+            <button class="nv-button nv-button--sm">Day</button>
+            <button class="nv-button nv-button--sm">Week</button>
+            <button class="nv-button nv-button--sm">Month</button>
+          </div>
+          <nav class="nv-nav-tabs" aria-label="View"
+               style="--nv-selection-name: nv-sel-tabs-static">
+            <a class="nv-nav__item" href="#components" aria-selected="true">Overview</a>
+            <a class="nv-nav__item" href="#components" aria-selected="false">Activity</a>
+            <a class="nv-nav__item" href="#components" aria-selected="false">Settings</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Input</h3>
+
+        <div class="form-grid">
+          <div class="nv-field">
+            <label class="nv-field__label" for="f-name">Workspace name</label>
+            <input class="nv-input" id="f-name" placeholder="Northern Light">
+            <span class="nv-field__hint">Visible to everyone in the workspace.</span>
+          </div>
+
+          <div class="nv-field">
+            <label class="nv-field__label" for="f-mail">Email</label>
+            <div class="nv-input-group">
+              <span class="nv-input-group__affix">@</span>
+              <input class="nv-input" id="f-mail" type="email" placeholder="you@example.com">
+            </div>
+            <span class="nv-field__hint">Used for sign-in and recovery.</span>
+          </div>
+
+          <div class="nv-field">
+            <label class="nv-field__label" for="f-plan">Plan</label>
+            <div class="nv-select">
+              <select class="nv-input" id="f-plan">
+                <option>Starter</option>
+                <option selected>Studio</option>
+                <option>Enterprise</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="nv-field">
+            <label class="nv-field__label" for="f-slug">Domain</label>
+            <input class="nv-input" id="f-slug" value="not a domain" aria-invalid="true"
+                   aria-describedby="f-slug-error">
+            <span class="nv-field__error" id="f-slug-error">
+              Use lowercase letters, numbers and hyphens.
+            </span>
+          </div>
+        </div>
+
+        <div class="nv-field" style="margin-block-start: var(--nv-space-5)">
+          <label class="nv-field__label" for="f-notes" data-optional="(optional)">Notes</label>
+          <textarea class="nv-input" id="f-notes" rows="3"
+                    placeholder="Anything the team should know."></textarea>
+        </div>
+
+        <div class="demo-row" style="margin-block-start: var(--nv-space-5)">
+          <label class="nv-choice">
+            <input class="nv-checkbox" type="checkbox" checked>
+            Weekly digest
+          </label>
+          <label class="nv-choice">
+            <input class="nv-checkbox" type="checkbox" id="f-indeterminate">
+            Partial selection
+          </label>
+          <label class="nv-choice">
+            <input class="nv-radio" type="radio" name="vis" checked>
+            Private
+          </label>
+          <label class="nv-choice">
+            <input class="nv-radio" type="radio" name="vis">
+            Shared
+          </label>
+          <label class="nv-choice">
+            <input class="nv-switch" type="checkbox" checked>
+            Frosted chrome
+          </label>
+          <label class="nv-choice">
+            <input class="nv-checkbox" type="checkbox" disabled>
+            Unavailable
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Card</h3>
+
+        <div class="nv-card-grid">
+          <article class="nv-card">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Resting</h4>
+                <p class="nv-card__subtitle">Elevation 1</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              The default container. Sits on the canvas with just enough
+              separation to be read as its own surface.
+            </div>
+          </article>
+
+          <article class="nv-card nv-card--elevated">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Elevated</h4>
+                <p class="nv-card__subtitle">Elevation 2</p>
+              </div>
+              <span class="nv-nav__badge">New</span>
+            </div>
+            <div class="nv-card__body">
+              Separated from its context. Use when a card needs to be read
+              before the content around it.
+            </div>
+            <div class="nv-card__footer">
+              <button class="nv-button nv-button--sm nv-button--primary">Open</button>
+              <button class="nv-button nv-button--sm nv-button--ghost">Dismiss</button>
+            </div>
+          </article>
+
+          <article class="nv-card nv-card--interactive">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Interactive</h4>
+                <p class="nv-card__subtitle">Hover and press me</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              Rises on hover and sinks on press, using the same displacement
+              tokens as a button.
+            </div>
+          </article>
+
+          <article class="nv-card nv-card--inset">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Inset</h4>
+                <p class="nv-card__subtitle">Recessed</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              For regions that belong to their parent rather than floating
+              above it — summaries, wells, empty states.
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Navigation</h3>
+
+        <div class="layout-demo">
+          <nav class="nv-nav nv-nav--vertical" aria-label="Example sidebar"
+               style="--nv-selection-name: nv-sel-sidebar">
+            <span class="nv-nav__section">Workspace</span>
+            <ul class="nv-nav__list" data-nv-travel="local">
+              <li><a class="nv-nav__item" href="#components" aria-current="page">
+                <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 10.5 12 4l8 6.5V20H4z" stroke="currentColor" stroke-width="1.6"
+                        stroke-linejoin="round"/>
+                </svg>
+                Overview
+              </a></li>
+              <li><a class="nv-nav__item" href="#components">
+                <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M4 10h16" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+                Projects
+                <span class="nv-nav__badge">12</span>
+              </a></li>
+              <li><a class="nv-nav__item" href="#components">
+                <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="8.5" r="3.2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M5 20c1.2-3.4 3.8-5 7-5s5.8 1.6 7 5" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                People
+              </a></li>
+            </ul>
+            <span class="nv-nav__section">Account</span>
+            <ul class="nv-nav__list">
+              <li><a class="nv-nav__item" href="#components">Billing</a></li>
+              <li><span class="nv-nav__item" aria-disabled="true">Audit log</span></li>
+            </ul>
+          </nav>
+
+          <div class="layout-demo__content">
+            <ol class="nv-breadcrumbs" style="margin-block-end: var(--nv-space-4)">
+              <li><a href="#components">Workspace</a></li>
+              <li><a href="#components">Projects</a></li>
+              <li aria-current="page">Northern Light</li>
+            </ol>
+            <h4 class="nv-title">Overview</h4>
+            <p class="nv-prose" style="margin-block-start: var(--nv-space-2)">
+              A sidebar scrolls with its frame, so it is not chrome and drops
+              the translucency. The bar at the top of this page is chrome, and
+              keeps it.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Window</h3>
+        <div class="nv-bed nv-bed--quiet" style="display: grid; gap: var(--nv-space-6); grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-items: start">
+          <div class="nv-window">
+            <div class="nv-window__titlebar">
+              <div class="nv-window__controls">
+                <button class="nv-window__control nv-window__control--close" aria-label="Close"></button>
+                <button class="nv-window__control nv-window__control--minimize" aria-label="Minimize"></button>
+                <button class="nv-window__control nv-window__control--zoom" aria-label="Zoom"></button>
+              </div>
+              <span class="nv-window__title">Appearance</span>
+              <div class="nv-window__actions">
+                <button class="nv-button nv-button--ghost nv-button--sm nv-button--icon" aria-label="Search">
+                  <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="m20 20-4.2-4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="nv-window__body nv-stack" style="padding: var(--nv-space-5)">
+              <p class="nv-overline">Style</p>
+              <div class="nv-nav-tabs" role="tablist" aria-label="Appearance">
+                <button class="nv-nav__item" role="tab" aria-selected="false">Light</button>
+                <button class="nv-nav__item" role="tab" aria-selected="true">Dark</button>
+                <button class="nv-nav__item" role="tab" aria-selected="false">System</button>
+              </div>
+              <label class="nv-choice"><input class="nv-switch" type="checkbox" checked> Translucent chrome</label>
+              <label class="nv-choice"><input class="nv-switch" type="checkbox"> Reduce motion</label>
+              <div class="nv-field">
+                <label class="nv-field__label" for="win-wallpaper">Wallpaper</label>
+                <input class="nv-input" id="win-wallpaper" value="~/Pictures/dusk-ridge.jpg">
+              </div>
+              <div class="nv-cluster" style="justify-content: flex-end">
+                <button class="nv-button">Reset</button>
+                <button class="nv-button nv-button--primary">Apply</button>
+              </div>
+            </div>
+          </div>
+          <div class="nv-window nv-window--inactive">
+            <div class="nv-window__titlebar">
+              <div class="nv-window__controls">
+                <button class="nv-window__control nv-window__control--close" aria-label="Close"></button>
+                <button class="nv-window__control nv-window__control--minimize" aria-label="Minimize"></button>
+                <button class="nv-window__control nv-window__control--zoom" aria-label="Zoom"></button>
+              </div>
+              <span class="nv-window__title">Inactive — hover the lights</span>
+            </div>
+            <div class="nv-window__body" style="padding: var(--nv-space-5)">
+              <p class="nv-caption">A window without focus greys its lights and steps back one elevation. The lights take their color back the moment the pointer reaches them.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-4)">Dialog</h3>
+        <div class="demo-row">
+          <button class="nv-button nv-button--primary" data-nv-dialog="welcome">
+            Open dialog
+          </button>
+          <button class="nv-button" data-nv-dialog="sheet">Open sheet</button>
+          <button class="nv-button nv-button--danger" data-nv-dialog="confirm">
+            Destructive confirm
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="continuity">
+    <div class="section__head">
+      <h2 class="nv-heading">Continuity</h2>
+      <p class="nv-prose">
+        Every change should read as a continuation of the state before it. When
+        something moves, grows, collapses or changes appearance, the change
+        itself should be perceptible — where it came from, where it went, and
+        why. The goal is not to animate everything; it is that nothing pops
+        into a new state the user could have watched it reach.
+      </p>
+    </div>
+
+    <div class="nv-stack nv-stack--loose">
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          Emphasis travels
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          The selected item does not lose its material so another can gain it.
+          The marker itself moves. Click through these — and watch the bar at
+          the top of the page do the same thing.
+        </p>
+
+        <nav class="nv-nav nv-nav--inline" aria-label="Travel demo"
+             style="--nv-selection-name: nv-sel-travel">
+          <ul class="nv-nav__list" data-nv-travel="local">
+            <li><a class="nv-nav__item" href="#continuity" aria-current="page">Overview</a></li>
+            <li><a class="nv-nav__item" href="#continuity">Members</a></li>
+            <li><a class="nv-nav__item" href="#continuity">Integrations</a></li>
+            <li><a class="nv-nav__item" href="#continuity">Billing</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          Moving through one surface
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          Switching tabs should feel like moving along a surface, not replacing
+          the interface. The panels travel in the direction you are going —
+          forward to the right, back to the left — so the strip has a geography
+          you can remember.
+        </p>
+
+        <div class="nv-nav-tabs" role="tablist" data-nv-tabs aria-label="Project"
+             style="--nv-selection-name: nv-sel-tabs-live">
+          <button class="nv-nav__item" role="tab" id="tab-activity"
+                  aria-controls="panel-activity" aria-selected="true">Activity</button>
+          <button class="nv-nav__item" role="tab" id="tab-files"
+                  aria-controls="panel-files" aria-selected="false" tabindex="-1">Files</button>
+          <button class="nv-nav__item" role="tab" id="tab-settings"
+                  aria-controls="panel-settings" aria-selected="false" tabindex="-1">Settings</button>
+        </div>
+
+        <div class="nv-tab-panel" id="panel-activity" role="tabpanel"
+             aria-labelledby="tab-activity" style="padding-block-start: var(--nv-space-4)">
+          <h4 class="nv-title">Activity</h4>
+          <p class="nv-prose" style="margin-block-start: var(--nv-space-2)">
+            The outgoing panel leaves towards where you came from while the
+            incoming one arrives from where you are going. Both happen inside
+            the same box, so the surface never appears to be rebuilt.
+          </p>
+        </div>
+
+        <div class="nv-tab-panel" id="panel-files" role="tabpanel"
+             aria-labelledby="tab-files" style="padding-block-start: var(--nv-space-4)" hidden>
+          <h4 class="nv-title">Files</h4>
+          <p class="nv-prose" style="margin-block-start: var(--nv-space-2)">
+            Arrow keys move between tabs as well — the selection follows focus,
+            and the direction of travel follows the keys.
+          </p>
+        </div>
+
+        <div class="nv-tab-panel" id="panel-settings" role="tabpanel"
+             aria-labelledby="tab-settings" style="padding-block-start: var(--nv-space-4)" hidden>
+          <h4 class="nv-title">Settings</h4>
+          <p class="nv-prose" style="margin-block-start: var(--nv-space-2)">
+            Jump from here back to Activity and the movement reverses, because
+            direction is state the transition is told about rather than a fixed
+            animation.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          Content expands from where it is
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          Revealed content grows out of the row that revealed it, at its own
+          position, instead of appearing at full height somewhere below.
+        </p>
+
+        <div class="nv-disclosure-group">
+          <details class="nv-disclosure" open>
+            <summary class="nv-disclosure__summary">
+              How is the height animated?
+              <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nv-disclosure__body">
+              The content animates to <code class="nv-code">block-size: auto</code>
+              directly, because the continuity layer turns on
+              <code class="nv-code">interpolate-size</code>. Nothing is measured,
+              no height is cached, and content that changes while open stays
+              correct.
+            </div>
+          </details>
+
+          <details class="nv-disclosure">
+            <summary class="nv-disclosure__summary">
+              What happens on the way back?
+              <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nv-disclosure__body">
+              Collapsing is the same transition in reverse. The content stays
+              rendered while it shrinks rather than disappearing on the first
+              frame, so closing is as readable as opening.
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          Surfaces come from what opened them
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          A menu is anchored to its trigger and scales out of its edge. A dialog
+          expands away from the control you pressed rather than from the middle
+          of the screen — open the two dialogs below from buttons at opposite
+          ends of the row and watch where each one comes from.
+        </p>
+
+        <div class="demo-row">
+          <button class="nv-button nv-menu-trigger" popovertarget="demo-menu"
+                  style="--nv-anchor: --demo-menu">
+            Actions
+            <span class="nv-disclosure__chevron" aria-hidden="true"
+                  style="margin-inline-start: var(--nv-space-1)"></span>
+          </button>
+
+          <div class="nv-menu" popover id="demo-menu" style="--nv-anchor: --demo-menu">
+            <span class="nv-menu__label">This project</span>
+            <button class="nv-menu__item">Rename<span class="nv-menu__shortcut">F2</span></button>
+            <button class="nv-menu__item" aria-checked="true">Pin to sidebar</button>
+            <button class="nv-menu__item">Duplicate</button>
+            <hr class="nv-menu__separator">
+            <button class="nv-menu__item nv-menu__item--danger">Delete project</button>
+          </div>
+
+          <button class="nv-button" data-nv-dialog="welcome">Open from here</button>
+          <span class="nv-nav__spacer"></span>
+          <button class="nv-button" data-nv-dialog="welcome">…or from here</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          States resolve rather than switch
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          Hover lifts, press sinks, focus rings fade in, marks grow out of their
+          centre, and the switch thumb travels the track. Every one of these is
+          a state the user can watch arrive.
+        </p>
+
+        <div class="demo-row">
+          <button class="nv-button nv-button--primary">Hover and hold</button>
+          <button class="nv-button">Secondary</button>
+          <label class="nv-choice">
+            <input class="nv-checkbox" type="checkbox">
+            Tick grows in
+          </label>
+          <label class="nv-choice">
+            <input class="nv-switch" type="checkbox">
+            Thumb travels
+          </label>
+          <label class="nv-choice">
+            <input class="nv-radio" type="radio" name="continuity-demo" checked>
+            One
+          </label>
+          <label class="nv-choice">
+            <input class="nv-radio" type="radio" name="continuity-demo">
+            Two
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="patterns">
+    <div class="section__head">
+      <h2 class="nv-heading">Patterns</h2>
+      <p class="nv-prose">
+        Components are the vocabulary; patterns are the sentences. Each of
+        these is built only from what the system already ships — no new colors,
+        no new shadows, no new spacing. If a pattern needs something the system
+        does not have, that is a finding about the system, not a reason to
+        write a one-off.
+      </p>
+    </div>
+
+    <div class="nv-stack nv-stack--loose">
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          A row that continues past its frame
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          The edges fade instead of cutting, so the row reads as running
+          underneath them, and each card snaps to the same place every time —
+          moving left and right returns you to positions you have already seen.
+          Scroll it with a trackpad or use the controls.
+        </p>
+
+        <div class="nv-scroller-frame" data-nv-scroller>
+          <div class="nv-scroller">
+            <article class="nv-card nv-card--interactive">
+              <div class="nv-card__header"><div>
+                <h4 class="nv-card__title">Northern Light</h4>
+                <p class="nv-card__subtitle">12 projects</p>
+              </div></div>
+              <div class="nv-card__body">Snap points make a row navigable without a scrollbar.</div>
+            </article>
+            <article class="nv-card nv-card--interactive">
+              <div class="nv-card__header"><div>
+                <h4 class="nv-card__title">Harbour</h4>
+                <p class="nv-card__subtitle">4 projects</p>
+              </div></div>
+              <div class="nv-card__body">Cards keep their own elevation and lift on hover.</div>
+            </article>
+            <article class="nv-card nv-card--interactive">
+              <div class="nv-card__header"><div>
+                <h4 class="nv-card__title">Greenhouse</h4>
+                <p class="nv-card__subtitle">9 projects</p>
+              </div></div>
+              <div class="nv-card__body">The track itself carries no styling of its own.</div>
+            </article>
+            <article class="nv-card nv-card--interactive">
+              <div class="nv-card__header"><div>
+                <h4 class="nv-card__title">Quarry</h4>
+                <p class="nv-card__subtitle">2 projects</p>
+              </div></div>
+              <div class="nv-card__body">Wheel, trackpad, touch and keyboard are the browser's.</div>
+            </article>
+            <article class="nv-card nv-card--interactive">
+              <div class="nv-card__header"><div>
+                <h4 class="nv-card__title">Signal</h4>
+                <p class="nv-card__subtitle">7 projects</p>
+              </div></div>
+              <div class="nv-card__body">The buttons exist for pointers with no horizontal axis.</div>
+            </article>
+            <article class="nv-card nv-card--interactive">
+              <div class="nv-card__header"><div>
+                <h4 class="nv-card__title">Ledger</h4>
+                <p class="nv-card__subtitle">1 project</p>
+              </div></div>
+              <div class="nv-card__body">At either end the control has nothing to do, and says so.</div>
+            </article>
+          </div>
+
+          <button class="nv-button nv-button--icon nv-button--float" data-nv-scroll="prev" aria-label="Previous">
+            <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="nv-button nv-button--icon nv-button--float" data-nv-scroll="next" aria-label="Next">
+            <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          Ground that is not ordinary background
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          A bed marks a region as different in kind — something being shown
+          off, previewed, or explained. It also gives translucent materials
+          something to be translucent against: the card below is frosted, and
+          on a flat grey that would prove nothing.
+        </p>
+
+        <div class="nv-bed">
+          <span class="nv-bed__label">Preview</span>
+          <div class="nv-card nv-card--frosted" style="max-inline-size: 26rem">
+            <div class="nv-card__header">
+              <div>
+                <h4 class="nv-card__title">Frosted over a bed</h4>
+                <p class="nv-card__subtitle">The hatch and the blooms read through it</p>
+              </div>
+            </div>
+            <div class="nv-card__body">
+              Use a bed for regions the user should look <em>at</em>. Content
+              they have to work <em>through</em> — a form, a table — belongs on
+              a plain surface, because the calm is the point.
+            </div>
+            <div class="nv-card__footer">
+              <button class="nv-button nv-button--sm nv-button--primary">Use this</button>
+              <button class="nv-button nv-button--sm nv-button--ghost">Not now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="nv-title" style="margin-block-end: var(--nv-space-2)">
+          A settings list
+        </h3>
+        <p class="nv-caption" style="margin-block-end: var(--nv-space-4)">
+          Rows, switches and per-row menus, composed from the same parts as
+          everything above. Each menu names its own anchor, so it opens from
+          its own row.
+        </p>
+
+        <div class="nv-card nv-card--flush">
+          <div class="nv-list-row">
+            <div>
+              <span class="nv-label">Weekly digest</span>
+              <p class="nv-caption">A summary every Monday morning.</p>
+            </div>
+            <label class="nv-choice"><input class="nv-switch" type="checkbox" checked></label>
+            <button class="nv-button nv-button--ghost nv-button--icon nv-menu-trigger"
+                    popovertarget="row-menu-1" style="--nv-anchor: --row1" aria-label="Options">
+              <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+              </svg>
+            </button>
+            <div class="nv-menu" popover id="row-menu-1" style="--nv-anchor: --row1">
+              <button class="nv-menu__item">Send a test</button>
+              <button class="nv-menu__item">Change schedule</button>
+              <hr class="nv-menu__separator">
+              <button class="nv-menu__item nv-menu__item--danger">Turn off</button>
+            </div>
+          </div>
+
+          <hr class="nv-divider" style="margin: 0">
+
+          <div class="nv-list-row">
+            <div>
+              <span class="nv-label">Frosted chrome</span>
+              <p class="nv-caption">Translucent bars over scrolling content.</p>
+            </div>
+            <label class="nv-choice"><input class="nv-switch" type="checkbox" checked></label>
+            <button class="nv-button nv-button--ghost nv-button--icon nv-menu-trigger"
+                    popovertarget="row-menu-2" style="--nv-anchor: --row2" aria-label="Options">
+              <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+              </svg>
+            </button>
+            <div class="nv-menu" popover id="row-menu-2" style="--nv-anchor: --row2">
+              <button class="nv-menu__item" aria-checked="true">Blur backdrops</button>
+              <button class="nv-menu__item">Reduce transparency</button>
+            </div>
+          </div>
+
+          <hr class="nv-divider" style="margin: 0">
+
+          <div class="nv-list-row">
+            <div>
+              <span class="nv-label">Audit log</span>
+              <p class="nv-caption">Not available on this plan.</p>
+            </div>
+            <label class="nv-choice"><input class="nv-switch" type="checkbox" disabled></label>
+            <button class="nv-button nv-button--ghost nv-button--icon" aria-label="Options" disabled>
+              <svg class="nv-button__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="usage">
+    <div class="section__head">
+      <h2 class="nv-heading">Using the system</h2>
+      <p class="nv-prose">
+        An application links one stylesheet and states an appearance. It never
+        needs to know the values behind either.
+      </p>
+    </div>
+
+    <code class="code">&lt;link rel="stylesheet" href="dist/niveus.css"&gt;
+&lt;html data-theme="dark"&gt;      &lt;!-- omit to follow the system --&gt;
+
+.thing {
+  background: var(--nv-color-surface-elevated);
+  border-radius: var(--nv-radius-lg);
+  padding: var(--nv-space-4) var(--nv-space-5);
+  box-shadow: var(--nv-highlight-top), var(--nv-elevation-2);
+}</code>
+  </section>
+
+  <footer class="footer">
+    <div class="nv-cluster nv-cluster--between">
+      <span>
+        Niveus — define the system once, implement it everywhere.
+        <a href="examples/index.html">See four products built with it</a>.
+      </span>
+      <span>Made by Nexoniarz</span>
+    </div>
+  </footer>
+
+</main>
+
+<!-- ===================================================================== -->
+<dialog class="nv-dialog" id="welcome" aria-labelledby="welcome-title">
+  <div class="nv-dialog__header">
+    <div>
+      <h2 class="nv-dialog__title" id="welcome-title">A surface above the page</h2>
+      <p class="nv-dialog__description">
+        The dialog rises and settles; the scrim blurs what is behind it. Both
+        are motion tokens, not per-component choices.
+      </p>
+    </div>
+    <button class="nv-button nv-button--ghost nv-button--icon nv-dialog__close"
+            aria-label="Close" data-nv-close>
+      <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="nv-dialog__body">
+    <p>
+      Escape closes it, focus is trapped inside it and the page behind is inert
+      — all of that comes from the native <code class="nv-code">&lt;dialog&gt;</code>
+      element rather than from script.
+    </p>
+  </div>
+  <div class="nv-dialog__footer">
+    <button class="nv-button" data-nv-close>Close</button>
+    <button class="nv-button nv-button--primary" data-nv-close>Got it</button>
+  </div>
+</dialog>
+
+<dialog class="nv-dialog nv-dialog--sheet" id="sheet" aria-labelledby="sheet-title">
+  <div class="nv-dialog__header">
+    <div>
+      <h2 class="nv-dialog__title" id="sheet-title">Sheet</h2>
+      <p class="nv-dialog__description">
+        Anchored to the block end, entering from the same direction.
+      </p>
+    </div>
+  </div>
+  <div class="nv-dialog__body">
+    <p>The right form on a small screen for anything with more than two actions.</p>
+  </div>
+  <div class="nv-dialog__footer nv-dialog__footer--divided">
+    <button class="nv-button" data-nv-close>Cancel</button>
+    <button class="nv-button nv-button--primary" data-nv-close>Continue</button>
+  </div>
+</dialog>
+
+<dialog class="nv-dialog nv-dialog--compact" id="confirm" aria-labelledby="confirm-title">
+  <div class="nv-dialog__header">
+    <div>
+      <h2 class="nv-dialog__title" id="confirm-title">Delete workspace?</h2>
+      <p class="nv-dialog__description">
+        This removes every project inside it. It cannot be undone.
+      </p>
+    </div>
+  </div>
+  <div class="nv-dialog__footer">
+    <button class="nv-button" data-nv-close>Cancel</button>
+    <button class="nv-button nv-button--danger" data-nv-close>Delete</button>
+  </div>
+</dialog>
+
+<script>
+  /* --------------------------------------------------------------------
+     Page behaviour. Note what is *not* here: no style values, no colors,
+     no durations. Continuity comes from nv.transition(); this file only
+     decides what changes.
+     -------------------------------------------------------------------- */
+
+  /* niveus.js is deferred, so it has defined nv by the time this fires. */
+  document.addEventListener("DOMContentLoaded", () => {
+    const STORAGE_KEY = "niveus-theme";
+
+    /* niveus.js wires the [data-nv-theme] buttons and the cross-fade between
+       appearances. The page only has to say what "remember it" means. */
+    document.documentElement.addEventListener("nv:theme", (event) => {
+      try { localStorage.setItem(STORAGE_KEY, event.detail.theme); } catch {}
+    });
+    nv.syncThemeControls(document.documentElement.getAttribute("data-theme") || "system");
+
+    /* One input, re-derived everywhere. Dragging the picker applies directly —
+       a view transition per pointer move would be absurd — while a preset is a
+       deliberate change, so it cross-fades like a theme switch. */
+    const brandInput = document.getElementById("brand-input");
+    const brandValue = document.getElementById("brand-value");
+
+    function setBrand(value, continuous) {
+      const apply = () => {
+        document.documentElement.style.setProperty("--nv-brand", value);
+        brandInput.value = value;
+        brandValue.textContent = value;
+      };
+      if (continuous) nv.transition(apply, { kind: "theme" });
+      else apply();
+    }
+
+    brandInput.addEventListener("input", (event) => setBrand(event.target.value, false));
+
+    document.getElementById("brand-presets").addEventListener("click", (event) => {
+      const preset = event.target.closest("[data-brand]");
+      if (preset) setBrand(preset.dataset.brand, true);
+    });
+
+    /* A selection group whose emphasis travels: one marker, moved inside a
+       transition, so the browser animates it from where it was to where it
+       now belongs. */
+    for (const group of document.querySelectorAll("[data-nv-travel]")) {
+      group.addEventListener("click", (event) => {
+        const item = event.target.closest(".nv-nav__item");
+        if (!item || !group.contains(item) || item.hasAttribute("aria-current")) return;
+        if (group.dataset.nvTravel === "local") event.preventDefault();
+
+        nv.transition(() => {
+          group.querySelectorAll("[aria-current]").forEach((previous) => {
+            previous.removeAttribute("aria-current");
+          });
+          item.setAttribute("aria-current", "page");
+        }, { scope: group });
+      });
+    }
+
+    /* The bar earns its shadow only once content has passed under it. */
+    const topnav = document.getElementById("topnav");
+    const onScroll = () => topnav.toggleAttribute("data-scrolled", window.scrollY > 8);
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    document.getElementById("f-indeterminate").indeterminate = true;
+
+    /* Build the semantic color list from the tokens themselves, so the page
+       cannot show a role the system does not actually define. */
+    const roles = [
+      "background", "background-subtle", "surface", "surface-elevated",
+      "surface-inset", "surface-hover", "text-primary", "text-secondary",
+      "text-tertiary", "border", "border-strong", "accent", "accent-hover",
+      "accent-subtle", "success", "warning", "danger", "scrim",
+    ];
+    const swatches = document.getElementById("swatches");
+    swatches.append(...roles.map((role) => {
+      const item = document.createElement("div");
+      item.className = "swatch";
+      item.innerHTML =
+        `<span class="swatch__chip" style="background: var(--nv-color-${role})"></span>` +
+        `<span class="swatch__name">--nv-color-${role}</span>`;
+      return item;
+    }));
+  });
+</script>
+</body>
+</html>

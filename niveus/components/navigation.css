@@ -1,0 +1,358 @@
+/* ==========================================================================
+   Niveus — Navigation
+   --------------------------------------------------------------------------
+     .nv-nav                      horizontal bar, frosted, sticky by default
+     .nv-nav--vertical            sidebar
+     .nv-nav--plain               solid instead of frosted
+     .nv-nav__brand / __list / __item / __section / __spacer
+     .nv-nav-tabs                 in-page tab strip with a sliding indicator
+
+   Navigation is chrome: it sits above content rather than in it. That is why
+   the bar is frosted and bevelled — the blur is not decoration, it is the
+   signal that content is passing underneath. A sidebar that scrolls with the page is not
+   chrome, so .nv-nav--vertical drops the translucency by default.
+   ========================================================================== */
+
+.nv-nav {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-4);
+  padding: var(--nv-space-2) var(--nv-space-4);
+  min-block-size: var(--nv-control-height-lg);
+
+  background-color: var(--nv-material-frosted-bg);
+  border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+
+  /* The travelling selection marker sits behind its item at z-index -1; the
+     bar has to be its own stacking context or the marker would fall behind
+     the bar's background and disappear. */
+  isolation: isolate;
+  box-shadow: var(--nv-bevel);
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+  transition: var(--nv-transition-surface);
+}
+
+/* The bar only earns a shadow once something is behind it. Set data-scrolled
+   from the application on scroll. */
+.nv-nav[data-scrolled] {
+  box-shadow: var(--nv-bevel), var(--nv-elevation-2);
+  transition: box-shadow var(--nv-duration-normal) var(--nv-ease-standard);
+}
+
+.nv-nav--plain {
+  background-color: var(--nv-color-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.nv-nav--static {
+  position: static;
+}
+
+/* A navigation group used inside content rather than as page chrome: no bar,
+   no border, no blur — just the items and their travelling selection. */
+.nv-nav--inline {
+  position: static;
+  display: inline-flex;
+  min-block-size: 0;
+  padding: var(--nv-space-1);
+
+  background-color: transparent;
+  border-block-end: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.nv-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2);
+  font: var(--nv-font-title);
+  letter-spacing: var(--nv-letter-spacing-tight);
+  color: var(--nv-color-text-primary);
+  text-decoration: none;
+  padding-inline: var(--nv-space-1);
+}
+
+.nv-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+.nv-nav__spacer {
+  flex: 1;
+}
+
+/* --- Item --------------------------------------------------------------------
+   Items are flat until they are touched. The active item is the only one with
+   material, which keeps the bar quiet while still answering "where am I". */
+
+.nv-nav__item {
+  /* Rides above a travelling marker once niveus.js has given it a name. */
+  view-transition-class: nv-carried;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2);
+  padding: var(--nv-space-2) var(--nv-space-3);
+  min-block-size: var(--nv-control-height-md);
+
+  border: var(--nv-border-width) solid transparent;
+  border-radius: var(--nv-radius-md);
+  background-color: transparent;
+
+  color: var(--nv-color-text-secondary);
+  font: var(--nv-font-label);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--nv-transition-control);
+}
+
+@media (hover: hover) {
+  .nv-nav__item:hover {
+    background-color: var(--nv-color-surface-hover);
+    color: var(--nv-color-text-primary);
+  }
+}
+
+.nv-nav__item:active {
+  background-color: var(--nv-color-surface-active);
+  box-shadow: var(--nv-elevation-inset-sm);
+  transition-duration: var(--nv-duration-instant);
+}
+
+.nv-nav__item:focus-visible {
+  outline: none;
+  box-shadow: var(--nv-focus-ring);
+}
+
+/* Selection is a material that *moves*. The emphasis lives in a pseudo-element
+   rather than on the item itself, and carries a view-transition-name: when the
+   selection changes inside a transition, the browser interpolates the marker's
+   old box into its new one, so the highlight slides from the previous item to
+   the next instead of blinking out and in somewhere else.
+
+   Only one item in a group may be selected at a time — that is what keeps the
+   name unique. A page with several selection groups must give each its own
+   --nv-selection-name, or the duplicate name aborts the transition. */
+
+/* Selection changes color and gains material — but not weight. Bolding the
+   selected item re-measures its text, which reflows every item beside it on
+   each change, and makes the old and new labels cross-fade against each other
+   at different widths. The pill is the cue; the weight was costing a flicker
+   for nothing. */
+.nv-nav__item[aria-current],
+.nv-nav__item--active,
+.nv-nav__item[aria-selected="true"] {
+  color: var(--nv-color-text-primary);
+}
+
+.nv-nav__item[aria-current]::before,
+.nv-nav__item--active::before,
+.nv-nav__item[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  background-color: var(--nv-color-surface-elevated);
+  background-image: var(--nv-sheen-raised);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: inherit;
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  view-transition-class: nv-travelling;
+}
+
+/* The marker is named only while its own group is changing (niveus.js sets
+   data-nv-travelling for the length of the transition). A permanent name
+   would lift every marker on the page out of the page snapshot on every
+   transition, theme changes included. */
+[data-nv-travelling] .nv-nav__item[aria-current]::before,
+[data-nv-travelling] .nv-nav__item--active::before,
+[data-nv-travelling] .nv-nav__item[aria-selected="true"]::before {
+  view-transition-name: var(--nv-selection-name);
+}
+
+/* Hovering an already-selected item should not restate the emphasis. */
+@media (hover: hover) {
+  .nv-nav__item[aria-current]:hover,
+  .nv-nav__item--active:hover,
+  .nv-nav__item[aria-selected="true"]:hover {
+    background-color: transparent;
+  }
+}
+
+.nv-nav__item[aria-disabled="true"] {
+  color: var(--nv-color-text-disabled);
+  pointer-events: none;
+}
+
+.nv-nav__icon {
+  inline-size: 1.15em;
+  block-size: 1.15em;
+  flex: none;
+  opacity: 0.85;
+}
+
+.nv-nav__badge {
+  margin-inline-start: auto;
+  padding-inline: var(--nv-space-1-5);
+  min-inline-size: var(--nv-space-5);
+  block-size: var(--nv-space-5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--nv-color-accent-subtle);
+  color: var(--nv-color-accent-text);
+  border-radius: var(--nv-radius-full);
+  font: var(--nv-font-caption);
+  font-size: var(--nv-font-size-2xs);
+  font-weight: var(--nv-font-weight-semibold);
+}
+
+/* --- Vertical ------------------------------------------------------------------ */
+
+.nv-nav--vertical {
+  position: sticky;
+  inset-block-start: 0;
+
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--nv-space-1);
+  inline-size: 15rem;
+  block-size: 100svh;
+  padding: var(--nv-space-4) var(--nv-space-3);
+
+  background-color: var(--nv-color-background-subtle);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-block-end: 0;
+  border-inline-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  box-shadow: none;
+  overflow-y: auto;
+}
+
+.nv-nav--vertical .nv-nav__list {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--nv-space-0-5);
+}
+
+.nv-nav--vertical .nv-nav__item {
+  justify-content: flex-start;
+}
+
+.nv-nav--vertical .nv-nav__brand {
+  padding: var(--nv-space-2) var(--nv-space-3);
+  margin-block-end: var(--nv-space-3);
+}
+
+/* Engraved, like .nv-overline: a section marks a region, it is not read. */
+.nv-nav__section {
+  padding: var(--nv-space-4) var(--nv-space-3) var(--nv-space-1-5);
+  font: var(--nv-font-engraved);
+  letter-spacing: var(--nv-letter-spacing-engraved);
+  text-transform: uppercase;
+  color: var(--nv-color-text-tertiary);
+}
+
+.nv-nav__section:first-child {
+  padding-block-start: 0;
+}
+
+/* --- Tabs ------------------------------------------------------------------------
+   For switching views inside a page, not for moving between pages. The strip
+   itself is inset, so the selected tab reads as lifted out of the track. */
+
+.nv-nav-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nv-space-0-5);
+  padding: var(--nv-space-1);
+
+  background-color: var(--nv-color-surface-inset);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: var(--nv-radius-md);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+  overflow-x: auto;
+  scrollbar-width: none;
+  isolation: isolate;
+}
+
+.nv-nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.nv-nav-tabs .nv-nav__item {
+  border-radius: var(--nv-radius-sm);
+  min-block-size: var(--nv-control-height-sm);
+  padding-block: var(--nv-space-1);
+}
+
+/* Tabs are a selection group of their own, so they get their own marker name;
+   sharing the navigation bar's would mean two visible elements with the same
+   view-transition-name. */
+.nv-nav-tabs {
+  --nv-selection-name: nv-tabs-selection;
+}
+
+.nv-nav-tabs .nv-nav__item[aria-selected="true"]::before {
+  border-radius: var(--nv-radius-sm);
+}
+
+/* --- Panels ----------------------------------------------------------------------
+   Switching tabs should feel like moving through one surface rather than
+   swapping the interface. nv.selectTab() gives the outgoing and incoming
+   panels one shared name for the length of the change, so they hand over
+   inside the same box — and slide with the direction of travel. The class is
+   what picks up the content animation in continuity.css. */
+.nv-tab-panel {
+  view-transition-class: nv-content;
+}
+
+/* --- Breadcrumbs -------------------------------------------------------------------- */
+
+.nv-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-tertiary);
+}
+
+.nv-breadcrumbs li + li::before {
+  content: "/";
+  margin-inline-end: var(--nv-space-2);
+  color: var(--nv-color-border-strong);
+}
+
+.nv-breadcrumbs a {
+  color: var(--nv-color-text-secondary);
+  text-decoration: none;
+}
+
+.nv-breadcrumbs a:hover {
+  color: var(--nv-color-text-primary);
+}
+
+.nv-breadcrumbs [aria-current] {
+  color: var(--nv-color-text-primary);
+  font-weight: var(--nv-font-weight-medium);
+}

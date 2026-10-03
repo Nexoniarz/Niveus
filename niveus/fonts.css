@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Niveus — Fonts
+   --------------------------------------------------------------------------
+   Niveus ships its own faces, so it reads the same wherever it is used
+   instead of depending on what a machine happens to have installed. Both are
+   variable fonts under the SIL Open Font License (fonts/OFL-*.txt), free to
+   bundle with anything.
+
+     Instrument Sans   the interface. Crisp, slightly narrow, warm at small
+                       sizes — the voice of every label, control and heading.
+     JetBrains Mono    code, figures, and the engraved labels (.nv-overline)
+                       that mark sections the way markings mark an instrument.
+
+   The paths are relative to this file and to dist/niveus.css alike: both sit
+   one level below the root, where fonts/ lives.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("../fonts/InstrumentSans.woff2") format("woff2");
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("../fonts/InstrumentSans-Italic.woff2") format("woff2");
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/JetBrainsMono.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}

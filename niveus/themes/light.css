@@ -1,0 +1,182 @@
+/* ==========================================================================
+   Niveus — Light appearance
+   --------------------------------------------------------------------------
+   Values for the light side of every semantic role. Nothing here is consumed
+   by components directly; tokens/color.css resolves these through light-dark().
+
+   Almost nothing below is a literal color. Each role is *derived* from
+   --nv-brand, so setting one value re-colours the entire system: the accent
+   and its states, what text goes on top of it, how the status colors lean, and
+   how much of the brand bleeds into the greys. See tokens/color.css for the
+   inputs.
+
+   Light Niveus reads as soft paper and enamel on a warm grey desk: surfaces
+   that hold content stay near-white, so documents never look yellowed; the
+   canvas around them is a few steps warmer and darker, so a window sits *on*
+   something. Raised controls are bevelled — a bright top edge, a soft shade
+   along the bottom, light falling across the face — and shadows are warm,
+   the color of shade on paper rather than of a grey filter.
+   ========================================================================== */
+
+:root {
+  /* Follow the environment unless the application states an appearance. */
+  color-scheme: light dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* [data-nv-brand] re-derives the whole set for a subtree, so one region can
+   carry a different brand without a second theme. */
+:root,
+[data-nv-brand] {
+  /* --- Canvas and surfaces -----------------------------------------------
+     Paper stays paper: the two surfaces that hold content are left untinted so
+     text keeps its contrast. Everything the surfaces sit *in* picks up a trace
+     of the brand, which is what stops an accent from looking stuck on. */
+  --nv-light-background: color-mix(in oklab, #e8e5de, var(--nv-brand) var(--nv-brand-tint));
+  --nv-light-background-subtle: color-mix(in oklab, #eeece6, var(--nv-brand) var(--nv-brand-tint));
+  --nv-light-surface: #fbfbfa;
+  --nv-light-surface-elevated: #f8f8f6;
+  --nv-light-surface-inset: color-mix(in oklab, #e3e2dd, var(--nv-brand) var(--nv-brand-tint));
+  --nv-light-surface-hover: color-mix(in oklab, #f1f0ec, var(--nv-brand) var(--nv-brand-tint));
+  --nv-light-surface-active: color-mix(in oklab, #e8e5de, var(--nv-brand) var(--nv-brand-tint));
+  --nv-light-scrim: rgb(28 24 18 / 0.34);
+
+  /* --- Text ---------------------------------------------------------------
+     Primary text stays neutral — it carries the reading contrast. The quieter
+     two lean towards the brand, where a tint reads as warmth rather than as a
+     loss of legibility. */
+  --nv-light-text-primary: var(--nv-palette-neutral-900);
+  --nv-light-text-secondary: color-mix(in oklab, var(--nv-palette-neutral-600), var(--nv-brand) 8%);
+  --nv-light-text-tertiary: color-mix(in oklab, var(--nv-palette-neutral-500), var(--nv-brand) 8%);
+  --nv-light-text-disabled: var(--nv-palette-neutral-400);
+  --nv-light-text-inverted: var(--nv-palette-neutral-0);
+
+  /* --- Borders ------------------------------------------------------------ */
+  --nv-light-border-subtle: rgb(28 24 18 / 0.07);
+  --nv-light-border: rgb(28 24 18 / 0.13);
+  --nv-light-border-strong: rgb(28 24 18 / 0.22);
+
+  /* --- Accent --------------------------------------------------------------
+     Every filled color is pushed away from the middle of the lightness range
+     before it is used. A mid-tone is the one place where neither white nor
+     black text reaches 4.5:1, so a brand that lands there is darkened until
+     white works — or, if it is already light, lightened until black does. The
+     brand's hue and chroma are untouched; only its lightness moves, and only
+     as far as it has to. */
+  --nv-light-accent: oklch(from var(--nv-brand) calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-light-accent-hover: oklch(from var(--nv-light-accent) calc(l - 0.045) c h);
+  --nv-light-accent-active: oklch(from var(--nv-light-accent) calc(l - 0.09) c h);
+  --nv-light-accent-subtle: oklch(from var(--nv-light-accent) 0.965 calc(c * 0.16) h);
+  --nv-light-accent-subtle-hover: oklch(from var(--nv-light-accent) 0.93 calc(c * 0.22) h);
+  --nv-light-accent-border: oklch(from var(--nv-light-accent) l c h / 0.32);
+  --nv-light-accent-text: oklch(from var(--nv-light-accent) clamp(0.3, calc(l - 0.12), 0.5) c h);
+  /* Text that lands on the color itself. The clamp is a step function: below
+     the lightness threshold it resolves to 1 and the text goes near-white,
+     above it to 0 and the text goes near-black — so a yellow brand gets dark
+     labels and a navy one gets light labels, with no second token to set. */
+  --nv-light-on-accent: oklch(from var(--nv-light-accent)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Success ------------------------------------------------------------- */
+  --nv-light-success: oklch(from
+    color-mix(in oklab, var(--nv-palette-success-500), var(--nv-brand) var(--nv-brand-harmony))
+    calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-light-success-hover: oklch(from var(--nv-light-success) calc(l - 0.05) c h);
+  --nv-light-success-subtle: oklch(from var(--nv-light-success) 0.965 calc(c * 0.16) h);
+  --nv-light-success-border: oklch(from var(--nv-light-success) l c h / 0.3);
+  --nv-light-success-text: oklch(from var(--nv-light-success) clamp(0.3, calc(l - 0.1), 0.48) c h);
+  --nv-light-on-success: oklch(from var(--nv-light-success)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Warning -------------------------------------------------------------- */
+  /* Amber starts above the pivot on purpose. Pushed the other way it lands as
+     brown, which reads as neither a warning nor a color anyone chose. */
+  --nv-light-warning: oklch(from
+    color-mix(in oklab, var(--nv-palette-warning-400), var(--nv-brand) var(--nv-brand-harmony))
+    calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-light-warning-hover: oklch(from var(--nv-light-warning) calc(l - 0.05) c h);
+  --nv-light-warning-subtle: oklch(from var(--nv-light-warning) 0.965 calc(c * 0.16) h);
+  --nv-light-warning-border: oklch(from var(--nv-light-warning) l c h / 0.32);
+  --nv-light-warning-text: oklch(from var(--nv-light-warning) clamp(0.3, calc(l - 0.1), 0.48) c h);
+  --nv-light-on-warning: oklch(from var(--nv-light-warning)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Danger ---------------------------------------------------------------- */
+  --nv-light-danger: oklch(from
+    color-mix(in oklab, var(--nv-palette-danger-500), var(--nv-brand) var(--nv-brand-harmony))
+    calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-light-danger-hover: oklch(from var(--nv-light-danger) calc(l - 0.05) c h);
+  --nv-light-danger-active: oklch(from var(--nv-light-danger) calc(l - 0.1) c h);
+  --nv-light-danger-subtle: oklch(from var(--nv-light-danger) 0.965 calc(c * 0.16) h);
+  --nv-light-danger-border: oklch(from var(--nv-light-danger) l c h / 0.3);
+  --nv-light-danger-text: oklch(from var(--nv-light-danger) clamp(0.3, calc(l - 0.1), 0.48) c h);
+  --nv-light-on-danger: oklch(from var(--nv-light-danger)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Depth and material -------------------------------------------------
+     Three shadow colors build every elevation level: an ambient contact
+     shadow, a soft penumbra, and a deeper umbra for high elevations. */
+  --nv-light-shadow-ambient: rgb(40 32 20 / 0.09);
+  --nv-light-shadow-penumbra: rgb(40 32 20 / 0.12);
+  --nv-light-shadow-umbra: rgb(40 32 20 / 0.11);
+  --nv-light-shadow-inset: rgb(40 32 20 / 0.17);
+  --nv-light-highlight: rgb(255 255 255 / 0.9);
+  --nv-light-highlight-strong: rgb(255 255 255 / 1);
+
+  /* Paper already has a border doing the contact work, so the outline only
+     softens it; the bottom shade is faint for the same reason. */
+  --nv-light-lowlight: rgb(40 32 20 / 0.07);
+  --nv-light-outline: rgb(40 32 20 / 0.05);
+
+  --nv-light-sheen-top: rgb(255 255 255 / 0.75);
+  --nv-light-sheen-bottom: rgb(40 32 20 / 0.04);
+  --nv-light-sheen-strong-top: rgb(255 255 255 / 0.24);
+  --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.1);
+
+  --nv-light-knob: var(--nv-palette-neutral-0);
+  --nv-light-knob-shade: rgb(40 32 20 / 0.13);
+
+  /* Light surfaces are already lighter than their canvas; the shadow alone
+     carries elevation, so there is nothing to add. */
+  --nv-light-elevation-tint-1: transparent;
+  --nv-light-elevation-tint-2: transparent;
+  --nv-light-elevation-tint-3: transparent;
+  --nv-light-elevation-tint-4: transparent;
+  --nv-light-elevation-tint-5: transparent;
+
+  --nv-light-material-frosted: rgb(251 251 249 / 0.66);
+  --nv-light-material-glass: rgb(251 251 249 / 0.5);
+  --nv-light-material-border: rgb(255 255 255 / 0.6);
+
+  /* --- Window controls --------------------------------------------------------- */
+  --nv-light-window-close: var(--nv-palette-window-close);
+  --nv-light-window-minimize: var(--nv-palette-window-minimize);
+  --nv-light-window-zoom: var(--nv-palette-window-zoom);
+  --nv-light-window-inactive: var(--nv-palette-neutral-300);
+  --nv-light-window-control-ring: rgb(0 0 0 / 0.16);
+  --nv-light-window-glyph: rgb(0 0 0 / 0.55);
+
+  /* --- Interaction ----------------------------------------------------------- */
+  --nv-light-focus-ring: oklch(from var(--nv-light-accent) l c h / 0.4);
+  --nv-light-focus-ring-contrast: rgb(255 255 255 / 0.9);
+  --nv-light-selection: oklch(from var(--nv-light-accent) l c h / 0.2);
+}

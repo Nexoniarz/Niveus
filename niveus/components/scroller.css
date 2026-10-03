@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Niveus — Scroller
+   --------------------------------------------------------------------------
+     <div class="nv-scroller-frame" data-nv-scroller>
+       <div class="nv-scroller"> …cards… </div>
+       <button class="nv-button nv-button--icon" data-nv-scroll="prev">…</button>
+       <button class="nv-button nv-button--icon" data-nv-scroll="next">…</button>
+     </div>
+
+   A row of content that continues past its frame. Two things make that
+   readable rather than merely clipped: the edges fade, so the row visibly runs
+   under them instead of being cut, and snapping lands each item at the same
+   place every time — so moving left and right returns you to positions you
+   have already seen rather than to arbitrary offsets.
+
+   Scrolling works with no script at all: wheel, trackpad, touch and keyboard
+   are the browser's. The buttons are an affordance for pointers that have no
+   horizontal axis, and niveus.js wires them.
+   ========================================================================== */
+
+.nv-scroller-frame {
+  position: relative;
+}
+
+.nv-scroller {
+  --nv-scroller-item: 18rem;
+  --nv-scroller-fade: var(--nv-space-8);
+
+  display: flex;
+  gap: var(--nv-space-4);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+
+  /* Room for items to lift on hover without being clipped by the scroll box. */
+  padding-block: var(--nv-space-2);
+
+  scroll-snap-type: inline mandatory;
+  scroll-padding-inline: var(--nv-space-1);
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+
+  /* The row runs under its own edges rather than stopping at them — but only
+     on the side where there is actually more to see. A fade at an end the row
+     has already reached is a lie about the content. niveus.js marks the ends;
+     with no script both sides fade, which is the safe default. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--nv-scroller-fade),
+    black calc(100% - var(--nv-scroller-fade)),
+    transparent
+  );
+}
+
+.nv-scroller-frame[data-nv-at-start] .nv-scroller {
+  mask-image: linear-gradient(
+    to right,
+    black calc(100% - var(--nv-scroller-fade)),
+    transparent
+  );
+}
+
+.nv-scroller-frame[data-nv-at-end] .nv-scroller {
+  mask-image: linear-gradient(to right, transparent, black var(--nv-scroller-fade));
+}
+
+.nv-scroller-frame[data-nv-at-start][data-nv-at-end] .nv-scroller {
+  mask-image: none;
+}
+
+.nv-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.nv-scroller > * {
+  flex: 0 0 auto;
+  inline-size: min(var(--nv-scroller-item), 78%);
+  scroll-snap-align: start;
+}
+
+/* Items that should size to their content rather than to the track. */
+.nv-scroller--auto > * {
+  inline-size: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-scroller {
+    scroll-behavior: auto;
+  }
+}
+
+/* --- Controls ------------------------------------------------------------
+   Centred on the row's block axis and pulled half outside it, so they read as
+   belonging to the frame rather than floating over the content. */
+
+.nv-scroller-frame [data-nv-scroll] {
+  position: absolute;
+  inset-block-start: 50%;
+  z-index: 1;
+
+  /* Read by .nv-button--float, which keeps it through hover and press. */
+  --nv-button-offset: 0 -50%;
+}
+
+/* Belt and braces: the frame knows these controls float, so their centring
+   survives even if the markup forgets --float. */
+.nv-scroller-frame [data-nv-scroll],
+.nv-scroller-frame [data-nv-scroll]:hover,
+.nv-scroller-frame [data-nv-scroll]:active {
+  translate: var(--nv-button-offset);
+}
+
+.nv-scroller-frame [data-nv-scroll="prev"] {
+  inset-inline-start: calc(var(--nv-space-4) * -1);
+}
+
+.nv-scroller-frame [data-nv-scroll="next"] {
+  inset-inline-end: calc(var(--nv-space-4) * -1);
+}
+
+/* At either end the control has nothing left to do, and says so. */
+.nv-scroller-frame [data-nv-scroll]:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: none) {
+  .nv-scroller-frame [data-nv-scroll] {
+    display: none;
+  }
+}

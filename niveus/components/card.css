@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Niveus — Card
+   --------------------------------------------------------------------------
+     .nv-card                     resting surface, elevation 1
+     .nv-card--elevated           separated from its context, elevation 2
+     .nv-card--inset              recessed into its parent
+     .nv-card--frosted            over imagery or scrolling content
+     .nv-card--interactive        the whole card is one target
+     .nv-card__header / __body / __footer / __media
+
+   A card is a container, not a look. If a card needs a shadow that is not on
+   the elevation scale, the answer is a different elevation — not a different
+   shadow.
+   ========================================================================== */
+
+.nv-card {
+  --_bg: var(--nv-color-surface);
+  --_border: var(--nv-color-border-subtle);
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  --_sheen: var(--nv-sheen-surface);
+  --_padding: var(--nv-space-5);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+
+  background-color: var(--_bg);
+  background-image: var(--_sheen);
+  color: var(--nv-color-text-primary);
+  border: var(--nv-border-width) solid var(--_border);
+  border-radius: var(--nv-radius-lg);
+  box-shadow: var(--_shadow);
+
+  /* Children are clipped to the corner radius so media and inset regions
+     cannot square off the card. */
+  overflow: hidden;
+  transition: var(--nv-transition-surface);
+}
+
+.nv-card--elevated {
+  --_bg: var(--nv-color-surface-elevated);
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+}
+
+.nv-card--floating {
+  --_bg: var(--nv-color-surface-elevated);
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+}
+
+.nv-card--inset {
+  --_bg: var(--nv-color-surface-inset);
+  --_shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+  --_sheen: none;
+  --_border: var(--nv-color-border-subtle);
+}
+
+.nv-card--frosted {
+  --_bg: var(--nv-material-frosted-bg);
+  --_border: var(--nv-material-frosted-border);
+  --_shadow: var(--nv-material-frosted-shadow);
+  --_sheen: none;
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+}
+
+.nv-card--flush {
+  --_padding: 0;
+}
+
+/* --- Interactive ------------------------------------------------------------
+   Rises on hover and sinks on press, exactly like a button — one physical
+   language for anything that responds to a pointer. */
+
+.nv-card--interactive {
+  cursor: pointer;
+  text-align: start;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .nv-card--interactive:hover {
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+    translate: 0 calc(var(--nv-lift-hover) * 2);
+  }
+}
+
+.nv-card--interactive:active {
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  translate: 0 var(--nv-press-depth);
+  transition-duration: var(--nv-duration-instant);
+}
+
+.nv-card--interactive:focus-visible {
+  outline: none;
+  box-shadow: var(--_shadow), var(--nv-focus-ring);
+}
+
+/* Cards whose whole area is clickable via a link inside: the link's target is
+   stretched over the card, so the markup stays semantic and only the link text
+   is announced. */
+.nv-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* --- Parts ------------------------------------------------------------------- */
+
+.nv-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--nv-space-4);
+  padding: var(--_padding);
+  padding-block-end: var(--nv-space-3);
+}
+
+.nv-card__title {
+  font: var(--nv-font-title);
+  letter-spacing: var(--nv-letter-spacing-tight);
+  margin: 0;
+}
+
+.nv-card__subtitle {
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-secondary);
+  margin-block-start: var(--nv-space-1);
+}
+
+.nv-card__body {
+  flex: 1;
+  padding: var(--_padding);
+  color: var(--nv-color-text-secondary);
+  font: var(--nv-font-body);
+}
+
+/* A header already opened the block, so the body should not open it again. */
+.nv-card__header + .nv-card__body {
+  padding-block-start: 0;
+}
+
+.nv-card__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2);
+  padding: var(--_padding);
+  padding-block-start: var(--nv-space-3);
+  border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  margin-block-start: auto;
+}
+
+.nv-card__footer--plain {
+  border-block-start: 0;
+  padding-block-start: 0;
+}
+
+.nv-card__media {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background-color: var(--nv-color-surface-inset);
+}
+
+/* --- Group ---------------------------------------------------------------------
+   Equal-height cards on one rhythm, collapsing to a single column without a
+   media query. */
+
+.nv-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  gap: var(--nv-space-4);
+  align-items: stretch;
+}

@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen — an AI product landing page built with Niveus</title>
+
+<!-- The system, and its optional continuity helpers. -->
+<link rel="stylesheet" href="../../dist/niveus.css">
+<script src="../../niveus/niveus.js" defer></script>
+
+<!-- This page's own layout. No colors, no shadows, no type sizes. -->
+<link rel="stylesheet" href="app.css">
+
+<script>
+  /* Applied before first paint so the page never renders in the wrong
+     appearance and then corrects itself. */
+  try {
+    var saved = localStorage.getItem("lumen-theme");
+    if (saved && saved !== "system") document.documentElement.setAttribute("data-theme", saved);
+  } catch (error) { /* storage unavailable — follow the system */ }
+</script>
+
+<!-- The entire identity of this site is one declaration. -->
+<style>
+  :root { --nv-brand: #6d5efc; }
+</style>
+</head>
+
+<body>
+
+<nav class="nv-nav" id="topnav" aria-label="Main" style="--nv-selection-name: nv-lumen-nav">
+  <a class="nv-nav__brand" href="#top">
+    <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 3v18M3 12h18M6 6l12 12M18 6L6 18" stroke="currentColor"
+            stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Lumen
+  </a>
+
+  <ul class="nv-nav__list" data-nv-travel>
+    <li><a class="nv-nav__item" href="#features" aria-current="page">Features</a></li>
+    <li><a class="nv-nav__item" href="#build">Build</a></li>
+    <li><a class="nv-nav__item" href="#pricing">Pricing</a></li>
+    <li><a class="nv-nav__item" href="#faq">FAQ</a></li>
+  </ul>
+
+  <span class="nv-nav__spacer"></span>
+
+  <div class="nv-button-group" role="group" aria-label="Appearance">
+    <button class="nv-button nv-button--sm" data-nv-theme="light" aria-pressed="false">Light</button>
+    <button class="nv-button nv-button--sm" data-nv-theme="dark" aria-pressed="false">Dark</button>
+    <button class="nv-button nv-button--sm" data-nv-theme="system" aria-pressed="true">Auto</button>
+  </div>
+
+  <a class="nv-button nv-button--sm nv-button--primary" href="#pricing">Get started</a>
+</nav>
+
+<main id="top">
+
+  <!-- ================================================================== -->
+  <header class="shell hero">
+    <div class="hero__copy">
+      <span class="nv-badge nv-badge--accent">
+        <span class="nv-badge__dot"></span>
+        Lumen 2 is available
+      </span>
+
+      <h1 class="nv-display hero__title">The model that reads your whole codebase.</h1>
+
+      <p class="nv-prose">
+        Lumen answers questions about the systems you actually run — not a
+        snapshot of them. Point it at a repository and it keeps up as the code
+        changes.
+      </p>
+
+      <div class="nv-cluster">
+        <a class="nv-button nv-button--primary nv-button--lg" href="#pricing">Start free</a>
+        <button class="nv-button nv-button--lg" data-nv-dialog="demo">Watch a demo</button>
+      </div>
+
+      <p class="nv-caption">No card required · 14-day trial · SOC 2 Type II</p>
+    </div>
+
+    <div class="nv-bed nv-bed--single">
+      <span class="nv-bed__label">Live preview</span>
+
+      <div class="preview">
+        <div class="bubble bubble--from-user nv-material-elevated">
+          Why did checkout latency double after Tuesday's deploy?
+        </div>
+
+        <div class="nv-card nv-card--frosted bubble bubble--from-agent"
+             style="max-inline-size: 100%; padding: var(--nv-space-4)">
+          <p class="nv-body">
+            The <code class="nv-code">pricing</code> service started resolving
+            tax rules per line item instead of per cart in
+            <code class="nv-code">#4412</code>. Two of three carts hit the slow
+            path.
+          </p>
+          <div class="nv-cluster nv-cluster--tight" style="margin-block-start: var(--nv-space-3)">
+            <span class="nv-badge nv-badge--warning">p95 +118%</span>
+            <span class="nv-badge">3 files</span>
+          </div>
+        </div>
+
+        <div class="bubble bubble--from-user nv-material-elevated">
+          Open a PR that reverts just that change.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================================================== -->
+  <section class="shell">
+    <div class="logos">
+      <span class="nv-overline">Northwire</span>
+      <span class="nv-overline">Harbour</span>
+      <span class="nv-overline">Greenhouse Labs</span>
+      <span class="nv-overline">Quarry</span>
+      <span class="nv-overline">Signal Systems</span>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="shell section" id="features">
+    <div class="section__head">
+      <span class="nv-overline">Why teams switch</span>
+      <h2 class="nv-heading">Built for the code you already have.</h2>
+      <p class="nv-prose">
+        Three things matter when a model works on a real system: that it sees
+        the current state, that it explains itself, and that it cannot quietly
+        do something irreversible.
+      </p>
+    </div>
+
+    <div class="features">
+      <article class="nv-card">
+        <div class="nv-card__body">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="nv-title">Always current</h3>
+          <p style="margin-block-start: var(--nv-space-2)">
+            Indexes on every push, so answers describe the branch you are on
+            rather than the one it was trained on.
+          </p>
+        </div>
+      </article>
+
+      <article class="nv-card">
+        <div class="nv-card__body">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
+              <path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="nv-title">Shows its work</h3>
+          <p style="margin-block-start: var(--nv-space-2)">
+            Every claim links to the lines it came from. If it cannot cite a
+            file, it says so instead of guessing.
+          </p>
+        </div>
+      </article>
+
+      <article class="nv-card">
+        <div class="nv-card__body">
+          <span class="feature__icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z" stroke="currentColor"
+                    stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <h3 class="nv-title">Asks before it acts</h3>
+          <p style="margin-block-start: var(--nv-space-2)">
+            Writes, merges and deploys are proposals until a human approves
+            them. Read access is the default.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="shell section" id="build">
+    <div class="section__head">
+      <span class="nv-overline">What teams build</span>
+      <h2 class="nv-heading">One model, several jobs.</h2>
+    </div>
+
+    <div class="nv-scroller-frame" data-nv-scroller>
+      <div class="nv-scroller">
+        <article class="nv-card nv-card--interactive">
+          <div class="nv-card__header"><div>
+            <h3 class="nv-card__title">Incident triage</h3>
+            <p class="nv-card__subtitle">Platform teams</p>
+          </div></div>
+          <div class="nv-card__body">
+            Correlates a regression with the change that caused it, and drafts
+            the revert.
+          </div>
+        </article>
+
+        <article class="nv-card nv-card--interactive">
+          <div class="nv-card__header"><div>
+            <h3 class="nv-card__title">Review assistant</h3>
+            <p class="nv-card__subtitle">Every repository</p>
+          </div></div>
+          <div class="nv-card__body">
+            Reads the diff in the context of the whole system, not just the
+            files that changed.
+          </div>
+        </article>
+
+        <article class="nv-card nv-card--interactive">
+          <div class="nv-card__header"><div>
+            <h3 class="nv-card__title">Migration planning</h3>
+            <p class="nv-card__subtitle">Staff engineers</p>
+          </div></div>
+          <div class="nv-card__body">
+            Finds every call site, groups them by risk, and sequences the work.
+          </div>
+        </article>
+
+        <article class="nv-card nv-card--interactive">
+          <div class="nv-card__header"><div>
+            <h3 class="nv-card__title">Onboarding</h3>
+            <p class="nv-card__subtitle">New joiners</p>
+          </div></div>
+          <div class="nv-card__body">
+            Answers "why is this here" with the commit, the review and the
+            issue behind it.
+          </div>
+        </article>
+
+        <article class="nv-card nv-card--interactive">
+          <div class="nv-card__header"><div>
+            <h3 class="nv-card__title">Dependency audits</h3>
+            <p class="nv-card__subtitle">Security</p>
+          </div></div>
+          <div class="nv-card__body">
+            Separates the advisories that reach your code from the ones that
+            do not.
+          </div>
+        </article>
+      </div>
+
+      <button class="nv-button nv-button--icon nv-button--float" data-nv-scroll="prev" aria-label="Previous">
+        <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="nv-button nv-button--icon nv-button--float" data-nv-scroll="next" aria-label="Next">
+        <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="shell section" id="pricing">
+    <div class="section__head section__head--center">
+      <span class="nv-overline">Pricing</span>
+      <h2 class="nv-heading">Per seat, not per question.</h2>
+      <p class="nv-prose">
+        Usage limits make people ration the tool that is supposed to save them
+        time.
+      </p>
+    </div>
+
+    <div class="pricing">
+      <article class="nv-card">
+        <div class="nv-card__body">
+          <h3 class="nv-title">Starter</h3>
+          <p class="nv-caption">For a single repository.</p>
+          <p class="price">
+            <span class="price__amount">$0</span>
+            <span class="nv-caption">forever</span>
+          </p>
+          <ul class="plan-features nv-caption">
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> One repository</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Community support</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Read-only access</li>
+          </ul>
+        </div>
+        <div class="nv-card__footer">
+          <button class="nv-button nv-button--block">Start free</button>
+        </div>
+      </article>
+
+      <article class="nv-card nv-card--floating">
+        <div class="nv-card__body">
+          <div class="nv-cluster nv-cluster--between">
+            <h3 class="nv-title">Team</h3>
+            <span class="nv-badge nv-badge--accent nv-badge--solid">Most chosen</span>
+          </div>
+          <p class="nv-caption">For a codebase several people touch.</p>
+          <p class="price">
+            <span class="price__amount">$24</span>
+            <span class="nv-caption">per seat / month</span>
+          </p>
+          <ul class="plan-features nv-caption">
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Unlimited repositories</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Pull request proposals</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Shared context across the team</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> SSO and audit log</li>
+          </ul>
+        </div>
+        <div class="nv-card__footer">
+          <button class="nv-button nv-button--primary nv-button--block">Start 14-day trial</button>
+        </div>
+      </article>
+
+      <article class="nv-card">
+        <div class="nv-card__body">
+          <h3 class="nv-title">Enterprise</h3>
+          <p class="nv-caption">For code that cannot leave your network.</p>
+          <p class="price">
+            <span class="price__amount">Talk</span>
+            <span class="nv-caption">to us</span>
+          </p>
+          <ul class="plan-features nv-caption">
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Self-hosted or VPC</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Custom retention</li>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Named support engineer</li>
+          </ul>
+        </div>
+        <div class="nv-card__footer">
+          <button class="nv-button nv-button--block">Contact sales</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="shell section" id="faq">
+    <div class="section__head">
+      <span class="nv-overline">Questions</span>
+      <h2 class="nv-heading">Before you ask.</h2>
+    </div>
+
+    <div class="nv-disclosure-group" style="max-inline-size: var(--nv-measure-wide)">
+      <details class="nv-disclosure" open>
+        <summary class="nv-disclosure__summary">
+          Do you train on our code?
+          <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="nv-disclosure__body">
+          No. Repository contents are used to answer your team's questions and
+          nothing else. Enterprise plans can run entirely inside your own
+          network, where the question never leaves it either.
+        </div>
+      </details>
+
+      <details class="nv-disclosure">
+        <summary class="nv-disclosure__summary">
+          What happens when it is wrong?
+          <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="nv-disclosure__body">
+          Every answer cites the files it drew on, so a wrong answer is
+          checkable rather than merely confident. Anything that writes is a
+          proposal until a person approves it.
+        </div>
+      </details>
+
+      <details class="nv-disclosure">
+        <summary class="nv-disclosure__summary">
+          How large a codebase can it handle?
+          <span class="nv-disclosure__chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="nv-disclosure__body">
+          The largest repository we index in production is around eleven
+          million lines. Indexing is incremental, so size affects the first
+          run far more than the ones after it.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="shell">
+    <div class="nv-bed nv-bed--vivid closing">
+      <h2 class="nv-heading">Point it at a repository.</h2>
+      <p class="nv-prose">
+        The first answer usually arrives before the tour would have finished.
+      </p>
+      <div class="nv-cluster">
+        <a class="nv-button nv-button--primary nv-button--lg" href="#pricing">Start free</a>
+        <button class="nv-button nv-button--lg nv-button--frosted" data-nv-dialog="demo">
+          Watch a demo
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="shell site-footer">
+    <div class="nv-cluster nv-cluster--between">
+      <span class="nv-caption">Lumen — an example interface built with Niveus.</span>
+      <span class="nv-caption">Made by Nexoniarz</span>
+    </div>
+  </footer>
+
+</main>
+
+<dialog class="nv-dialog" id="demo" aria-labelledby="demo-title">
+  <div class="nv-dialog__header">
+    <div>
+      <h2 class="nv-dialog__title" id="demo-title">A two-minute tour</h2>
+      <p class="nv-dialog__description">
+        This dialog expanded from the button you pressed, and the page behind
+        it is blurred rather than hidden.
+      </p>
+    </div>
+    <button class="nv-button nv-button--ghost nv-button--icon nv-dialog__close"
+            aria-label="Close" data-nv-close>
+      <svg class="nv-button__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="nv-dialog__body">
+    <div class="nv-bed nv-bed--quiet" style="display: grid; place-items: center; min-block-size: 12rem">
+      <span class="nv-caption">Where the video would be.</span>
+    </div>
+  </div>
+  <div class="nv-dialog__footer">
+    <button class="nv-button" data-nv-close>Close</button>
+    <a class="nv-button nv-button--primary" href="#pricing" data-nv-close>Start free</a>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    /* niveus.js wires the appearance buttons; the page decides what
+       "remember it" means. */
+    document.documentElement.addEventListener("nv:theme", (event) => {
+      try { localStorage.setItem("lumen-theme", event.detail.theme); } catch {}
+    });
+    nv.syncThemeControls(document.documentElement.getAttribute("data-theme") || "system");
+
+    /* The nav's selection travels to whatever section you jump to. */
+    const nav = document.querySelector("[data-nv-travel]");
+    nav.addEventListener("click", (event) => {
+      const item = event.target.closest(".nv-nav__item");
+      if (!item || item.hasAttribute("aria-current")) return;
+      nv.transition(() => {
+        nav.querySelectorAll("[aria-current]").forEach((el) => el.removeAttribute("aria-current"));
+        item.setAttribute("aria-current", "page");
+      }, { scope: nav });
+    });
+
+    /* The bar earns its shadow only once content has passed under it. */
+    const topnav = document.getElementById("topnav");
+    const onScroll = () => topnav.toggleAttribute("data-scrolled", scrollY > 8);
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  });
+</script>
+</body>
+</html>

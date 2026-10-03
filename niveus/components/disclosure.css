@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Niveus — Disclosure
+   --------------------------------------------------------------------------
+     <details class="nv-disclosure">
+       <summary class="nv-disclosure__summary"> … </summary>
+       <div class="nv-disclosure__body"> … </div>
+     </details>
+
+   Content expands out of the row that revealed it, at the position it already
+   occupies, rather than appearing at full height. The height animates because
+   the continuity layer turns on `interpolate-size`, which is what lets
+   block-size: auto take part in a transition — no measurement, no script, and
+   no wrapper whose height has to be kept in sync.
+
+   .nv-collapse in continuity.css covers the same relationship for markup that
+   cannot be a <details>.
+   ========================================================================== */
+
+.nv-disclosure {
+  --_padding: var(--nv-space-4);
+
+  background-color: var(--nv-color-surface);
+  background-image: var(--nv-sheen-surface);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: var(--nv-radius-lg);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  transition: var(--nv-transition-surface);
+}
+
+.nv-disclosure--plain {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.nv-disclosure__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-3);
+  padding: var(--nv-space-3) var(--_padding);
+
+  font: var(--nv-font-label);
+  color: var(--nv-color-text-primary);
+  border-radius: inherit;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  transition: var(--nv-transition-colors);
+}
+
+/* Both spellings are needed to suppress the native marker. */
+.nv-disclosure__summary::marker,
+.nv-disclosure__summary::-webkit-details-marker {
+  display: none;
+  content: "";
+}
+
+@media (hover: hover) {
+  .nv-disclosure__summary:hover {
+    background-color: var(--nv-color-surface-hover);
+  }
+}
+
+.nv-disclosure__summary:focus-visible {
+  outline: none;
+  box-shadow: var(--nv-focus-ring);
+}
+
+/* The chevron turns rather than swapping to a different glyph — the rotation
+   is what says "this is the same control in its other state". */
+.nv-disclosure__chevron {
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  margin-inline-start: auto;
+  margin-block-start: -0.2em;
+  flex: none;
+
+  border-inline-end: 1.5px solid var(--nv-color-text-tertiary);
+  border-block-end: 1.5px solid var(--nv-color-text-tertiary);
+  rotate: 45deg;
+  transition: rotate var(--nv-duration-normal) var(--nv-ease-standard);
+}
+
+.nv-disclosure[open] .nv-disclosure__chevron {
+  rotate: 225deg;
+  margin-block-start: 0.15em;
+}
+
+.nv-disclosure__body {
+  padding: 0 var(--_padding) var(--_padding);
+  color: var(--nv-color-text-secondary);
+  font: var(--nv-font-body);
+}
+
+/* The element the browser creates for a <details> body. Transitioning
+   content-visibility as a discrete property is what keeps the content
+   rendered while it collapses, instead of vanishing on the first frame. */
+.nv-disclosure::details-content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    block-size var(--nv-duration-expand) var(--nv-ease-standard),
+    opacity var(--nv-duration-expand) var(--nv-ease-standard),
+    content-visibility var(--nv-duration-expand) allow-discrete;
+}
+
+.nv-disclosure[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+/* Stacked disclosures read as one control surface, so only the outer corners
+   round and neighbours share a single hairline. */
+.nv-disclosure-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The negative margin collapses each pair of adjacent borders into a single
+   hairline, so neighbours are separated once rather than twice. */
+.nv-disclosure-group > .nv-disclosure:not(:first-child) {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+  margin-block-start: calc(var(--nv-border-width) * -1);
+}
+
+.nv-disclosure-group > .nv-disclosure:not(:last-child) {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}

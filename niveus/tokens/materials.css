@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Niveus — Materials
+   --------------------------------------------------------------------------
+   A material is a surface treatment: what it is made of, not where it sits.
+   Elevation answers "how far from the canvas"; material answers "what does
+   light do when it hits this".
+
+     solid      opaque, stable. The default. Content lives here.
+     elevated   solid with depth and a top highlight. Separated from context.
+     inset      recessed into its parent. Fields, wells, tracks.
+     frosted    translucent, moderately blurred, bevelled. Chrome that sits
+                over content: bars, docks, launchers, notifications, menus.
+     glass      more translucent, lightly blurred. Contextual layers where the
+                content behind should stay legible: overlays, hover cards.
+
+   Niveus is a solid system with glass used sparingly. Windows, cards, dialogs
+   and everything that holds content are solid; translucency is reserved for
+   the chrome that floats over them. Translucency has a cost — it tints
+   whatever is behind it and forces the GPU to composite — and used everywhere
+   it stops meaning "this floats".
+
+   Sheen is the light falling across a raised face. It is laid over a
+   surface's own color as background-image, so a surface keeps its role color
+   and gains the gradient; anything that does not draw gradients simply shows
+   the role color.
+   ========================================================================== */
+
+:root {
+  /* --- Blur ---------------------------------------------------------------- */
+  --nv-blur-sm: 8px;
+  --nv-blur-md: 16px;
+  --nv-blur-lg: 28px;
+  --nv-blur-xl: 44px;
+
+  /* Backdrops lose saturation when blurred; a touch of saturate() puts the
+     color back so frosted surfaces do not read as gray films. Moderate on
+     purpose: the blur says "this floats", it is not the look itself. */
+  --nv-backdrop-saturate: 160%;
+  --nv-backdrop-frosted: blur(var(--nv-blur-md)) saturate(var(--nv-backdrop-saturate));
+  --nv-backdrop-glass: blur(var(--nv-blur-sm)) saturate(var(--nv-backdrop-saturate));
+
+  /* --- Sheen ------------------------------------------------------------------
+     raised    neutral controls: buttons, the selected tab, a titlebar
+     filled    saturated fills: primary and danger buttons, checked marks
+     surface   large surfaces: windows, dialogs, cards. The light fades out
+               within the first stretch, so it reads as a lit top edge
+               rather than as a gradient over the content.
+     knob      a round thumb: lit from above, shaded towards its rim */
+  --nv-sheen-raised: linear-gradient(var(--nv-color-sheen-top), var(--nv-color-sheen-bottom));
+  --nv-sheen-filled: linear-gradient(var(--nv-color-sheen-strong-top), var(--nv-color-sheen-strong-bottom));
+  --nv-sheen-surface: linear-gradient(var(--nv-color-sheen-top), transparent 6rem);
+  --nv-sheen-knob: radial-gradient(circle at 50% 30%, transparent 35%, var(--nv-color-knob-shade));
+  --nv-backdrop-scrim: blur(var(--nv-blur-sm)) saturate(120%);
+
+  /* --- Material recipes -----------------------------------------------------
+     Each recipe is the full set of properties that defines the material.
+     Applied by the .nv-material-* classes in components/surface.css. */
+  --nv-material-solid-bg: var(--nv-color-surface);
+  --nv-material-solid-border: var(--nv-color-border);
+  --nv-material-solid-shadow: var(--nv-elevation-0);
+
+  --nv-material-elevated-bg: var(--nv-color-surface-elevated);
+  --nv-material-elevated-border: var(--nv-color-border-subtle);
+  --nv-material-elevated-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+
+  --nv-material-inset-bg: var(--nv-color-surface-inset);
+  --nv-material-inset-border: var(--nv-color-border-subtle);
+  --nv-material-inset-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+
+  --nv-material-frosted-bg: var(--nv-color-material-frosted);
+  --nv-material-frosted-border: var(--nv-color-material-border);
+  --nv-material-frosted-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+
+  --nv-material-glass-bg: var(--nv-color-material-glass);
+  --nv-material-glass-border: var(--nv-color-material-border);
+  --nv-material-glass-shadow: var(--nv-highlight-top-strong), var(--nv-outline), var(--nv-elevation-4);
+}
+
+/* Where translucency cannot be honoured — reduced transparency, or a browser
+   without backdrop-filter — materials fall back to their solid equivalents
+   rather than becoming unreadable washes. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --nv-material-frosted-bg: var(--nv-color-surface-elevated);
+    --nv-material-glass-bg: var(--nv-color-surface-elevated);
+    --nv-backdrop-frosted: none;
+    --nv-backdrop-glass: none;
+    --nv-backdrop-scrim: none;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  :root {
+    --nv-material-frosted-bg: var(--nv-color-surface-elevated);
+    --nv-material-glass-bg: var(--nv-color-surface-elevated);
+  }
+}

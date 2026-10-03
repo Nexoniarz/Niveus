@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Niveus — examples</title>
+
+<link rel="stylesheet" href="../dist/niveus.css">
+<script src="../niveus/niveus.js" defer></script>
+
+<script>
+  try {
+    var saved = localStorage.getItem("niveus-theme");
+    if (saved && saved !== "system") document.documentElement.setAttribute("data-theme", saved);
+  } catch (error) {}
+</script>
+
+<style>
+  /* Layout only — see each example's app.css for the same discipline. */
+  .shell {
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: var(--nv-space-10) var(--nv-layout-gutter) var(--nv-space-20);
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-10);
+  }
+
+  .intro {
+    max-inline-size: var(--nv-measure);
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-4);
+  }
+
+  .examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
+    gap: var(--nv-space-5);
+  }
+
+  /* Each card previews its own brand by re-deriving the set for itself. */
+  .swatches {
+    display: flex;
+    gap: var(--nv-space-1-5);
+    margin-block-start: var(--nv-space-1);
+  }
+
+  .swatches span {
+    inline-size: var(--nv-space-5);
+    block-size: var(--nv-space-5);
+    border-radius: var(--nv-radius-xs);
+    border: var(--nv-border-width) solid var(--nv-color-border);
+  }
+
+  .site-footer {
+    padding-block-start: var(--nv-space-8);
+    border-block-start: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  }
+</style>
+</head>
+
+<body>
+
+<nav class="nv-nav" aria-label="Main">
+  <a class="nv-nav__brand" href="../index.html">
+    <svg class="nv-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="6" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 15.5V8.5l8 7v-7" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Niveus
+  </a>
+  <ul class="nv-nav__list">
+    <li><a class="nv-nav__item" href="../index.html">Specimen</a></li>
+    <li><span class="nv-nav__item" aria-current="page">Examples</span></li>
+    <li><a class="nv-nav__item" href="../REFERENCE.md">Reference</a></li>
+  </ul>
+  <span class="nv-nav__spacer"></span>
+  <div class="nv-button-group" role="group" aria-label="Appearance">
+    <button class="nv-button nv-button--sm" data-nv-theme="light" aria-pressed="false">Light</button>
+    <button class="nv-button nv-button--sm" data-nv-theme="dark" aria-pressed="false">Dark</button>
+    <button class="nv-button nv-button--sm" data-nv-theme="system" aria-pressed="true">Auto</button>
+  </div>
+</nav>
+
+<main class="shell">
+
+  <header class="intro">
+    <span class="nv-overline">Examples</span>
+    <h1 class="nv-display">Four products, one system.</h1>
+    <p class="nv-prose">
+      Each of these is a complete interface built from Niveus and nothing else.
+      They look like different products because they are — but none of them
+      overrides a component, forks a token, or writes a color. What differs is
+      one declaration of <code class="nv-code">--nv-brand</code>, and the
+      layout each one needs for its own content.
+    </p>
+    <p class="nv-prose">
+      Open any <code class="nv-code">app.css</code> beside them: it contains
+      grids, widths and breakpoints, and not a single hex value. That split —
+      the system owns the language, the application owns the layout — is the
+      thing these examples are really demonstrating.
+    </p>
+  </header>
+
+  <div class="examples">
+
+    <article class="nv-card nv-card--interactive" data-nv-brand style="--nv-brand: #6d5efc">
+      <div class="nv-card__header">
+        <div>
+          <h2 class="nv-card__title">
+            <a class="nv-card__link" href="ai-landing/index.html"
+               style="color: inherit; text-decoration: none">Lumen</a>
+          </h2>
+          <p class="nv-card__subtitle">AI product landing page</p>
+        </div>
+        <span class="nv-badge nv-badge--accent">Marketing</span>
+      </div>
+      <div class="nv-card__body">
+        Hero, feature cards, a scrolling row, pricing and an FAQ. Shows the
+        bed as a showcase surface and the disclosure group.
+        <div class="swatches" aria-hidden="true">
+          <span style="background: var(--nv-color-accent)"></span>
+          <span style="background: var(--nv-color-accent-subtle)"></span>
+          <span style="background: var(--nv-color-surface)"></span>
+          <span style="background: var(--nv-color-background)"></span>
+        </div>
+      </div>
+      <div class="nv-card__footer">
+        <span class="nv-caption nv-code">--nv-brand: #6d5efc</span>
+      </div>
+    </article>
+
+    <article class="nv-card nv-card--interactive" data-nv-brand style="--nv-brand: #6d5efc">
+      <div class="nv-card__header">
+        <div>
+          <h2 class="nv-card__title">
+            <a class="nv-card__link" href="ai-chat/index.html"
+               style="color: inherit; text-decoration: none">Lumen Chat</a>
+          </h2>
+          <p class="nv-card__subtitle">AI chat application</p>
+        </div>
+        <span class="nv-badge nv-badge--accent">Web app</span>
+      </div>
+      <div class="nv-card__body">
+        A full app shell: sidebar with travelling selection, a transcript that
+        cross-fades between threads, a composer, and settings in a dialog with
+        tabs.
+        <div class="swatches" aria-hidden="true">
+          <span style="background: var(--nv-color-accent)"></span>
+          <span style="background: var(--nv-color-accent-subtle)"></span>
+          <span style="background: var(--nv-color-surface)"></span>
+          <span style="background: var(--nv-color-background)"></span>
+        </div>
+      </div>
+      <div class="nv-card__footer">
+        <span class="nv-caption nv-code">--nv-brand: #6d5efc</span>
+      </div>
+    </article>
+
+    <article class="nv-card nv-card--interactive" data-nv-brand style="--nv-brand: #ea580c">
+      <div class="nv-card__header">
+        <div>
+          <h2 class="nv-card__title">
+            <a class="nv-card__link" href="it-shop/index.html"
+               style="color: inherit; text-decoration: none">Northwire</a>
+          </h2>
+          <p class="nv-card__subtitle">IT hardware shop</p>
+        </div>
+        <span class="nv-badge nv-badge--accent">Commerce</span>
+      </div>
+      <div class="nv-card__body">
+        Filters, a product grid, stock states in the status colors, and a
+        basket in a dialog with a table. Same components, warm brand.
+        <div class="swatches" aria-hidden="true">
+          <span style="background: var(--nv-color-accent)"></span>
+          <span style="background: var(--nv-color-accent-subtle)"></span>
+          <span style="background: var(--nv-color-surface)"></span>
+          <span style="background: var(--nv-color-background)"></span>
+        </div>
+      </div>
+      <div class="nv-card__footer">
+        <span class="nv-caption nv-code">--nv-brand: #ea580c</span>
+      </div>
+    </article>
+
+    <article class="nv-card nv-card--interactive" data-nv-brand style="--nv-brand: #0d9488">
+      <div class="nv-card__header">
+        <div>
+          <h2 class="nv-card__title">
+            <a class="nv-card__link" href="dashboard/index.html"
+               style="color: inherit; text-decoration: none">Northwire Ops</a>
+          </h2>
+          <p class="nv-card__subtitle">Monitoring dashboard</p>
+        </div>
+        <span class="nv-badge nv-badge--accent">Data app</span>
+      </div>
+      <div class="nv-card__body">
+        Stat tiles, a chart drawn in semantic colors, a service table with
+        per-row menus, and tabs that filter it. The densest test of the system.
+        <div class="swatches" aria-hidden="true">
+          <span style="background: var(--nv-color-accent)"></span>
+          <span style="background: var(--nv-color-accent-subtle)"></span>
+          <span style="background: var(--nv-color-surface)"></span>
+          <span style="background: var(--nv-color-background)"></span>
+        </div>
+      </div>
+      <div class="nv-card__footer">
+        <span class="nv-caption nv-code">--nv-brand: #0d9488</span>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="nv-bed">
+    <span class="nv-bed__label">How to read these</span>
+    <div class="nv-stack" style="max-inline-size: var(--nv-measure)">
+      <p class="nv-body">
+        Every example links exactly two files from the system —
+        <code class="nv-code">dist/niveus.css</code> and the optional
+        <code class="nv-code">niveus/niveus.js</code> — then its own
+        <code class="nv-code">app.css</code> for layout. Nothing else is shared
+        between them.
+      </p>
+      <p class="nv-body">
+        Where one of them needed something the system did not have, the answer
+        was to add it to the system, not to the page: the badge and table
+        components exist because these examples asked for them.
+      </p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="nv-cluster nv-cluster--between">
+      <span class="nv-caption">Niveus — define the system once, implement it everywhere.</span>
+      <span class="nv-caption">Made by Nexoniarz</span>
+    </div>
+  </footer>
+</main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.addEventListener("nv:theme", (event) => {
+      try { localStorage.setItem("niveus-theme", event.detail.theme); } catch {}
+    });
+    nv.syncThemeControls(document.documentElement.getAttribute("data-theme") || "system");
+  });
+</script>
+</body>
+</html>

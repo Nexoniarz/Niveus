@@ -1,0 +1,158 @@
+/* ==========================================================================
+   Niveus — Dark appearance
+   --------------------------------------------------------------------------
+   Values for the dark side of every semantic role, resolved through
+   light-dark() in tokens/color.css. Like the light appearance, almost nothing
+   here is a literal color — every role is derived from --nv-brand.
+
+   Dark Niveus is warm graphite, not the light theme inverted. Surfaces get
+   *lighter* as they rise and each step is large enough to see; shadows are
+   deep and every raised thing carries a near-black contact line, because on a
+   dark canvas a shadow alone has nothing left to darken. The bevel is what
+   carries depth here — a lit top edge, a shaded bottom one — and filled color
+   stays saturated: a vivid accent with a light label reads as a lit key, not
+   as a hole.
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+:root,
+[data-nv-brand] {
+  /* --- Canvas and surfaces ----------------------------------------------- */
+  --nv-dark-background: color-mix(in oklab, #121214, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-background-subtle: color-mix(in oklab, #18181b, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface: color-mix(in oklab, #1f1f22, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface-elevated: color-mix(in oklab, #2a2a2e, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface-inset: color-mix(in oklab, #111113, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface-hover: color-mix(in oklab, #313136, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface-active: color-mix(in oklab, #39393f, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-scrim: rgb(6 6 8 / 0.62);
+
+  /* --- Text --------------------------------------------------------------- */
+  --nv-dark-text-primary: #ecebe8;
+  --nv-dark-text-secondary: color-mix(in oklab, #a9a8a3, var(--nv-brand) 8%);
+  --nv-dark-text-tertiary: color-mix(in oklab, #7d7c77, var(--nv-brand) 8%);
+  --nv-dark-text-disabled: #58585c;
+  --nv-dark-text-inverted: var(--nv-palette-neutral-975);
+
+  /* --- Borders ------------------------------------------------------------ */
+  --nv-dark-border-subtle: rgb(255 255 255 / 0.06);
+  --nv-dark-border: rgb(255 255 255 / 0.1);
+  --nv-dark-border-strong: rgb(255 255 255 / 0.2);
+
+  /* --- Accent -------------------------------------------------------------
+     The same derivation as light: a fill is pushed out of the mid-tones until
+     its label clears 4.5:1, so the brand keeps its full saturation and a light
+     label. Earlier Niveus lifted the dark accent into pastel to avoid neon;
+     with bevel and sheen doing the shaping, a saturated fill reads as a lit
+     key instead, and the pastel was what made the whole system feel washed
+     out. Only the accent *text* (links, subtle labels) moves up the ramp,
+     because text on a dark canvas needs the lightness that a fill does not. */
+  --nv-dark-accent: oklch(from var(--nv-brand) calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-dark-accent-hover: oklch(from var(--nv-dark-accent) calc(l + 0.05) c h);
+  --nv-dark-accent-active: oklch(from var(--nv-dark-accent) calc(l + 0.09) c h);
+  --nv-dark-accent-subtle: oklch(from var(--nv-dark-accent) l c h / 0.2);
+  --nv-dark-accent-subtle-hover: oklch(from var(--nv-dark-accent) l c h / 0.28);
+  --nv-dark-accent-border: oklch(from var(--nv-dark-accent) l c h / 0.5);
+  --nv-dark-accent-text: oklch(from var(--nv-dark-accent) clamp(0.74, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+  --nv-dark-on-accent: oklch(from var(--nv-dark-accent)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Success ------------------------------------------------------------ */
+  --nv-dark-success: oklch(from
+    color-mix(in oklab, var(--nv-palette-success-500), var(--nv-brand) var(--nv-brand-harmony))
+    calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-dark-success-hover: oklch(from var(--nv-dark-success) calc(l + 0.05) c h);
+  --nv-dark-success-subtle: oklch(from var(--nv-dark-success) l c h / 0.2);
+  --nv-dark-success-border: oklch(from var(--nv-dark-success) l c h / 0.35);
+  --nv-dark-success-text: oklch(from var(--nv-dark-success) clamp(0.76, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+  --nv-dark-on-success: oklch(from var(--nv-dark-success)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Warning ------------------------------------------------------------ */
+  --nv-dark-warning: oklch(from
+    color-mix(in oklab, var(--nv-palette-warning-400), var(--nv-brand) var(--nv-brand-harmony))
+    calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-dark-warning-hover: oklch(from var(--nv-dark-warning) calc(l + 0.05) c h);
+  --nv-dark-warning-subtle: oklch(from var(--nv-dark-warning) l c h / 0.2);
+  --nv-dark-warning-border: oklch(from var(--nv-dark-warning) l c h / 0.35);
+  --nv-dark-warning-text: oklch(from var(--nv-dark-warning) clamp(0.76, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+  --nv-dark-on-warning: oklch(from var(--nv-dark-warning)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Danger ------------------------------------------------------------- */
+  --nv-dark-danger: oklch(from
+    color-mix(in oklab, var(--nv-palette-danger-500), var(--nv-brand) var(--nv-brand-harmony))
+    calc(
+    clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1) * min(l, var(--nv-contrast-dark)) +
+    (1 - clamp(0, (var(--nv-contrast-pivot) - l) * 100, 1)) * max(l, var(--nv-contrast-light))
+  ) clamp(0.02, c, 0.25) h);
+  --nv-dark-danger-hover: oklch(from var(--nv-dark-danger) calc(l + 0.05) c h);
+  --nv-dark-danger-active: oklch(from var(--nv-dark-danger) calc(l + 0.09) c h);
+  --nv-dark-danger-subtle: oklch(from var(--nv-dark-danger) l c h / 0.2);
+  --nv-dark-danger-border: oklch(from var(--nv-dark-danger) l c h / 0.35);
+  --nv-dark-danger-text: oklch(from var(--nv-dark-danger) clamp(0.76, calc(l + 0.2), 0.9) calc(c * 0.9) h);
+  --nv-dark-on-danger: oklch(from var(--nv-dark-danger)
+    calc(0.14 + clamp(0, (0.68 - l) * 100, 1) * 0.84)
+    calc(c * 0.2) h);
+
+  /* --- Depth and material -------------------------------------------------- */
+  --nv-dark-shadow-ambient: rgb(0 0 0 / 0.5);
+  --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.5);
+  --nv-dark-shadow-umbra: rgb(0 0 0 / 0.55);
+  --nv-dark-shadow-inset: rgb(0 0 0 / 0.65);
+  --nv-dark-highlight: rgb(255 255 255 / 0.11);
+  --nv-dark-highlight-strong: rgb(255 255 255 / 0.17);
+
+  /* The contact line is what separates graphite from graphite: a raised
+     surface over a dark canvas has no shadow to show, but it always has an
+     edge. */
+  --nv-dark-lowlight: rgb(0 0 0 / 0.42);
+  --nv-dark-outline: rgb(0 0 0 / 0.72);
+
+  --nv-dark-sheen-top: rgb(255 255 255 / 0.06);
+  --nv-dark-sheen-bottom: rgb(0 0 0 / 0.09);
+  --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.2);
+  --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.12);
+
+  --nv-dark-knob: #f4f3ef;
+  --nv-dark-knob-shade: rgb(40 32 20 / 0.24);
+
+  /* The higher a surface sits, the more light reaches it. */
+  --nv-dark-elevation-tint-1: rgb(255 255 255 / 0.025);
+  --nv-dark-elevation-tint-2: rgb(255 255 255 / 0.042);
+  --nv-dark-elevation-tint-3: rgb(255 255 255 / 0.06);
+  --nv-dark-elevation-tint-4: rgb(255 255 255 / 0.078);
+  --nv-dark-elevation-tint-5: rgb(255 255 255 / 0.095);
+
+  --nv-dark-material-frosted: color-mix(in oklab, rgb(36 36 40 / 0.62), var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 48 / 0.5), var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-material-border: rgb(255 255 255 / 0.1);
+
+  /* --- Window controls --------------------------------------------------------- */
+  --nv-dark-window-close: var(--nv-palette-window-close);
+  --nv-dark-window-minimize: var(--nv-palette-window-minimize);
+  --nv-dark-window-zoom: var(--nv-palette-window-zoom);
+  --nv-dark-window-inactive: var(--nv-palette-neutral-700);
+  --nv-dark-window-control-ring: rgb(0 0 0 / 0.35);
+  --nv-dark-window-glyph: rgb(0 0 0 / 0.6);
+
+  /* --- Interaction ---------------------------------------------------------- */
+  --nv-dark-focus-ring: oklch(from var(--nv-dark-accent-text) l c h / 0.55);
+  --nv-dark-focus-ring-contrast: rgb(8 8 10 / 0.9);
+  --nv-dark-selection: oklch(from var(--nv-dark-accent) l c h / 0.4);
+}

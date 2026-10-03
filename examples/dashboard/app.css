@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Northwire Ops — dashboard layout
+   --------------------------------------------------------------------------
+   Layout only. A data-dense view is where a design system is tested hardest:
+   there are more things on screen than anywhere else, so any inconsistency in
+   spacing or weight shows up immediately. Nothing here restates the language —
+   even the chart draws itself in semantic colors.
+   ========================================================================== */
+
+html, body { block-size: 100%; }
+
+.app {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-block-size: 100svh;
+}
+
+@media (max-width: 62rem) {
+  .app { grid-template-columns: 1fr; }
+  .app__sidebar { display: none; }
+}
+
+.app__main {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__content {
+  flex: 1;
+  padding: var(--nv-space-6) var(--nv-layout-gutter) var(--nv-space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-6);
+  max-inline-size: 80rem;
+  inline-size: 100%;
+  margin-inline: auto;
+}
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--nv-space-4);
+}
+
+/* --- Stat tiles -------------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: var(--nv-space-4);
+}
+
+.stat__value {
+  display: block;
+  margin-block: var(--nv-space-2) var(--nv-space-1);
+  font-size: var(--nv-font-size-3xl);
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-tighter);
+  color: var(--nv-color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Chart --------------------------------------------------------------------
+   Drawn in semantic colors, so it follows the brand and both appearances with
+   no second palette to maintain. */
+
+.chart {
+  inline-size: 100%;
+  block-size: 14rem;
+  display: block;
+  overflow: visible;
+}
+
+.chart__grid {
+  stroke: var(--nv-color-border-subtle);
+  stroke-width: 1;
+}
+
+.chart__line {
+  fill: none;
+  stroke: var(--nv-color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart__line--compare {
+  stroke: var(--nv-color-border-strong);
+  stroke-dasharray: 4 4;
+}
+
+.chart__area {
+  fill: url(#chart-fill);
+}
+
+.chart__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-block-start: var(--nv-space-2);
+}
+
+/* --- Layout of the lower half --------------------------------------------------- */
+
+.split {
+  display: grid;
+  gap: var(--nv-space-6);
+  align-items: start;
+}
+
+@media (min-width: 70rem) {
+  .split { grid-template-columns: 1.6fr 1fr; }
+}
+
+.activity {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity li {
+  display: flex;
+  gap: var(--nv-space-3);
+  padding-block: var(--nv-space-3);
+  border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
+}
+
+.activity li:last-child { border-block-end: 0; }
+
+.activity__mark {
+  inline-size: var(--nv-space-2);
+  block-size: var(--nv-space-2);
+  border-radius: var(--nv-radius-full);
+  margin-block-start: 0.45em;
+  flex: none;
+  background-color: var(--nv-color-border-strong);
+}
+
+.activity__mark--danger { background-color: var(--nv-color-danger); }
+.activity__mark--success { background-color: var(--nv-color-success); }
+.activity__mark--accent { background-color: var(--nv-color-accent); }
+.activity__mark--warning { background-color: var(--nv-color-warning); }
+
+.service-name {
+  display: flex;
+  align-items: center;
+  gap: var(--nv-space-2-5);
+}
