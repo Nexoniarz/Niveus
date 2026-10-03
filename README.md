@@ -18,6 +18,11 @@ JetBrains Mono for code and engraved labels, both under the SIL Open Font
 License. Copy `fonts/` alongside `dist/` (or `niveus/`) and they load by
 themselves.
 
+The stylesheet uses the variable `.woff2` files. `fonts/static/` holds the
+same faces as plain TrueType files at the four weights Niveus uses (400, 500,
+600, 700, plus Instrument Sans italics), for native toolkits and font
+configurations that pick a weight by name rather than by variable axis.
+
 ```html
 <html data-theme="dark">   <!-- omit data-theme to follow the system -->
 ```
