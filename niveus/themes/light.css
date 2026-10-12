@@ -39,7 +39,7 @@
   --nv-light-background-subtle: color-mix(in oklab, #eeece6, var(--nv-brand) var(--nv-brand-tint));
   --nv-light-surface: #fbfbfa;
   --nv-light-surface-elevated: #f8f8f6;
-  --nv-light-surface-inset: color-mix(in oklab, #e3e2dd, var(--nv-brand) var(--nv-brand-tint));
+  --nv-light-surface-inset: color-mix(in oklab, #eeede8, var(--nv-brand) var(--nv-brand-tint));
   --nv-light-surface-hover: color-mix(in oklab, #f1f0ec, var(--nv-brand) var(--nv-brand-tint));
   --nv-light-surface-active: color-mix(in oklab, #e6e5e0, var(--nv-brand) var(--nv-brand-tint));
   --nv-light-scrim: rgb(28 24 18 / 0.34);
@@ -135,22 +135,22 @@
   /* --- Depth and material -------------------------------------------------
      Three shadow colors build every elevation level: an ambient contact
      shadow, a soft penumbra, and a deeper umbra for high elevations. */
-  --nv-light-shadow-ambient: rgb(40 32 20 / 0.09);
-  --nv-light-shadow-penumbra: rgb(40 32 20 / 0.12);
-  --nv-light-shadow-umbra: rgb(40 32 20 / 0.11);
-  --nv-light-shadow-inset: rgb(40 32 20 / 0.17);
+  --nv-light-shadow-ambient: rgb(40 32 20 / 0.08);
+  --nv-light-shadow-penumbra: rgb(40 32 20 / 0.1);
+  --nv-light-shadow-umbra: rgb(40 32 20 / 0.16);
+  --nv-light-shadow-inset: rgb(40 32 20 / 0.14);
   --nv-light-highlight: rgb(255 255 255 / 0.9);
   --nv-light-highlight-strong: rgb(255 255 255 / 1);
 
   /* Paper already has a border doing the contact work, so the outline only
      softens it; the bottom shade is faint for the same reason. */
-  --nv-light-lowlight: rgb(40 32 20 / 0.07);
+  --nv-light-lowlight: rgb(40 32 20 / 0.09);
   --nv-light-outline: rgb(40 32 20 / 0.05);
 
-  --nv-light-sheen-top: rgb(255 255 255 / 0.75);
-  --nv-light-sheen-bottom: rgb(40 32 20 / 0.04);
-  --nv-light-sheen-strong-top: rgb(255 255 255 / 0.24);
-  --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.1);
+  --nv-light-sheen-top: rgb(255 255 255 / 0.9);
+  --nv-light-sheen-bottom: rgb(40 32 20 / 0.07);
+  --nv-light-sheen-strong-top: rgb(255 255 255 / 0.32);
+  --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.16);
 
   --nv-light-knob: var(--nv-palette-neutral-0);
   --nv-light-knob-shade: rgb(40 32 20 / 0.13);
@@ -163,9 +163,9 @@
   --nv-light-elevation-tint-4: transparent;
   --nv-light-elevation-tint-5: transparent;
 
-  --nv-light-material-frosted: rgb(251 251 249 / 0.66);
-  --nv-light-material-glass: rgb(251 251 249 / 0.5);
-  --nv-light-material-border: rgb(255 255 255 / 0.6);
+  --nv-light-material-frosted: rgb(252 252 250 / 0.56);
+  --nv-light-material-glass: rgb(252 252 250 / 0.4);
+  --nv-light-material-border: rgb(255 255 255 / 0.72);
 
   /* --- Window controls --------------------------------------------------------- */
   --nv-light-window-close: var(--nv-palette-window-close);

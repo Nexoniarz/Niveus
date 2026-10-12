@@ -37,6 +37,7 @@
   min-inline-size: 0;
 
   background-color: var(--nv-color-surface);
+  background-image: var(--nv-sheen-surface);
   color: var(--nv-color-text-primary);
   border: var(--nv-border-width) solid var(--nv-color-border-subtle);
   border-radius: var(--nv-radius-xl);

@@ -525,34 +525,35 @@
 
     --nv-elevation-1:
       0 1px 1px var(--nv-color-shadow-ambient),
-      0 1px 3px -1px var(--nv-color-shadow-penumbra);
+      0 2px 4px -1px var(--nv-color-shadow-penumbra),
+      0 6px 14px -8px var(--nv-color-shadow-umbra);
 
     --nv-elevation-2:
       0 1px 1px var(--nv-color-shadow-ambient),
-      0 2px 4px -1px var(--nv-color-shadow-penumbra),
-      0 4px 8px -4px var(--nv-color-shadow-umbra);
+      0 3px 6px -2px var(--nv-color-shadow-penumbra),
+      0 10px 20px -10px var(--nv-color-shadow-umbra);
 
     --nv-elevation-3:
-      0 1px 1px var(--nv-color-shadow-ambient),
-      0 4px 8px -2px var(--nv-color-shadow-penumbra),
-      0 10px 20px -6px var(--nv-color-shadow-umbra);
+      0 1px 2px var(--nv-color-shadow-ambient),
+      0 6px 12px -4px var(--nv-color-shadow-penumbra),
+      0 18px 36px -12px var(--nv-color-shadow-umbra);
 
     --nv-elevation-4:
       0 1px 2px var(--nv-color-shadow-ambient),
-      0 8px 16px -4px var(--nv-color-shadow-penumbra),
-      0 20px 40px -10px var(--nv-color-shadow-umbra);
+      0 10px 20px -6px var(--nv-color-shadow-penumbra),
+      0 30px 60px -16px var(--nv-color-shadow-umbra);
 
     --nv-elevation-5:
-      0 1px 2px var(--nv-color-shadow-ambient),
-      0 14px 28px -6px var(--nv-color-shadow-penumbra),
-      0 32px 64px -14px var(--nv-color-shadow-umbra);
+      0 2px 3px var(--nv-color-shadow-ambient),
+      0 16px 32px -8px var(--nv-color-shadow-penumbra),
+      0 44px 88px -20px var(--nv-color-shadow-umbra);
 
     /* --- Inset ---------------------------------------------------------------
        Recessed surfaces: fields, wells, tracks, pressed controls. */
     --nv-elevation-inset-sm: inset 0 1px 2px var(--nv-color-shadow-inset);
     --nv-elevation-inset-md:
       inset 0 1px 1px var(--nv-color-shadow-inset),
-      inset 0 2px 5px -1px var(--nv-color-shadow-inset);
+      inset 0 3px 6px -2px var(--nv-color-shadow-inset);
     --nv-elevation-inset-lg:
       inset 0 2px 3px var(--nv-color-shadow-inset),
       inset 0 6px 12px -3px var(--nv-color-shadow-inset);
@@ -738,30 +739,31 @@
 
   :root {
     /* --- Blur ---------------------------------------------------------------- */
-    --nv-blur-sm: 8px;
-    --nv-blur-md: 16px;
-    --nv-blur-lg: 28px;
-    --nv-blur-xl: 44px;
+    --nv-blur-sm: 12px;
+    --nv-blur-md: 24px;
+    --nv-blur-lg: 36px;
+    --nv-blur-xl: 56px;
 
     /* Backdrops lose saturation when blurred; a touch of saturate() puts the
        color back so frosted surfaces do not read as gray films. Moderate on
        purpose: the blur says "this floats", it is not the look itself. */
-    --nv-backdrop-saturate: 160%;
+    --nv-backdrop-saturate: 180%;
     --nv-backdrop-frosted: blur(var(--nv-blur-md)) saturate(var(--nv-backdrop-saturate));
     --nv-backdrop-glass: blur(var(--nv-blur-sm)) saturate(var(--nv-backdrop-saturate));
 
     /* --- Sheen ------------------------------------------------------------------
        raised    neutral controls: buttons, the selected tab, a titlebar
        filled    saturated fills: primary and danger buttons, checked marks
-       surface   large surfaces: windows, dialogs, cards. The light fades out
-                 within the first stretch, so it reads as a lit top edge
-                 rather than as a gradient over the content.
+       surface   large surfaces: windows, dialogs, cards. Brightest along the
+                 top edge, easing through the middle and settling into a faint
+                 shade at the foot, so a panel reads as a curved, lit body
+                 rather than as a flat sheet.
        knob      a round thumb: lit from above, shaded towards its rim */
     --nv-sheen-raised: linear-gradient(var(--nv-color-sheen-top), var(--nv-color-sheen-bottom));
     --nv-sheen-filled: linear-gradient(var(--nv-color-sheen-strong-top), var(--nv-color-sheen-strong-bottom));
-    --nv-sheen-surface: linear-gradient(var(--nv-color-sheen-top), transparent 6rem);
-    --nv-sheen-knob: radial-gradient(circle at 50% 30%, transparent 35%, var(--nv-color-knob-shade));
-    --nv-backdrop-scrim: blur(var(--nv-blur-sm)) saturate(120%);
+    --nv-sheen-surface: linear-gradient(var(--nv-color-sheen-top), transparent 7rem, transparent 55%, var(--nv-color-sheen-bottom));
+    --nv-sheen-knob: radial-gradient(circle at 50% 22%, var(--nv-color-highlight-strong), transparent 45%), radial-gradient(circle at 50% 30%, transparent 40%, var(--nv-color-knob-shade));
+    --nv-backdrop-scrim: blur(var(--nv-blur-sm)) saturate(140%);
 
     /* --- Material recipes -----------------------------------------------------
        Each recipe is the full set of properties that defines the material.
@@ -851,7 +853,7 @@
     --nv-light-background-subtle: color-mix(in oklab, #eeece6, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-surface: #fbfbfa;
     --nv-light-surface-elevated: #f8f8f6;
-    --nv-light-surface-inset: color-mix(in oklab, #e3e2dd, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-inset: color-mix(in oklab, #eeede8, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-surface-hover: color-mix(in oklab, #f1f0ec, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-surface-active: color-mix(in oklab, #e6e5e0, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-scrim: rgb(28 24 18 / 0.34);
@@ -947,22 +949,22 @@
     /* --- Depth and material -------------------------------------------------
        Three shadow colors build every elevation level: an ambient contact
        shadow, a soft penumbra, and a deeper umbra for high elevations. */
-    --nv-light-shadow-ambient: rgb(40 32 20 / 0.09);
-    --nv-light-shadow-penumbra: rgb(40 32 20 / 0.12);
-    --nv-light-shadow-umbra: rgb(40 32 20 / 0.11);
-    --nv-light-shadow-inset: rgb(40 32 20 / 0.17);
+    --nv-light-shadow-ambient: rgb(40 32 20 / 0.08);
+    --nv-light-shadow-penumbra: rgb(40 32 20 / 0.1);
+    --nv-light-shadow-umbra: rgb(40 32 20 / 0.16);
+    --nv-light-shadow-inset: rgb(40 32 20 / 0.14);
     --nv-light-highlight: rgb(255 255 255 / 0.9);
     --nv-light-highlight-strong: rgb(255 255 255 / 1);
 
     /* Paper already has a border doing the contact work, so the outline only
        softens it; the bottom shade is faint for the same reason. */
-    --nv-light-lowlight: rgb(40 32 20 / 0.07);
+    --nv-light-lowlight: rgb(40 32 20 / 0.09);
     --nv-light-outline: rgb(40 32 20 / 0.05);
 
-    --nv-light-sheen-top: rgb(255 255 255 / 0.75);
-    --nv-light-sheen-bottom: rgb(40 32 20 / 0.04);
-    --nv-light-sheen-strong-top: rgb(255 255 255 / 0.24);
-    --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.1);
+    --nv-light-sheen-top: rgb(255 255 255 / 0.9);
+    --nv-light-sheen-bottom: rgb(40 32 20 / 0.07);
+    --nv-light-sheen-strong-top: rgb(255 255 255 / 0.32);
+    --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.16);
 
     --nv-light-knob: var(--nv-palette-neutral-0);
     --nv-light-knob-shade: rgb(40 32 20 / 0.13);
@@ -975,9 +977,9 @@
     --nv-light-elevation-tint-4: transparent;
     --nv-light-elevation-tint-5: transparent;
 
-    --nv-light-material-frosted: rgb(251 251 249 / 0.66);
-    --nv-light-material-glass: rgb(251 251 249 / 0.5);
-    --nv-light-material-border: rgb(255 255 255 / 0.6);
+    --nv-light-material-frosted: rgb(252 252 250 / 0.56);
+    --nv-light-material-glass: rgb(252 252 250 / 0.4);
+    --nv-light-material-border: rgb(255 255 255 / 0.72);
 
     /* --- Window controls --------------------------------------------------------- */
     --nv-light-window-close: var(--nv-palette-window-close);
@@ -1017,7 +1019,7 @@
   :root,
   [data-nv-brand] {
     /* --- Canvas and surfaces ----------------------------------------------- */
-    --nv-dark-background: color-mix(in oklab, #121214, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-background: color-mix(in oklab, #0f0f12, var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-background-subtle: color-mix(in oklab, #18181b, var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-surface: color-mix(in oklab, #1f1f22, var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-surface-elevated: color-mix(in oklab, #2a2a2e, var(--nv-brand) var(--nv-brand-tint));
@@ -1111,33 +1113,33 @@
     --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.5);
     --nv-dark-shadow-umbra: rgb(0 0 0 / 0.55);
     --nv-dark-shadow-inset: rgb(0 0 0 / 0.65);
-    --nv-dark-highlight: rgb(255 255 255 / 0.11);
-    --nv-dark-highlight-strong: rgb(255 255 255 / 0.17);
+    --nv-dark-highlight: rgb(255 255 255 / 0.15);
+    --nv-dark-highlight-strong: rgb(255 255 255 / 0.24);
 
     /* The contact line is what separates graphite from graphite: a raised
        surface over a dark canvas has no shadow to show, but it always has an
        edge. */
-    --nv-dark-lowlight: rgb(0 0 0 / 0.42);
+    --nv-dark-lowlight: rgb(0 0 0 / 0.5);
     --nv-dark-outline: rgb(0 0 0 / 0.72);
 
-    --nv-dark-sheen-top: rgb(255 255 255 / 0.06);
-    --nv-dark-sheen-bottom: rgb(0 0 0 / 0.09);
-    --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.2);
-    --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.12);
+    --nv-dark-sheen-top: rgb(255 255 255 / 0.09);
+    --nv-dark-sheen-bottom: rgb(0 0 0 / 0.18);
+    --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.3);
+    --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.2);
 
     --nv-dark-knob: #f4f3ef;
-    --nv-dark-knob-shade: rgb(40 32 20 / 0.24);
+    --nv-dark-knob-shade: rgb(40 32 20 / 0.3);
 
     /* The higher a surface sits, the more light reaches it. */
-    --nv-dark-elevation-tint-1: rgb(255 255 255 / 0.025);
-    --nv-dark-elevation-tint-2: rgb(255 255 255 / 0.042);
-    --nv-dark-elevation-tint-3: rgb(255 255 255 / 0.06);
-    --nv-dark-elevation-tint-4: rgb(255 255 255 / 0.078);
-    --nv-dark-elevation-tint-5: rgb(255 255 255 / 0.095);
+    --nv-dark-elevation-tint-1: rgb(255 255 255 / 0.03);
+    --nv-dark-elevation-tint-2: rgb(255 255 255 / 0.05);
+    --nv-dark-elevation-tint-3: rgb(255 255 255 / 0.07);
+    --nv-dark-elevation-tint-4: rgb(255 255 255 / 0.09);
+    --nv-dark-elevation-tint-5: rgb(255 255 255 / 0.11);
 
-    --nv-dark-material-frosted: color-mix(in oklab, rgb(36 36 40 / 0.62), var(--nv-brand) var(--nv-brand-tint));
-    --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 48 / 0.5), var(--nv-brand) var(--nv-brand-tint));
-    --nv-dark-material-border: rgb(255 255 255 / 0.1);
+    --nv-dark-material-frosted: color-mix(in oklab, rgb(34 34 40 / 0.5), var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 52 / 0.36), var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-material-border: rgb(255 255 255 / 0.14);
 
     /* --- Window controls --------------------------------------------------------- */
     --nv-dark-window-close: var(--nv-palette-window-close);
@@ -1182,6 +1184,14 @@
     margin: 0;
     min-height: 100svh;
     background-color: var(--nv-color-background);
+    /* The canvas is lit, not painted: a wash of the accent falls in from the top
+       corner and a fainter one pools at the opposite foot. It is what gives
+       translucent surfaces something to be translucent against, and keeps a
+       page of solid panels from reading as one flat field. */
+    background-image:
+      radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--nv-color-accent) light-dark(10%, 16%), transparent), transparent 60%),
+      radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, var(--nv-color-accent) light-dark(6%, 10%), transparent), transparent 60%);
+    background-attachment: fixed;
     color: var(--nv-color-text-primary);
     font: var(--nv-font-body);
     letter-spacing: var(--nv-letter-spacing-normal);
@@ -1841,6 +1851,12 @@
     --_fg: var(--nv-color-on-accent);
     --_border: transparent;
     --_sheen: var(--nv-sheen-filled);
+    /* A filled key gives off a little of its own color: the glow is what makes
+       it read as lit rather than printed. */
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2),
+      0 6px 16px -8px color-mix(in oklab, var(--_bg) 80%, transparent);
+    --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3),
+      0 8px 22px -8px color-mix(in oklab, var(--_bg) 85%, transparent);
     font-weight: var(--nv-font-weight-semibold);
   }
 
@@ -1851,6 +1867,10 @@
     --_fg: var(--nv-color-on-danger);
     --_border: transparent;
     --_sheen: var(--nv-sheen-filled);
+    --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2),
+      0 6px 16px -8px color-mix(in oklab, var(--_bg) 80%, transparent);
+    --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3),
+      0 8px 22px -8px color-mix(in oklab, var(--_bg) 85%, transparent);
     --nv-color-focus-ring: var(--nv-color-danger-border);
     font-weight: var(--nv-font-weight-semibold);
   }
@@ -1865,6 +1885,14 @@
     --_shadow: none;
     --_shadow-hover: none;
     --_shadow-active: var(--nv-elevation-inset-sm);
+  }
+
+  /* A ghost has no material to lose, so disabling it only dims the label —
+     it does not suddenly grow a well its enabled siblings never had. */
+  .nv-button--ghost:disabled,
+  .nv-button--ghost[aria-disabled="true"] {
+    background-color: transparent;
+    border-color: transparent;
   }
 
   @media (hover: hover) {
@@ -2075,8 +2103,10 @@
     min-inline-size: 0;
     block-size: var(--_height);
     padding-inline: var(--_padding);
-
-    background-color: var(--nv-color-surface-inset);
+    /* A well in dark, where recess reads as shade; paper in light, where a grey
+       well reads as a field that has been switched off. The inset shadow and
+       ledge carry the recess either way. */
+    background-color: light-dark(var(--nv-color-surface), var(--nv-color-surface-inset));
     color: var(--nv-color-text-primary);
     border: var(--nv-border-width) solid var(--_border);
     border-radius: var(--_radius);
@@ -2150,7 +2180,13 @@
     padding: 0;
   }
 
-  .nv-input--color::-webkit-color-swatch,
+  .nv-input--color::-webkit-color-swatch {
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    border-radius: calc(var(--nv-radius-md) - var(--nv-space-1));
+  }
+
+  /* Separate rules on purpose: a selector list that names another engine's
+     pseudo-element is invalid as a whole, and each browser would drop both. */
   .nv-input--color::-moz-color-swatch {
     border: var(--nv-border-width) solid var(--nv-color-border);
     border-radius: calc(var(--nv-radius-md) - var(--nv-space-1));
@@ -2243,6 +2279,9 @@
   .nv-radio {
     position: relative;
     flex: none;
+    /* The marks are drawn in em; pinning the size keeps them the same whatever
+       the label around them is set in. */
+    font-size: var(--nv-font-size-md);
     inline-size: var(--nv-space-5);
     block-size: var(--nv-space-5);
     margin: 0;
@@ -2407,7 +2446,10 @@
     display: flex;
     align-items: center;
     gap: var(--nv-space-2-5);
+    /* Labelled at control size, so a row of switches and checkboxes sits level
+       with the buttons and fields beside it. */
     font: var(--nv-font-body);
+    font-size: var(--nv-font-size-sm);
     cursor: pointer;
   }
 
@@ -2439,7 +2481,11 @@
      ========================================================================== */
 
   .nv-card {
-    --_bg: var(--nv-color-surface);
+    /* Content surfaces are mostly solid: enough of the canvas comes through to
+       tie a card to the light around it, never enough to compete with what it
+       holds. The blur keeps anything busy behind it (a bed, an image) from
+       reading through as texture. */
+    --_bg: color-mix(in oklab, var(--nv-color-surface) 90%, transparent);
     --_border: var(--nv-color-border-subtle);
     --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
     --_sheen: var(--nv-sheen-surface);
@@ -2456,6 +2502,8 @@
     border: var(--nv-border-width) solid var(--_border);
     border-radius: var(--nv-radius-lg);
     box-shadow: var(--_shadow);
+    backdrop-filter: var(--nv-backdrop-glass);
+    -webkit-backdrop-filter: var(--nv-backdrop-glass);
 
     /* Children are clipped to the corner radius so media and inset regions
        cannot square off the card. */
@@ -2464,17 +2512,17 @@
   }
 
   .nv-card--elevated {
-    --_bg: var(--nv-color-surface-elevated);
+    --_bg: color-mix(in oklab, var(--nv-color-surface-elevated) 90%, transparent);
     --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
   }
 
   .nv-card--floating {
-    --_bg: var(--nv-color-surface-elevated);
+    --_bg: color-mix(in oklab, var(--nv-color-surface-elevated) 88%, transparent);
     --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
   }
 
   .nv-card--inset {
-    --_bg: var(--nv-color-surface-inset);
+    --_bg: color-mix(in oklab, var(--nv-color-surface-inset) 85%, transparent);
     --_shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
     --_sheen: none;
     --_border: var(--nv-color-border-subtle);
@@ -2625,8 +2673,13 @@
     max-block-size: min(42rem, calc(100svh - var(--nv-space-12)));
     padding: 0;
 
-    background-color: var(--nv-color-surface-elevated);
+    /* The dialog sits over a dimmed, blurred page, so it can afford to let a
+       little of it through: it reads as a pane lifted off the page rather than
+       a card pasted over it. */
+    background-color: color-mix(in oklab, var(--nv-color-surface-elevated) 86%, transparent);
     background-image: var(--nv-sheen-surface);
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
     color: var(--nv-color-text-primary);
     border: var(--nv-border-width) solid var(--nv-color-border-subtle);
     border-radius: var(--nv-radius-xl);
@@ -2815,11 +2868,12 @@
 
     display: flex;
     align-items: center;
-    gap: var(--nv-space-4);
+    flex-wrap: wrap;
+    gap: var(--nv-space-2) var(--nv-space-4);
     padding: var(--nv-space-2) var(--nv-space-4);
     min-block-size: var(--nv-control-height-lg);
-
     background-color: var(--nv-material-frosted-bg);
+    background-image: var(--nv-sheen-raised);
     border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
 
     /* The travelling selection marker sits behind its item at z-index -1; the
@@ -2841,6 +2895,7 @@
 
   .nv-nav--plain {
     background-color: var(--nv-color-surface);
+    background-image: var(--nv-sheen-raised);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -2859,6 +2914,7 @@
 
     background-color: transparent;
     border-block-end: 0;
+    background-image: none;
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -2883,6 +2939,15 @@
     padding: 0;
     list-style: none;
     min-inline-size: 0;
+    /* On a narrow screen a long list scrolls inside the bar instead of pushing
+       the page sideways. */
+    max-inline-size: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nv-nav__list::-webkit-scrollbar {
+    display: none;
   }
 
   .nv-nav__spacer {
@@ -3030,11 +3095,15 @@
     gap: var(--nv-space-1);
     inline-size: 15rem;
     block-size: 100svh;
+    flex-wrap: nowrap;
     padding: var(--nv-space-4) var(--nv-space-3);
-
-    background-color: var(--nv-color-background-subtle);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    /* A sidebar is a pane of the canvas rather than chrome over content, so it
+       stays mostly opaque — but it lets the light of the canvas through, which
+       is what stops it reading as a grey slab beside the page. */
+    background-color: color-mix(in oklab, var(--nv-color-background-subtle) 72%, transparent);
+    background-image: var(--nv-sheen-surface);
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
     border-block-end: 0;
     border-inline-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
     box-shadow: none;
@@ -3076,10 +3145,10 @@
   .nv-nav-tabs {
     display: inline-flex;
     align-items: center;
+    max-inline-size: 100%;
     gap: var(--nv-space-0-5);
     padding: var(--nv-space-1);
-
-    background-color: var(--nv-color-surface-inset);
+    background-color: color-mix(in oklab, var(--nv-color-surface-inset) 80%, transparent);
     border: var(--nv-border-width) solid var(--nv-color-border-subtle);
     border-radius: var(--nv-radius-md);
     box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
@@ -3198,6 +3267,7 @@
     margin-block-start: var(--nv-space-2);
 
     background-color: var(--nv-material-frosted-bg);
+    background-image: var(--nv-sheen-surface);
     border: var(--nv-border-width) solid var(--nv-material-frosted-border);
     border-radius: var(--nv-radius-lg);
     box-shadow: var(--nv-material-frosted-shadow);
@@ -3940,6 +4010,7 @@
     min-inline-size: 0;
 
     background-color: var(--nv-color-surface);
+    background-image: var(--nv-sheen-surface);
     color: var(--nv-color-text-primary);
     border: var(--nv-border-width) solid var(--nv-color-border-subtle);
     border-radius: var(--nv-radius-xl);

@@ -22,34 +22,35 @@
 
   --nv-elevation-1:
     0 1px 1px var(--nv-color-shadow-ambient),
-    0 1px 3px -1px var(--nv-color-shadow-penumbra);
+    0 2px 4px -1px var(--nv-color-shadow-penumbra),
+    0 6px 14px -8px var(--nv-color-shadow-umbra);
 
   --nv-elevation-2:
     0 1px 1px var(--nv-color-shadow-ambient),
-    0 2px 4px -1px var(--nv-color-shadow-penumbra),
-    0 4px 8px -4px var(--nv-color-shadow-umbra);
+    0 3px 6px -2px var(--nv-color-shadow-penumbra),
+    0 10px 20px -10px var(--nv-color-shadow-umbra);
 
   --nv-elevation-3:
-    0 1px 1px var(--nv-color-shadow-ambient),
-    0 4px 8px -2px var(--nv-color-shadow-penumbra),
-    0 10px 20px -6px var(--nv-color-shadow-umbra);
+    0 1px 2px var(--nv-color-shadow-ambient),
+    0 6px 12px -4px var(--nv-color-shadow-penumbra),
+    0 18px 36px -12px var(--nv-color-shadow-umbra);
 
   --nv-elevation-4:
     0 1px 2px var(--nv-color-shadow-ambient),
-    0 8px 16px -4px var(--nv-color-shadow-penumbra),
-    0 20px 40px -10px var(--nv-color-shadow-umbra);
+    0 10px 20px -6px var(--nv-color-shadow-penumbra),
+    0 30px 60px -16px var(--nv-color-shadow-umbra);
 
   --nv-elevation-5:
-    0 1px 2px var(--nv-color-shadow-ambient),
-    0 14px 28px -6px var(--nv-color-shadow-penumbra),
-    0 32px 64px -14px var(--nv-color-shadow-umbra);
+    0 2px 3px var(--nv-color-shadow-ambient),
+    0 16px 32px -8px var(--nv-color-shadow-penumbra),
+    0 44px 88px -20px var(--nv-color-shadow-umbra);
 
   /* --- Inset ---------------------------------------------------------------
      Recessed surfaces: fields, wells, tracks, pressed controls. */
   --nv-elevation-inset-sm: inset 0 1px 2px var(--nv-color-shadow-inset);
   --nv-elevation-inset-md:
     inset 0 1px 1px var(--nv-color-shadow-inset),
-    inset 0 2px 5px -1px var(--nv-color-shadow-inset);
+    inset 0 3px 6px -2px var(--nv-color-shadow-inset);
   --nv-elevation-inset-lg:
     inset 0 2px 3px var(--nv-color-shadow-inset),
     inset 0 6px 12px -3px var(--nv-color-shadow-inset);

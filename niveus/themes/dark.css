@@ -21,7 +21,7 @@
 :root,
 [data-nv-brand] {
   /* --- Canvas and surfaces ----------------------------------------------- */
-  --nv-dark-background: color-mix(in oklab, #121214, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-background: color-mix(in oklab, #0f0f12, var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-background-subtle: color-mix(in oklab, #18181b, var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-surface: color-mix(in oklab, #1f1f22, var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-surface-elevated: color-mix(in oklab, #2a2a2e, var(--nv-brand) var(--nv-brand-tint));
@@ -115,33 +115,33 @@
   --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.5);
   --nv-dark-shadow-umbra: rgb(0 0 0 / 0.55);
   --nv-dark-shadow-inset: rgb(0 0 0 / 0.65);
-  --nv-dark-highlight: rgb(255 255 255 / 0.11);
-  --nv-dark-highlight-strong: rgb(255 255 255 / 0.17);
+  --nv-dark-highlight: rgb(255 255 255 / 0.15);
+  --nv-dark-highlight-strong: rgb(255 255 255 / 0.24);
 
   /* The contact line is what separates graphite from graphite: a raised
      surface over a dark canvas has no shadow to show, but it always has an
      edge. */
-  --nv-dark-lowlight: rgb(0 0 0 / 0.42);
+  --nv-dark-lowlight: rgb(0 0 0 / 0.5);
   --nv-dark-outline: rgb(0 0 0 / 0.72);
 
-  --nv-dark-sheen-top: rgb(255 255 255 / 0.06);
-  --nv-dark-sheen-bottom: rgb(0 0 0 / 0.09);
-  --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.2);
-  --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.12);
+  --nv-dark-sheen-top: rgb(255 255 255 / 0.09);
+  --nv-dark-sheen-bottom: rgb(0 0 0 / 0.18);
+  --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.3);
+  --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.2);
 
   --nv-dark-knob: #f4f3ef;
-  --nv-dark-knob-shade: rgb(40 32 20 / 0.24);
+  --nv-dark-knob-shade: rgb(40 32 20 / 0.3);
 
   /* The higher a surface sits, the more light reaches it. */
-  --nv-dark-elevation-tint-1: rgb(255 255 255 / 0.025);
-  --nv-dark-elevation-tint-2: rgb(255 255 255 / 0.042);
-  --nv-dark-elevation-tint-3: rgb(255 255 255 / 0.06);
-  --nv-dark-elevation-tint-4: rgb(255 255 255 / 0.078);
-  --nv-dark-elevation-tint-5: rgb(255 255 255 / 0.095);
+  --nv-dark-elevation-tint-1: rgb(255 255 255 / 0.03);
+  --nv-dark-elevation-tint-2: rgb(255 255 255 / 0.05);
+  --nv-dark-elevation-tint-3: rgb(255 255 255 / 0.07);
+  --nv-dark-elevation-tint-4: rgb(255 255 255 / 0.09);
+  --nv-dark-elevation-tint-5: rgb(255 255 255 / 0.11);
 
-  --nv-dark-material-frosted: color-mix(in oklab, rgb(36 36 40 / 0.62), var(--nv-brand) var(--nv-brand-tint));
-  --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 48 / 0.5), var(--nv-brand) var(--nv-brand-tint));
-  --nv-dark-material-border: rgb(255 255 255 / 0.1);
+  --nv-dark-material-frosted: color-mix(in oklab, rgb(34 34 40 / 0.5), var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 52 / 0.36), var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-material-border: rgb(255 255 255 / 0.14);
 
   /* --- Window controls --------------------------------------------------------- */
   --nv-dark-window-close: var(--nv-palette-window-close);

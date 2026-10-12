@@ -27,30 +27,31 @@
 
 :root {
   /* --- Blur ---------------------------------------------------------------- */
-  --nv-blur-sm: 8px;
-  --nv-blur-md: 16px;
-  --nv-blur-lg: 28px;
-  --nv-blur-xl: 44px;
+  --nv-blur-sm: 12px;
+  --nv-blur-md: 24px;
+  --nv-blur-lg: 36px;
+  --nv-blur-xl: 56px;
 
   /* Backdrops lose saturation when blurred; a touch of saturate() puts the
      color back so frosted surfaces do not read as gray films. Moderate on
      purpose: the blur says "this floats", it is not the look itself. */
-  --nv-backdrop-saturate: 160%;
+  --nv-backdrop-saturate: 180%;
   --nv-backdrop-frosted: blur(var(--nv-blur-md)) saturate(var(--nv-backdrop-saturate));
   --nv-backdrop-glass: blur(var(--nv-blur-sm)) saturate(var(--nv-backdrop-saturate));
 
   /* --- Sheen ------------------------------------------------------------------
      raised    neutral controls: buttons, the selected tab, a titlebar
      filled    saturated fills: primary and danger buttons, checked marks
-     surface   large surfaces: windows, dialogs, cards. The light fades out
-               within the first stretch, so it reads as a lit top edge
-               rather than as a gradient over the content.
+     surface   large surfaces: windows, dialogs, cards. Brightest along the
+               top edge, easing through the middle and settling into a faint
+               shade at the foot, so a panel reads as a curved, lit body
+               rather than as a flat sheet.
      knob      a round thumb: lit from above, shaded towards its rim */
   --nv-sheen-raised: linear-gradient(var(--nv-color-sheen-top), var(--nv-color-sheen-bottom));
   --nv-sheen-filled: linear-gradient(var(--nv-color-sheen-strong-top), var(--nv-color-sheen-strong-bottom));
-  --nv-sheen-surface: linear-gradient(var(--nv-color-sheen-top), transparent 6rem);
-  --nv-sheen-knob: radial-gradient(circle at 50% 30%, transparent 35%, var(--nv-color-knob-shade));
-  --nv-backdrop-scrim: blur(var(--nv-blur-sm)) saturate(120%);
+  --nv-sheen-surface: linear-gradient(var(--nv-color-sheen-top), transparent 7rem, transparent 55%, var(--nv-color-sheen-bottom));
+  --nv-sheen-knob: radial-gradient(circle at 50% 22%, var(--nv-color-highlight-strong), transparent 45%), radial-gradient(circle at 50% 30%, transparent 40%, var(--nv-color-knob-shade));
+  --nv-backdrop-scrim: blur(var(--nv-blur-sm)) saturate(140%);
 
   /* --- Material recipes -----------------------------------------------------
      Each recipe is the full set of properties that defines the material.

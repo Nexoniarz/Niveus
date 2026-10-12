@@ -14,7 +14,11 @@
    ========================================================================== */
 
 .nv-card {
-  --_bg: var(--nv-color-surface);
+  /* Content surfaces are mostly solid: enough of the canvas comes through to
+     tie a card to the light around it, never enough to compete with what it
+     holds. The blur keeps anything busy behind it (a bed, an image) from
+     reading through as texture. */
+  --_bg: color-mix(in oklab, var(--nv-color-surface) 90%, transparent);
   --_border: var(--nv-color-border-subtle);
   --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
   --_sheen: var(--nv-sheen-surface);
@@ -31,6 +35,8 @@
   border: var(--nv-border-width) solid var(--_border);
   border-radius: var(--nv-radius-lg);
   box-shadow: var(--_shadow);
+  backdrop-filter: var(--nv-backdrop-glass);
+  -webkit-backdrop-filter: var(--nv-backdrop-glass);
 
   /* Children are clipped to the corner radius so media and inset regions
      cannot square off the card. */
@@ -39,17 +45,17 @@
 }
 
 .nv-card--elevated {
-  --_bg: var(--nv-color-surface-elevated);
+  --_bg: color-mix(in oklab, var(--nv-color-surface-elevated) 90%, transparent);
   --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
 }
 
 .nv-card--floating {
-  --_bg: var(--nv-color-surface-elevated);
+  --_bg: color-mix(in oklab, var(--nv-color-surface-elevated) 88%, transparent);
   --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
 }
 
 .nv-card--inset {
-  --_bg: var(--nv-color-surface-inset);
+  --_bg: color-mix(in oklab, var(--nv-color-surface-inset) 85%, transparent);
   --_shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
   --_sheen: none;
   --_border: var(--nv-color-border-subtle);
