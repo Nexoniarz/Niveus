@@ -24,6 +24,14 @@ body {
   margin: 0;
   min-height: 100svh;
   background-color: var(--nv-color-background);
+  /* The canvas is lit, not painted: a wash of the accent falls in from the top
+     corner and a fainter one pools at the opposite foot. It is what gives
+     translucent surfaces something to be translucent against, and keeps a
+     page of solid panels from reading as one flat field. */
+  background-image:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--nv-color-accent) light-dark(10%, 16%), transparent), transparent 60%),
+    radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, var(--nv-color-accent) light-dark(6%, 10%), transparent), transparent 60%);
+  background-attachment: fixed;
   color: var(--nv-color-text-primary);
   font: var(--nv-font-body);
   letter-spacing: var(--nv-letter-spacing-normal);

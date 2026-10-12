@@ -43,6 +43,7 @@
   margin-block-start: var(--nv-space-2);
 
   background-color: var(--nv-material-frosted-bg);
+  background-image: var(--nv-sheen-surface);
   border: var(--nv-border-width) solid var(--nv-material-frosted-border);
   border-radius: var(--nv-radius-lg);
   box-shadow: var(--nv-material-frosted-shadow);

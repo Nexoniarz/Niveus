@@ -23,8 +23,13 @@
   max-block-size: min(42rem, calc(100svh - var(--nv-space-12)));
   padding: 0;
 
-  background-color: var(--nv-color-surface-elevated);
+  /* The dialog sits over a dimmed, blurred page, so it can afford to let a
+     little of it through: it reads as a pane lifted off the page rather than
+     a card pasted over it. */
+  background-color: color-mix(in oklab, var(--nv-color-surface-elevated) 86%, transparent);
   background-image: var(--nv-sheen-surface);
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
   color: var(--nv-color-text-primary);
   border: var(--nv-border-width) solid var(--nv-color-border-subtle);
   border-radius: var(--nv-radius-xl);

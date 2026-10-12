@@ -59,8 +59,10 @@
   min-inline-size: 0;
   block-size: var(--_height);
   padding-inline: var(--_padding);
-
-  background-color: var(--nv-color-surface-inset);
+  /* A well in dark, where recess reads as shade; paper in light, where a grey
+     well reads as a field that has been switched off. The inset shadow and
+     ledge carry the recess either way. */
+  background-color: light-dark(var(--nv-color-surface), var(--nv-color-surface-inset));
   color: var(--nv-color-text-primary);
   border: var(--nv-border-width) solid var(--_border);
   border-radius: var(--_radius);
@@ -134,7 +136,13 @@ textarea.nv-input {
   padding: 0;
 }
 
-.nv-input--color::-webkit-color-swatch,
+.nv-input--color::-webkit-color-swatch {
+  border: var(--nv-border-width) solid var(--nv-color-border);
+  border-radius: calc(var(--nv-radius-md) - var(--nv-space-1));
+}
+
+/* Separate rules on purpose: a selector list that names another engine's
+   pseudo-element is invalid as a whole, and each browser would drop both. */
 .nv-input--color::-moz-color-swatch {
   border: var(--nv-border-width) solid var(--nv-color-border);
   border-radius: calc(var(--nv-radius-md) - var(--nv-space-1));
@@ -227,6 +235,9 @@ textarea.nv-input {
 .nv-radio {
   position: relative;
   flex: none;
+  /* The marks are drawn in em; pinning the size keeps them the same whatever
+     the label around them is set in. */
+  font-size: var(--nv-font-size-md);
   inline-size: var(--nv-space-5);
   block-size: var(--nv-space-5);
   margin: 0;
@@ -391,7 +402,10 @@ textarea.nv-input {
   display: flex;
   align-items: center;
   gap: var(--nv-space-2-5);
+  /* Labelled at control size, so a row of switches and checkboxes sits level
+     with the buttons and fields beside it. */
   font: var(--nv-font-body);
+  font-size: var(--nv-font-size-sm);
   cursor: pointer;
 }
 

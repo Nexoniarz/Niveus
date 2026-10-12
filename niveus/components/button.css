@@ -123,6 +123,12 @@
   --_fg: var(--nv-color-on-accent);
   --_border: transparent;
   --_sheen: var(--nv-sheen-filled);
+  /* A filled key gives off a little of its own color: the glow is what makes
+     it read as lit rather than printed. */
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2),
+    0 6px 16px -8px color-mix(in oklab, var(--_bg) 80%, transparent);
+  --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3),
+    0 8px 22px -8px color-mix(in oklab, var(--_bg) 85%, transparent);
   font-weight: var(--nv-font-weight-semibold);
 }
 
@@ -133,6 +139,10 @@
   --_fg: var(--nv-color-on-danger);
   --_border: transparent;
   --_sheen: var(--nv-sheen-filled);
+  --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2),
+    0 6px 16px -8px color-mix(in oklab, var(--_bg) 80%, transparent);
+  --_shadow-hover: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3),
+    0 8px 22px -8px color-mix(in oklab, var(--_bg) 85%, transparent);
   --nv-color-focus-ring: var(--nv-color-danger-border);
   font-weight: var(--nv-font-weight-semibold);
 }
@@ -147,6 +157,14 @@
   --_shadow: none;
   --_shadow-hover: none;
   --_shadow-active: var(--nv-elevation-inset-sm);
+}
+
+/* A ghost has no material to lose, so disabling it only dims the label —
+   it does not suddenly grow a well its enabled siblings never had. */
+.nv-button--ghost:disabled,
+.nv-button--ghost[aria-disabled="true"] {
+  background-color: transparent;
+  border-color: transparent;
 }
 
 @media (hover: hover) {

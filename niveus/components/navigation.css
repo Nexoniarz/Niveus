@@ -20,11 +20,12 @@
 
   display: flex;
   align-items: center;
-  gap: var(--nv-space-4);
+  flex-wrap: wrap;
+  gap: var(--nv-space-2) var(--nv-space-4);
   padding: var(--nv-space-2) var(--nv-space-4);
   min-block-size: var(--nv-control-height-lg);
-
   background-color: var(--nv-material-frosted-bg);
+  background-image: var(--nv-sheen-raised);
   border-block-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
 
   /* The travelling selection marker sits behind its item at z-index -1; the
@@ -46,6 +47,7 @@
 
 .nv-nav--plain {
   background-color: var(--nv-color-surface);
+  background-image: var(--nv-sheen-raised);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -64,6 +66,7 @@
 
   background-color: transparent;
   border-block-end: 0;
+  background-image: none;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -88,6 +91,15 @@
   padding: 0;
   list-style: none;
   min-inline-size: 0;
+  /* On a narrow screen a long list scrolls inside the bar instead of pushing
+     the page sideways. */
+  max-inline-size: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nv-nav__list::-webkit-scrollbar {
+  display: none;
 }
 
 .nv-nav__spacer {
@@ -235,11 +247,15 @@
   gap: var(--nv-space-1);
   inline-size: 15rem;
   block-size: 100svh;
+  flex-wrap: nowrap;
   padding: var(--nv-space-4) var(--nv-space-3);
-
-  background-color: var(--nv-color-background-subtle);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  /* A sidebar is a pane of the canvas rather than chrome over content, so it
+     stays mostly opaque — but it lets the light of the canvas through, which
+     is what stops it reading as a grey slab beside the page. */
+  background-color: color-mix(in oklab, var(--nv-color-background-subtle) 72%, transparent);
+  background-image: var(--nv-sheen-surface);
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
   border-block-end: 0;
   border-inline-end: var(--nv-border-width) solid var(--nv-color-border-subtle);
   box-shadow: none;
@@ -281,10 +297,10 @@
 .nv-nav-tabs {
   display: inline-flex;
   align-items: center;
+  max-inline-size: 100%;
   gap: var(--nv-space-0-5);
   padding: var(--nv-space-1);
-
-  background-color: var(--nv-color-surface-inset);
+  background-color: color-mix(in oklab, var(--nv-color-surface-inset) 80%, transparent);
   border: var(--nv-border-width) solid var(--nv-color-border-subtle);
   border-radius: var(--nv-radius-md);
   box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
