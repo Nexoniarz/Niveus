@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Niveus — Skeleton
+   --------------------------------------------------------------------------
+     <span class="nv-skeleton nv-skeleton--text"></span>
+
+   The shape of content that has not arrived yet. A skeleton is a shallow well
+   cut where the content will sit, with a slow band of light crossing it — the
+   surface is recessed and waiting, not broken.
+
+     .nv-skeleton           a block; size it with the layout
+     .nv-skeleton--text     one line of body text
+     .nv-skeleton--circle   an avatar or a tile
+
+   Under reduced motion the light stops crossing and the well stays: the state
+   is still legible, it just does not move.
+   ========================================================================== */
+
+.nv-skeleton {
+  display: block;
+  min-block-size: var(--nv-space-4);
+  border-radius: var(--nv-radius-md);
+  background-color: var(--nv-color-surface-inset);
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    var(--nv-color-sheen-top) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+  animation: nv-shimmer var(--nv-duration-shimmer) var(--nv-ease-linear) infinite;
+}
+
+.nv-skeleton--text {
+  inline-size: 100%;
+  min-block-size: 0;
+  block-size: 0.75em;
+  border-radius: var(--nv-radius-full);
+}
+
+/* A paragraph of skeleton lines ends short, like the paragraph it stands for. */
+.nv-skeleton--text:last-child:not(:first-child) {
+  inline-size: 60%;
+}
+
+.nv-skeleton--circle {
+  aspect-ratio: 1;
+  border-radius: var(--nv-radius-full);
+}
+
+@keyframes nv-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-skeleton {
+    animation: none;
+  }
+}

@@ -204,3 +204,32 @@ textarea {
 .nv-text-success { color: var(--nv-color-success-text); }
 .nv-text-warning { color: var(--nv-color-warning-text); }
 .nv-text-danger { color: var(--nv-color-danger-text); }
+
+/* Lit text: type cut from the same material as the surfaces — bright along
+   the top, warming towards the accent below, the way light falls across a
+   raised face. Each line is lit on its own. For one display line on a page,
+   not for running text. */
+.nv-text-lit {
+  background-image: linear-gradient(
+    180deg,
+    var(--nv-color-text-primary) 30%,
+    color-mix(in oklab, var(--nv-color-accent-text) 30%, var(--nv-color-text-primary))
+  );
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--nv-color-accent-text);
+}
+
+/* The accent alone, lit from above: for an accented phrase inside a display
+   line, where flat accent text would read as a link. */
+.nv-text-lit--accent {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--nv-color-accent-text) 55%, var(--nv-color-text-primary)),
+    var(--nv-color-accent-text) 60%,
+    var(--nv-color-accent)
+  );
+}

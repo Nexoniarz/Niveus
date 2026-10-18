@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Niveus — Stat
+   --------------------------------------------------------------------------
+     <dl class="nv-stat-group">
+       <div class="nv-stat">
+         <dt class="nv-stat__label">Servers</dt>
+         <dd class="nv-stat__value">1,204</dd>
+       </div>
+     </dl>
+
+   A number the user is meant to read at a glance. A group of stats is set into
+   one shallow well, like the readout panel of an instrument: the figures sit
+   behind the surface, separated by hairlines, so a row of numbers reads as one
+   display instead of as four loose labels.
+
+     .nv-stat-group         the readout well; wraps without a media query
+     .nv-stat               one reading
+     .nv-stat__label        what is measured
+     .nv-stat__value        the figure, in tabular numerals
+     .nv-stat__delta        change since last time; --up / --down
+   ========================================================================== */
+
+.nv-stat-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(8rem, 100%), 1fr));
+  /* The hairlines between readings are the well itself showing through a
+     one-pixel gap, so they stay continuous however the row wraps. */
+  gap: var(--nv-border-width);
+  margin: 0;
+  background-color: var(--nv-color-border-subtle);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: var(--nv-radius-lg);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+  overflow: hidden;
+}
+
+.nv-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-1);
+  min-inline-size: 0;
+  padding: var(--nv-space-4) var(--nv-space-5);
+}
+
+.nv-stat-group > .nv-stat {
+  background-color: var(--nv-color-surface-inset);
+}
+
+.nv-stat__label {
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-tertiary);
+}
+
+.nv-stat__value {
+  margin: 0;
+  font: var(--nv-font-heading);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--nv-letter-spacing-tight);
+  color: var(--nv-color-text-primary);
+}
+
+.nv-stat__delta {
+  font: var(--nv-font-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--nv-color-text-secondary);
+}
+
+.nv-stat__delta--up {
+  color: var(--nv-color-success);
+}
+
+.nv-stat__delta--down {
+  color: var(--nv-color-danger);
+}

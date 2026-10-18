@@ -200,6 +200,33 @@
   view-transition-class: nv-content;
 }
 
+/* --- Reveal ------------------------------------------------------------------------
+   Content arriving as it scrolls into view: it rises a short way and fades in,
+   once, so a long page is read in the order it was written instead of all at
+   once. .nv-reveal-group does the same for its children one after another,
+   --nv-stagger apart.
+
+   niveus.js marks what is waiting. Without the script, and under reduced
+   motion, nothing is ever marked — so nothing is ever hidden. */
+
+.nv-reveal[data-nv-reveal="pending"],
+.nv-reveal-group > [data-nv-reveal="pending"] {
+  opacity: 0;
+}
+
+.nv-reveal[data-nv-reveal="shown"],
+.nv-reveal-group > [data-nv-reveal="shown"] {
+  animation: nv-arrive var(--nv-duration-slower) var(--nv-ease-entrance)
+    calc(var(--nv-reveal-index, 0) * var(--nv-stagger)) both;
+}
+
+@keyframes nv-arrive {
+  from {
+    opacity: 0;
+    translate: 0 var(--nv-travel-lg);
+  }
+}
+
 /* Collapsible region for markup that is not a <details>. The 0fr -> 1fr grid
    row is the one technique that animates to an unknown content height in every
    browser, with no measurement and no script. */

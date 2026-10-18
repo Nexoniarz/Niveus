@@ -302,6 +302,11 @@
     --nv-color-sheen-strong-top: light-dark(var(--nv-light-sheen-strong-top), var(--nv-dark-sheen-strong-top));
     --nv-color-sheen-strong-bottom: light-dark(var(--nv-light-sheen-strong-bottom), var(--nv-dark-sheen-strong-bottom));
 
+    /* Glow: light a surface gives off, as opposed to the shade it casts. It is
+       the accent seen through air — strong enough in dark to read as a lit
+       edge, faint in light, where paper does not emit. */
+    --nv-color-glow: light-dark(var(--nv-light-glow), var(--nv-dark-glow));
+
     /* A knob: the thumb of a switch or a slider. It stays light in both
        appearances, the way a physical knob does not change color with the room. */
     --nv-color-knob: light-dark(var(--nv-light-knob), var(--nv-dark-knob));
@@ -598,6 +603,32 @@
     --nv-focus-ring:
       0 0 0 1px var(--nv-color-focus-ring-contrast),
       0 0 0 calc(1px + var(--nv-focus-ring-width)) var(--nv-color-focus-ring);
+
+    /* --- Glow ------------------------------------------------------------------
+       Light a surface emits rather than the shade it casts. Glow is for things
+       that are *on* — a live status, the selected item in a showcase, a lit key —
+       and it always sits beside an elevation, never instead of one: a glowing
+       surface still rests on something.
+
+       The geometry is a scale like elevation. The color is the component's: a
+       tinted surface glows in its own tint, mixed down to --nv-glow-strength. */
+    --nv-glow-strength: 40%;
+    --nv-glow-blur-sm: 12px;
+    --nv-glow-spread-sm: -2px;
+    --nv-glow-blur-md: 28px;
+    --nv-glow-spread-md: -6px;
+    --nv-glow-blur-lg: 64px;
+    --nv-glow-spread-lg: -12px;
+  }
+
+  /* The accent glows are declared on every branded subtree as well as the root:
+     a var() inside a custom property resolves where the property is declared, so
+     a root-only declaration would glow in the root brand everywhere. */
+  :root,
+  [data-nv-brand] {
+    --nv-glow-sm: 0 0 var(--nv-glow-blur-sm) var(--nv-glow-spread-sm) var(--nv-color-glow);
+    --nv-glow-md: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-md) var(--nv-color-glow);
+    --nv-glow-lg: 0 0 var(--nv-glow-blur-lg) var(--nv-glow-spread-lg) var(--nv-color-glow);
   }
 }
 @layer niveus.tokens {
@@ -685,6 +716,15 @@
     --nv-travel-sm: 4px;
     --nv-travel-md: 8px;
     --nv-travel-lg: 16px;
+
+    /* --- Sequence ---------------------------------------------------------------
+       The gap between siblings arriving one after another. Short enough that a
+       group reads as one movement, long enough that the eye sees an order. */
+    --nv-stagger: 60ms;
+
+    /* A loading shimmer is a slow, constant sweep — slow enough to read as
+       "waiting", never fast enough to read as an alert. */
+    --nv-duration-shimmer: 1600ms;
   }
 
   /* Reduced motion is a system-wide contract, not a per-component opt-in: cut
@@ -706,6 +746,7 @@
       --nv-travel-sm: 0px;
       --nv-travel-md: 0px;
       --nv-travel-lg: 0px;
+      --nv-stagger: 0ms;
     }
   }
 }
@@ -965,6 +1006,7 @@
     --nv-light-sheen-bottom: rgb(40 32 20 / 0.07);
     --nv-light-sheen-strong-top: rgb(255 255 255 / 0.32);
     --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.16);
+    --nv-light-glow: oklch(from var(--nv-light-accent) l c h / 0.3);
 
     --nv-light-knob: var(--nv-palette-neutral-0);
     --nv-light-knob-shade: rgb(40 32 20 / 0.13);
@@ -1126,6 +1168,7 @@
     --nv-dark-sheen-bottom: rgb(0 0 0 / 0.18);
     --nv-dark-sheen-strong-top: rgb(255 255 255 / 0.3);
     --nv-dark-sheen-strong-bottom: rgb(0 0 0 / 0.2);
+    --nv-dark-glow: oklch(from var(--nv-dark-accent) l c h / 0.5);
 
     --nv-dark-knob: #f4f3ef;
     --nv-dark-knob-shade: rgb(40 32 20 / 0.3);
@@ -1364,6 +1407,35 @@
   .nv-text-success { color: var(--nv-color-success-text); }
   .nv-text-warning { color: var(--nv-color-warning-text); }
   .nv-text-danger { color: var(--nv-color-danger-text); }
+
+  /* Lit text: type cut from the same material as the surfaces — bright along
+     the top, warming towards the accent below, the way light falls across a
+     raised face. Each line is lit on its own. For one display line on a page,
+     not for running text. */
+  .nv-text-lit {
+    background-image: linear-gradient(
+      180deg,
+      var(--nv-color-text-primary) 30%,
+      color-mix(in oklab, var(--nv-color-accent-text) 30%, var(--nv-color-text-primary))
+    );
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--nv-color-accent-text);
+  }
+
+  /* The accent alone, lit from above: for an accented phrase inside a display
+     line, where flat accent text would read as a link. */
+  .nv-text-lit--accent {
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--nv-color-accent-text) 55%, var(--nv-color-text-primary)),
+      var(--nv-color-accent-text) 60%,
+      var(--nv-color-accent)
+    );
+  }
 }
 
 /* --- Continuity: how one state becomes the next ----------------------------- */
@@ -1568,6 +1640,33 @@
   .nv-continuous {
     view-transition-name: var(--nv-content-name, nv-content);
     view-transition-class: nv-content;
+  }
+
+  /* --- Reveal ------------------------------------------------------------------------
+     Content arriving as it scrolls into view: it rises a short way and fades in,
+     once, so a long page is read in the order it was written instead of all at
+     once. .nv-reveal-group does the same for its children one after another,
+     --nv-stagger apart.
+
+     niveus.js marks what is waiting. Without the script, and under reduced
+     motion, nothing is ever marked — so nothing is ever hidden. */
+
+  .nv-reveal[data-nv-reveal="pending"],
+  .nv-reveal-group > [data-nv-reveal="pending"] {
+    opacity: 0;
+  }
+
+  .nv-reveal[data-nv-reveal="shown"],
+  .nv-reveal-group > [data-nv-reveal="shown"] {
+    animation: nv-arrive var(--nv-duration-slower) var(--nv-ease-entrance)
+      calc(var(--nv-reveal-index, 0) * var(--nv-stagger)) both;
+  }
+
+  @keyframes nv-arrive {
+    from {
+      opacity: 0;
+      translate: 0 var(--nv-travel-lg);
+    }
   }
 
   /* Collapsible region for markup that is not a <details>. The 0fr -> 1fr grid
@@ -2473,6 +2572,9 @@
        .nv-card--inset              recessed into its parent
        .nv-card--frosted            over imagery or scrolling content
        .nv-card--interactive        the whole card is one target
+       .nv-card--lit                lit along its top edge in its tint
+       .nv-card--glow               gives off its tint — the one card that is on
+       .nv-card--spotlight          catches a light that follows the pointer
        .nv-card__header / __body / __footer / __media
 
      A card is a container, not a look. If a card needs a shadow that is not on
@@ -2490,6 +2592,11 @@
     --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
     --_sheen: var(--nv-sheen-surface);
     --_padding: var(--nv-space-5);
+    /* Light layers the variants switch on. Kept separate from --_shadow so a
+       lit or glowing card can still be elevated, floating or interactive. */
+    --_lit: 0 0 transparent;
+    --_glow: 0 0 transparent;
+    --_spot: linear-gradient(transparent, transparent);
 
     position: relative;
     display: flex;
@@ -2497,11 +2604,11 @@
     min-inline-size: 0;
 
     background-color: var(--_bg);
-    background-image: var(--_sheen);
+    background-image: var(--_spot), var(--_sheen);
     color: var(--nv-color-text-primary);
     border: var(--nv-border-width) solid var(--_border);
     border-radius: var(--nv-radius-lg);
-    box-shadow: var(--_shadow);
+    box-shadow: var(--_lit), var(--_shadow), var(--_glow);
     backdrop-filter: var(--nv-backdrop-glass);
     -webkit-backdrop-filter: var(--nv-backdrop-glass);
 
@@ -2553,20 +2660,75 @@
 
   @media (hover: hover) {
     .nv-card--interactive:hover {
-      box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+      box-shadow: var(--_lit), var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3), var(--_glow);
       translate: 0 calc(var(--nv-lift-hover) * 2);
     }
   }
 
   .nv-card--interactive:active {
-    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+    box-shadow: var(--_lit), var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1), var(--_glow);
     translate: 0 var(--nv-press-depth);
     transition-duration: var(--nv-duration-instant);
   }
 
   .nv-card--interactive:focus-visible {
     outline: none;
-    box-shadow: var(--_shadow), var(--nv-focus-ring);
+    box-shadow: var(--_lit), var(--_shadow), var(--_glow), var(--nv-focus-ring);
+  }
+
+  /* --- Light ------------------------------------------------------------------
+     Three ways a card can carry light, each stated once and combinable with
+     every elevation above. They all take the card's tint — the accent unless
+     --nv-card-tint names another color, the way --nv-bed-tint does for a bed.
+
+     Lit:       a strip of light along the top edge, spilling a little way down
+                the face. For a card that belongs to something with a color: a
+                project, a status, a category.
+     Glow:      the card gives off its tint. For the one card that is on — the
+                current plan, the live item. Two glowing cards side by side
+                cancel each other out.
+     Spotlight: a soft light follows the pointer across the face (niveus.js
+                tracks it). A showcase effect; a list of work items does not
+                need one. */
+
+  .nv-card--lit,
+  .nv-card--glow,
+  .nv-card--spotlight {
+    --nv-card-tint: var(--nv-color-accent);
+  }
+
+  .nv-card--lit {
+    --_lit:
+      inset 0 2px 0 color-mix(in oklab, var(--nv-card-tint) 85%, transparent),
+      inset 0 18px 28px -22px color-mix(in oklab, var(--nv-card-tint) 70%, transparent);
+    --_sheen:
+      radial-gradient(
+        120% 70% at 0% 0%,
+        color-mix(in oklab, var(--nv-card-tint) 12%, transparent),
+        transparent 70%
+      ),
+      var(--nv-sheen-surface);
+  }
+
+  .nv-card--glow {
+    --_border: color-mix(in oklab, var(--nv-card-tint) 40%, var(--nv-color-border-subtle));
+    --_glow: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-md)
+      color-mix(in oklab, var(--nv-card-tint) var(--nv-glow-strength), transparent);
+  }
+
+  @media (hover: hover) {
+    .nv-card--glow.nv-card--interactive:hover {
+      --_glow: 0 0 var(--nv-glow-blur-lg) var(--nv-glow-spread-md)
+        color-mix(in oklab, var(--nv-card-tint) var(--nv-glow-strength), transparent);
+    }
+
+    .nv-card--spotlight:hover {
+      --_spot: radial-gradient(
+        22rem circle at var(--nv-pointer-x, 50%) var(--nv-pointer-y, 0%),
+        color-mix(in oklab, var(--nv-card-tint) 14%, var(--nv-color-sheen-top)),
+        transparent 70%
+      );
+    }
   }
 
   /* Cards whose whole area is clickable via a link inside: the link's target is
@@ -4162,6 +4324,560 @@
     flex: 1;
     min-block-size: 0;
     overflow: auto;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Tile
+     --------------------------------------------------------------------------
+       <span class="nv-tile"><svg …></svg></span>
+
+     A tile is a small raised key that holds one glyph: the icon beside a
+     feature, the mark of a product, the symbol on a stat. It is the physical
+     version of an icon — something with an edge you could press — which is why
+     a row of features reads as a set of objects rather than as clip art.
+
+       .nv-tile             soft key: tinted face, the glyph in its tint
+       .nv-tile--solid      filled key: saturated face, a light glyph
+       .nv-tile--glow       the key is lit from inside
+       .nv-tile--sm / --lg / --xl
+
+     Everything derives from --nv-tile-tint, the accent unless set. A tile is
+     not a button: if it does something, it is an .nv-button--icon.
+     ========================================================================== */
+
+  .nv-tile {
+    --nv-tile-tint: var(--nv-color-accent);
+    --_size: 2.75rem;
+    --_radius: var(--nv-radius-md);
+    --_bg: color-mix(in oklab, var(--nv-tile-tint) 16%, var(--nv-color-surface-elevated));
+    --_ink: color-mix(in oklab, var(--nv-tile-tint) 70%, var(--nv-color-text-primary));
+    --_sheen: var(--nv-sheen-raised);
+    --_glow: 0 0 transparent;
+
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    background-color: var(--_bg);
+    background-image: var(--_sheen);
+    color: var(--_ink);
+    border: var(--nv-border-width) solid color-mix(in oklab, var(--nv-tile-tint) 30%, var(--nv-color-border-subtle));
+    border-radius: var(--_radius);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1), var(--_glow);
+    transition: var(--nv-transition-surface);
+  }
+
+  /* Glyphs take half the key; a mark that is itself a picture (an image, a
+     logo) fills it, clipped to the key's corners. */
+  .nv-tile > svg {
+    inline-size: 50%;
+    block-size: 50%;
+  }
+
+  .nv-tile > img {
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+  }
+
+  .nv-tile--solid {
+    --_bg: var(--nv-tile-tint);
+    --_ink: var(--nv-color-on-accent);
+    --_sheen: var(--nv-sheen-filled);
+  }
+
+  .nv-tile--glow {
+    --_glow: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-sm)
+      color-mix(in oklab, var(--nv-tile-tint) var(--nv-glow-strength), transparent);
+  }
+
+  .nv-tile--sm {
+    --_size: 2rem;
+    --_radius: var(--nv-radius-sm);
+  }
+
+  .nv-tile--lg {
+    --_size: 3.5rem;
+    --_radius: var(--nv-radius-lg);
+  }
+
+  .nv-tile--xl {
+    --_size: 4.5rem;
+    --_radius: var(--nv-radius-xl);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Avatar
+     --------------------------------------------------------------------------
+       <span class="nv-avatar"><img src="…" alt=""></span>
+       <span class="nv-avatar">NX</span>
+
+     A person, as a round raised disc: an image when there is one, initials when
+     there is not. The disc is lit like a knob — highlight above, shade below —
+     so a face reads as something set into the interface, not pasted onto it.
+
+       .nv-avatar--ring       a ring in the tint, set off by a gap of surface
+       .nv-avatar--glow       the ring gives off its tint
+       .nv-avatar--sm / --lg / --xl
+       .nv-avatar__status     presence dot; --online lights it
+       .nv-avatar-group       overlapping row of avatars
+
+     --nv-avatar-tint picks the ring color; the accent unless set.
+     ========================================================================== */
+
+  .nv-avatar {
+    --nv-avatar-tint: var(--nv-color-accent);
+    --_size: 2.5rem;
+    --_ring: 0 0 transparent;
+    --_glow: 0 0 transparent;
+
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    background-color: var(--nv-color-surface-elevated);
+    background-image: var(--nv-sheen-raised);
+    color: var(--nv-color-text-secondary);
+    font: var(--nv-font-label);
+    font-weight: var(--nv-font-weight-semibold);
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--_ring), var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1), var(--_glow);
+    user-select: none;
+  }
+
+  .nv-avatar > img {
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+  }
+
+  /* The gap is drawn in the surface color, so the ring reads as a separate band
+     sitting around the disc rather than as a thick border painted onto it. */
+  .nv-avatar--ring,
+  .nv-avatar--glow {
+    --_ring:
+      0 0 0 2px var(--nv-color-surface),
+      0 0 0 4px var(--nv-avatar-tint);
+  }
+
+  .nv-avatar--glow {
+    --_glow: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-sm)
+      color-mix(in oklab, var(--nv-avatar-tint) var(--nv-glow-strength), transparent);
+  }
+
+  .nv-avatar--sm {
+    --_size: 1.75rem;
+    font: var(--nv-font-caption);
+  }
+
+  .nv-avatar--lg {
+    --_size: 4rem;
+    font: var(--nv-font-title);
+  }
+
+  .nv-avatar--xl {
+    --_size: 6rem;
+    font: var(--nv-font-heading);
+  }
+
+  /* --- Status ------------------------------------------------------------------ */
+
+  .nv-avatar__status {
+    position: absolute;
+    inset-block-end: 4%;
+    inset-inline-end: 4%;
+    inline-size: max(0.625rem, 24%);
+    block-size: max(0.625rem, 24%);
+    border-radius: var(--nv-radius-full);
+    background-color: var(--nv-color-text-tertiary);
+    box-shadow: 0 0 0 2px var(--nv-color-surface);
+  }
+
+  .nv-avatar__status--online {
+    background-color: var(--nv-color-success);
+    box-shadow:
+      0 0 0 2px var(--nv-color-surface),
+      0 0 var(--nv-glow-blur-sm) var(--nv-glow-spread-sm)
+        color-mix(in oklab, var(--nv-color-success) var(--nv-glow-strength), transparent);
+  }
+
+  /* --- Group ----------------------------------------------------------------------- */
+
+  .nv-avatar-group {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nv-avatar-group > .nv-avatar {
+    box-shadow: 0 0 0 2px var(--nv-color-surface), var(--nv-bevel), var(--nv-elevation-1);
+  }
+
+  .nv-avatar-group > .nv-avatar + .nv-avatar {
+    margin-inline-start: calc(var(--_size) * -0.3);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Stat
+     --------------------------------------------------------------------------
+       <dl class="nv-stat-group">
+         <div class="nv-stat">
+           <dt class="nv-stat__label">Servers</dt>
+           <dd class="nv-stat__value">1,204</dd>
+         </div>
+       </dl>
+
+     A number the user is meant to read at a glance. A group of stats is set into
+     one shallow well, like the readout panel of an instrument: the figures sit
+     behind the surface, separated by hairlines, so a row of numbers reads as one
+     display instead of as four loose labels.
+
+       .nv-stat-group         the readout well; wraps without a media query
+       .nv-stat               one reading
+       .nv-stat__label        what is measured
+       .nv-stat__value        the figure, in tabular numerals
+       .nv-stat__delta        change since last time; --up / --down
+     ========================================================================== */
+
+  .nv-stat-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(8rem, 100%), 1fr));
+    /* The hairlines between readings are the well itself showing through a
+       one-pixel gap, so they stay continuous however the row wraps. */
+    gap: var(--nv-border-width);
+    margin: 0;
+    background-color: var(--nv-color-border-subtle);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-lg);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+    overflow: hidden;
+  }
+
+  .nv-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-1);
+    min-inline-size: 0;
+    padding: var(--nv-space-4) var(--nv-space-5);
+  }
+
+  .nv-stat-group > .nv-stat {
+    background-color: var(--nv-color-surface-inset);
+  }
+
+  .nv-stat__label {
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .nv-stat__value {
+    margin: 0;
+    font: var(--nv-font-heading);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--nv-letter-spacing-tight);
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-stat__delta {
+    font: var(--nv-font-caption);
+    font-variant-numeric: tabular-nums;
+    color: var(--nv-color-text-secondary);
+  }
+
+  .nv-stat__delta--up {
+    color: var(--nv-color-success);
+  }
+
+  .nv-stat__delta--down {
+    color: var(--nv-color-danger);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Steps
+     --------------------------------------------------------------------------
+       <ol class="nv-steps">
+         <li class="nv-steps__item" data-state="done">
+           <span class="nv-steps__marker">1</span>
+           <div class="nv-steps__body">
+             <h3 class="nv-steps__title">Listen</h3>
+             <p class="nv-steps__text">…</p>
+           </div>
+         </li>
+       </ol>
+
+     A sequence the user moves through: a process, an onboarding, an order's
+     progress. The steps sit on a rail — a groove cut into the surface — with
+     each marker a raised knob set into it. Finished steps light their stretch
+     of the rail, so progress reads as something filling up rather than as a
+     row of ticks.
+
+       .nv-steps              horizontal; becomes vertical on narrow screens
+       .nv-steps--vertical    always vertical
+       data-state="done"      the step and its stretch of rail are lit
+       aria-current="step"    the step in progress: lit marker, rail still dark
+     ========================================================================== */
+
+  .nv-steps {
+    --_marker: 2.25rem;
+    --_rail: 6px;
+    --_gap: var(--nv-space-4);
+
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--_gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nv-steps__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-3);
+    min-inline-size: 0;
+  }
+
+  /* Each step draws the rail from its own marker to the next one, so a finished
+     step can light exactly its stretch and the rail never runs past the end. */
+  .nv-steps__item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    inset-block-start: calc((var(--_marker) - var(--_rail)) / 2);
+    inset-inline-start: calc(var(--_marker) / 2);
+    inline-size: calc(100% + var(--_gap));
+    block-size: var(--_rail);
+    border-radius: var(--nv-radius-full);
+    background-color: var(--nv-color-surface-inset);
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+    transition: var(--nv-transition-surface);
+  }
+
+  .nv-steps__item[data-state="done"]:not(:last-child)::before {
+    background-color: var(--nv-color-accent);
+    background-image: var(--nv-sheen-filled);
+    box-shadow: var(--nv-glow-sm);
+  }
+
+  .nv-steps__marker {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--_marker);
+    block-size: var(--_marker);
+
+    background-color: var(--nv-color-surface-elevated);
+    background-image: var(--nv-sheen-raised);
+    color: var(--nv-color-text-secondary);
+    font: var(--nv-font-label);
+    font-weight: var(--nv-font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+    transition: var(--nv-transition-surface);
+  }
+
+  .nv-steps__item[data-state="done"] > .nv-steps__marker,
+  .nv-steps__item[aria-current="step"] > .nv-steps__marker {
+    background-color: var(--nv-color-accent);
+    background-image: var(--nv-sheen-filled);
+    color: var(--nv-color-on-accent);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2), var(--nv-glow-md);
+  }
+
+  .nv-steps__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-1);
+    min-inline-size: 0;
+  }
+
+  .nv-steps__title {
+    margin: 0;
+    font: var(--nv-font-title);
+    letter-spacing: var(--nv-letter-spacing-tight);
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-steps__text {
+    margin: 0;
+    font: var(--nv-font-caption);
+    color: var(--nv-color-text-secondary);
+  }
+
+  /* --- Vertical -------------------------------------------------------------------
+     Marker beside the text and the rail running down between markers. Also what
+     a horizontal sequence becomes once its columns are too narrow to read. */
+
+  .nv-steps--vertical {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    --_gap: var(--nv-space-5);
+  }
+
+  .nv-steps--vertical > .nv-steps__item {
+    flex-direction: row;
+    gap: var(--nv-space-4);
+  }
+
+  .nv-steps--vertical > .nv-steps__item:not(:last-child)::before {
+    inset-block-start: calc(var(--_marker) / 2);
+    inset-inline-start: calc((var(--_marker) - var(--_rail)) / 2);
+    inline-size: var(--_rail);
+    block-size: calc(100% + var(--_gap));
+  }
+
+  @media (max-width: 40rem) {
+    .nv-steps {
+      grid-auto-flow: row;
+      grid-auto-columns: auto;
+      --_gap: var(--nv-space-5);
+    }
+
+    .nv-steps > .nv-steps__item {
+      flex-direction: row;
+      gap: var(--nv-space-4);
+    }
+
+    .nv-steps > .nv-steps__item:not(:last-child)::before {
+      inset-block-start: calc(var(--_marker) / 2);
+      inset-inline-start: calc((var(--_marker) - var(--_rail)) / 2);
+      inline-size: var(--_rail);
+      block-size: calc(100% + var(--_gap));
+    }
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Deck
+     --------------------------------------------------------------------------
+       <div class="nv-deck">
+         <article class="nv-card">…</article>
+         <div class="nv-deck__layer" aria-hidden="true"></div>
+         <div class="nv-deck__layer" aria-hidden="true"></div>
+       </div>
+
+     One surface in front of others of its kind: the current item of a set that
+     has more behind it. The layers are cards seen edge-on, stepping back and
+     dimming with distance, so the set has depth without anything having to
+     move. Use it where "there are more of these" is part of the message — a
+     showcase of products, a stack of notifications, a carousel at rest.
+
+     Everything in the deck shares one grid cell. The front surface is any
+     element; the layers are decorative and hidden from assistive technology.
+     Panels that swap (an .nv-tab-panel set) can live in the deck together:
+     the hidden ones take no space.
+     ========================================================================== */
+
+  .nv-deck {
+    --_step: var(--nv-space-3);
+
+    display: grid;
+    position: relative;
+    isolation: isolate;
+    /* Room above the front surface for the layers that peek out behind it. */
+    padding-block-start: calc(var(--_step) * 2);
+  }
+
+  .nv-deck > * {
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+  }
+
+  .nv-deck__layer {
+    --_depth: 1;
+
+    z-index: -1;
+    pointer-events: none;
+    background-color: color-mix(in oklab, var(--nv-color-surface) 90%, transparent);
+    background-image: var(--nv-sheen-surface);
+    border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+    border-radius: var(--nv-radius-lg);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+    translate: 0 calc(var(--_step) * var(--_depth) * -1);
+    scale: calc(1 - var(--_depth) * 0.05) 1;
+    opacity: calc(1 - var(--_depth) * 0.3);
+  }
+
+  .nv-deck__layer + .nv-deck__layer {
+    --_depth: 2;
+    z-index: -2;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Skeleton
+     --------------------------------------------------------------------------
+       <span class="nv-skeleton nv-skeleton--text"></span>
+
+     The shape of content that has not arrived yet. A skeleton is a shallow well
+     cut where the content will sit, with a slow band of light crossing it — the
+     surface is recessed and waiting, not broken.
+
+       .nv-skeleton           a block; size it with the layout
+       .nv-skeleton--text     one line of body text
+       .nv-skeleton--circle   an avatar or a tile
+
+     Under reduced motion the light stops crossing and the well stays: the state
+     is still legible, it just does not move.
+     ========================================================================== */
+
+  .nv-skeleton {
+    display: block;
+    min-block-size: var(--nv-space-4);
+    border-radius: var(--nv-radius-md);
+    background-color: var(--nv-color-surface-inset);
+    background-image: linear-gradient(
+      100deg,
+      transparent 30%,
+      var(--nv-color-sheen-top) 50%,
+      transparent 70%
+    );
+    background-size: 220% 100%;
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+    animation: nv-shimmer var(--nv-duration-shimmer) var(--nv-ease-linear) infinite;
+  }
+
+  .nv-skeleton--text {
+    inline-size: 100%;
+    min-block-size: 0;
+    block-size: 0.75em;
+    border-radius: var(--nv-radius-full);
+  }
+
+  /* A paragraph of skeleton lines ends short, like the paragraph it stands for. */
+  .nv-skeleton--text:last-child:not(:first-child) {
+    inline-size: 60%;
+  }
+
+  .nv-skeleton--circle {
+    aspect-ratio: 1;
+    border-radius: var(--nv-radius-full);
+  }
+
+  @keyframes nv-shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: -120% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nv-skeleton {
+      animation: none;
+    }
   }
 }
 

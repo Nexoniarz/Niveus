@@ -27,6 +27,9 @@
      [data-nv-close]               button that closes its dialog or popover
      [data-nv-scroller]            frame whose [data-nv-scroll] controls move
                                    its .nv-scroller a page at a time
+     .nv-reveal / .nv-reveal-group content that arrives as it scrolls into
+                                   view, once (see continuity.css)
+     .nv-card--spotlight           card whose light follows the pointer
 
    Only what changes is lifted. A transition names the selection marker and
    the items of the groups it is given as `scope`, and only for as long as it
@@ -297,6 +300,61 @@
     return named;
   }
 
+  /**
+   * Reveal content as it scrolls into view. Elements are only marked as
+   * waiting here, so a page without this script — or under reduced motion —
+   * never hides anything. Each element arrives once and is then left alone.
+   */
+  var revealer = null;
+
+  function arrive(target) {
+    var items = target.classList.contains("nv-reveal-group") ? target.children : [target];
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      item.style.setProperty("--nv-reveal-index", String(i));
+      item.dataset.nvReveal = "shown";
+      item.addEventListener("animationend", function settle(event) {
+        if (event.target !== this || event.animationName !== "nv-arrive") return;
+        this.removeEventListener("animationend", settle);
+        delete this.dataset.nvReveal;
+        this.style.removeProperty("--nv-reveal-index");
+      });
+    }
+  }
+
+  function initReveal(scope) {
+    if (prefersReducedMotion() || typeof global.IntersectionObserver !== "function") return;
+
+    revealer = revealer || new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        revealer.unobserve(entry.target);
+        arrive(entry.target);
+      });
+    }, { rootMargin: "0px 0px -8% 0px" });
+
+    scope.querySelectorAll(".nv-reveal, .nv-reveal-group").forEach(function (target) {
+      if (target.dataset.nvRevealWired) return;
+      target.dataset.nvRevealWired = "";
+      var items = target.classList.contains("nv-reveal-group") ? target.children : [target];
+      for (var i = 0; i < items.length; i++) items[i].dataset.nvReveal = "pending";
+      revealer.observe(target);
+    });
+  }
+
+  /**
+   * The light on a .nv-card--spotlight sits under the pointer. One listener
+   * for the whole document, so cards added later need no wiring.
+   */
+  function trackSpotlight(event) {
+    if (event.pointerType && event.pointerType !== "mouse") return;
+    var surface = event.target.closest && event.target.closest(".nv-card--spotlight");
+    if (!surface) return;
+    var box = surface.getBoundingClientRect();
+    surface.style.setProperty("--nv-pointer-x", event.clientX - box.left + "px");
+    surface.style.setProperty("--nv-pointer-y", event.clientY - box.top + "px");
+  }
+
   function wire(scope) {
     scope = scope || document;
 
@@ -314,6 +372,7 @@
 
     scope.querySelectorAll("[data-nv-tabs]").forEach(initTabs);
     scope.querySelectorAll("[data-nv-scroller]").forEach(initScroller);
+    initReveal(scope);
 
     scope.querySelectorAll("[data-nv-close]").forEach(function (control) {
       control.addEventListener("click", function () {
@@ -344,6 +403,8 @@
     wire: wire,
     prefersReducedMotion: prefersReducedMotion,
   };
+
+  document.addEventListener("pointermove", trackSpotlight, { passive: true });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () { wire(); });

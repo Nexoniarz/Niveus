@@ -58,6 +58,12 @@
 @import url("components/badge.css") layer(niveus.components);
 @import url("components/table.css") layer(niveus.components);
 @import url("components/window.css") layer(niveus.components);
+@import url("components/tile.css") layer(niveus.components);
+@import url("components/avatar.css") layer(niveus.components);
+@import url("components/stat.css") layer(niveus.components);
+@import url("components/steps.css") layer(niveus.components);
+@import url("components/deck.css") layer(niveus.components);
+@import url("components/skeleton.css") layer(niveus.components);
 
 /* --- Utilities ----------------------------------------------------------------- */
 @import url("utilities.css") layer(niveus.utilities);

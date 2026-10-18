@@ -95,4 +95,30 @@
   --nv-focus-ring:
     0 0 0 1px var(--nv-color-focus-ring-contrast),
     0 0 0 calc(1px + var(--nv-focus-ring-width)) var(--nv-color-focus-ring);
+
+  /* --- Glow ------------------------------------------------------------------
+     Light a surface emits rather than the shade it casts. Glow is for things
+     that are *on* — a live status, the selected item in a showcase, a lit key —
+     and it always sits beside an elevation, never instead of one: a glowing
+     surface still rests on something.
+
+     The geometry is a scale like elevation. The color is the component's: a
+     tinted surface glows in its own tint, mixed down to --nv-glow-strength. */
+  --nv-glow-strength: 40%;
+  --nv-glow-blur-sm: 12px;
+  --nv-glow-spread-sm: -2px;
+  --nv-glow-blur-md: 28px;
+  --nv-glow-spread-md: -6px;
+  --nv-glow-blur-lg: 64px;
+  --nv-glow-spread-lg: -12px;
+}
+
+/* The accent glows are declared on every branded subtree as well as the root:
+   a var() inside a custom property resolves where the property is declared, so
+   a root-only declaration would glow in the root brand everywhere. */
+:root,
+[data-nv-brand] {
+  --nv-glow-sm: 0 0 var(--nv-glow-blur-sm) var(--nv-glow-spread-sm) var(--nv-color-glow);
+  --nv-glow-md: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-md) var(--nv-color-glow);
+  --nv-glow-lg: 0 0 var(--nv-glow-blur-lg) var(--nv-glow-spread-lg) var(--nv-color-glow);
 }

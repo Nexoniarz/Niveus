@@ -6,6 +6,9 @@
      .nv-card--inset              recessed into its parent
      .nv-card--frosted            over imagery or scrolling content
      .nv-card--interactive        the whole card is one target
+     .nv-card--lit                lit along its top edge in its tint
+     .nv-card--glow               gives off its tint — the one card that is on
+     .nv-card--spotlight          catches a light that follows the pointer
      .nv-card__header / __body / __footer / __media
 
    A card is a container, not a look. If a card needs a shadow that is not on
@@ -23,6 +26,11 @@
   --_shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
   --_sheen: var(--nv-sheen-surface);
   --_padding: var(--nv-space-5);
+  /* Light layers the variants switch on. Kept separate from --_shadow so a
+     lit or glowing card can still be elevated, floating or interactive. */
+  --_lit: 0 0 transparent;
+  --_glow: 0 0 transparent;
+  --_spot: linear-gradient(transparent, transparent);
 
   position: relative;
   display: flex;
@@ -30,11 +38,11 @@
   min-inline-size: 0;
 
   background-color: var(--_bg);
-  background-image: var(--_sheen);
+  background-image: var(--_spot), var(--_sheen);
   color: var(--nv-color-text-primary);
   border: var(--nv-border-width) solid var(--_border);
   border-radius: var(--nv-radius-lg);
-  box-shadow: var(--_shadow);
+  box-shadow: var(--_lit), var(--_shadow), var(--_glow);
   backdrop-filter: var(--nv-backdrop-glass);
   -webkit-backdrop-filter: var(--nv-backdrop-glass);
 
@@ -86,20 +94,75 @@
 
 @media (hover: hover) {
   .nv-card--interactive:hover {
-    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3);
+    box-shadow: var(--_lit), var(--nv-bevel), var(--nv-outline), var(--nv-elevation-3), var(--_glow);
     translate: 0 calc(var(--nv-lift-hover) * 2);
   }
 }
 
 .nv-card--interactive:active {
-  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  box-shadow: var(--_lit), var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1), var(--_glow);
   translate: 0 var(--nv-press-depth);
   transition-duration: var(--nv-duration-instant);
 }
 
 .nv-card--interactive:focus-visible {
   outline: none;
-  box-shadow: var(--_shadow), var(--nv-focus-ring);
+  box-shadow: var(--_lit), var(--_shadow), var(--_glow), var(--nv-focus-ring);
+}
+
+/* --- Light ------------------------------------------------------------------
+   Three ways a card can carry light, each stated once and combinable with
+   every elevation above. They all take the card's tint — the accent unless
+   --nv-card-tint names another color, the way --nv-bed-tint does for a bed.
+
+   Lit:       a strip of light along the top edge, spilling a little way down
+              the face. For a card that belongs to something with a color: a
+              project, a status, a category.
+   Glow:      the card gives off its tint. For the one card that is on — the
+              current plan, the live item. Two glowing cards side by side
+              cancel each other out.
+   Spotlight: a soft light follows the pointer across the face (niveus.js
+              tracks it). A showcase effect; a list of work items does not
+              need one. */
+
+.nv-card--lit,
+.nv-card--glow,
+.nv-card--spotlight {
+  --nv-card-tint: var(--nv-color-accent);
+}
+
+.nv-card--lit {
+  --_lit:
+    inset 0 2px 0 color-mix(in oklab, var(--nv-card-tint) 85%, transparent),
+    inset 0 18px 28px -22px color-mix(in oklab, var(--nv-card-tint) 70%, transparent);
+  --_sheen:
+    radial-gradient(
+      120% 70% at 0% 0%,
+      color-mix(in oklab, var(--nv-card-tint) 12%, transparent),
+      transparent 70%
+    ),
+    var(--nv-sheen-surface);
+}
+
+.nv-card--glow {
+  --_border: color-mix(in oklab, var(--nv-card-tint) 40%, var(--nv-color-border-subtle));
+  --_glow: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-md)
+    color-mix(in oklab, var(--nv-card-tint) var(--nv-glow-strength), transparent);
+}
+
+@media (hover: hover) {
+  .nv-card--glow.nv-card--interactive:hover {
+    --_glow: 0 0 var(--nv-glow-blur-lg) var(--nv-glow-spread-md)
+      color-mix(in oklab, var(--nv-card-tint) var(--nv-glow-strength), transparent);
+  }
+
+  .nv-card--spotlight:hover {
+    --_spot: radial-gradient(
+      22rem circle at var(--nv-pointer-x, 50%) var(--nv-pointer-y, 0%),
+      color-mix(in oklab, var(--nv-card-tint) 14%, var(--nv-color-sheen-top)),
+      transparent 70%
+    );
+  }
 }
 
 /* Cards whose whole area is clickable via a link inside: the link's target is

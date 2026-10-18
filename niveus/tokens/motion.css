@@ -82,6 +82,15 @@
   --nv-travel-sm: 4px;
   --nv-travel-md: 8px;
   --nv-travel-lg: 16px;
+
+  /* --- Sequence ---------------------------------------------------------------
+     The gap between siblings arriving one after another. Short enough that a
+     group reads as one movement, long enough that the eye sees an order. */
+  --nv-stagger: 60ms;
+
+  /* A loading shimmer is a slow, constant sweep — slow enough to read as
+     "waiting", never fast enough to read as an alert. */
+  --nv-duration-shimmer: 1600ms;
 }
 
 /* Reduced motion is a system-wide contract, not a per-component opt-in: cut
@@ -103,5 +112,6 @@
     --nv-travel-sm: 0px;
     --nv-travel-md: 0px;
     --nv-travel-lg: 0px;
+    --nv-stagger: 0ms;
   }
 }

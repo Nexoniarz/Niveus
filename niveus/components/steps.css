@@ -1,0 +1,157 @@
+/* ==========================================================================
+   Niveus — Steps
+   --------------------------------------------------------------------------
+     <ol class="nv-steps">
+       <li class="nv-steps__item" data-state="done">
+         <span class="nv-steps__marker">1</span>
+         <div class="nv-steps__body">
+           <h3 class="nv-steps__title">Listen</h3>
+           <p class="nv-steps__text">…</p>
+         </div>
+       </li>
+     </ol>
+
+   A sequence the user moves through: a process, an onboarding, an order's
+   progress. The steps sit on a rail — a groove cut into the surface — with
+   each marker a raised knob set into it. Finished steps light their stretch
+   of the rail, so progress reads as something filling up rather than as a
+   row of ticks.
+
+     .nv-steps              horizontal; becomes vertical on narrow screens
+     .nv-steps--vertical    always vertical
+     data-state="done"      the step and its stretch of rail are lit
+     aria-current="step"    the step in progress: lit marker, rail still dark
+   ========================================================================== */
+
+.nv-steps {
+  --_marker: 2.25rem;
+  --_rail: 6px;
+  --_gap: var(--nv-space-4);
+
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--_gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nv-steps__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-3);
+  min-inline-size: 0;
+}
+
+/* Each step draws the rail from its own marker to the next one, so a finished
+   step can light exactly its stretch and the rail never runs past the end. */
+.nv-steps__item:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  inset-block-start: calc((var(--_marker) - var(--_rail)) / 2);
+  inset-inline-start: calc(var(--_marker) / 2);
+  inline-size: calc(100% + var(--_gap));
+  block-size: var(--_rail);
+  border-radius: var(--nv-radius-full);
+  background-color: var(--nv-color-surface-inset);
+  box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+  transition: var(--nv-transition-surface);
+}
+
+.nv-steps__item[data-state="done"]:not(:last-child)::before {
+  background-color: var(--nv-color-accent);
+  background-image: var(--nv-sheen-filled);
+  box-shadow: var(--nv-glow-sm);
+}
+
+.nv-steps__marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--_marker);
+  block-size: var(--_marker);
+
+  background-color: var(--nv-color-surface-elevated);
+  background-image: var(--nv-sheen-raised);
+  color: var(--nv-color-text-secondary);
+  font: var(--nv-font-label);
+  font-weight: var(--nv-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2);
+  transition: var(--nv-transition-surface);
+}
+
+.nv-steps__item[data-state="done"] > .nv-steps__marker,
+.nv-steps__item[aria-current="step"] > .nv-steps__marker {
+  background-color: var(--nv-color-accent);
+  background-image: var(--nv-sheen-filled);
+  color: var(--nv-color-on-accent);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-2), var(--nv-glow-md);
+}
+
+.nv-steps__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-1);
+  min-inline-size: 0;
+}
+
+.nv-steps__title {
+  margin: 0;
+  font: var(--nv-font-title);
+  letter-spacing: var(--nv-letter-spacing-tight);
+  color: var(--nv-color-text-primary);
+}
+
+.nv-steps__text {
+  margin: 0;
+  font: var(--nv-font-caption);
+  color: var(--nv-color-text-secondary);
+}
+
+/* --- Vertical -------------------------------------------------------------------
+   Marker beside the text and the rail running down between markers. Also what
+   a horizontal sequence becomes once its columns are too narrow to read. */
+
+.nv-steps--vertical {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  --_gap: var(--nv-space-5);
+}
+
+.nv-steps--vertical > .nv-steps__item {
+  flex-direction: row;
+  gap: var(--nv-space-4);
+}
+
+.nv-steps--vertical > .nv-steps__item:not(:last-child)::before {
+  inset-block-start: calc(var(--_marker) / 2);
+  inset-inline-start: calc((var(--_marker) - var(--_rail)) / 2);
+  inline-size: var(--_rail);
+  block-size: calc(100% + var(--_gap));
+}
+
+@media (max-width: 40rem) {
+  .nv-steps {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    --_gap: var(--nv-space-5);
+  }
+
+  .nv-steps > .nv-steps__item {
+    flex-direction: row;
+    gap: var(--nv-space-4);
+  }
+
+  .nv-steps > .nv-steps__item:not(:last-child)::before {
+    inset-block-start: calc(var(--_marker) / 2);
+    inset-inline-start: calc((var(--_marker) - var(--_rail)) / 2);
+    inline-size: var(--_rail);
+    block-size: calc(100% + var(--_gap));
+  }
+}

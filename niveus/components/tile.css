@@ -1,0 +1,83 @@
+/* ==========================================================================
+   Niveus — Tile
+   --------------------------------------------------------------------------
+     <span class="nv-tile"><svg …></svg></span>
+
+   A tile is a small raised key that holds one glyph: the icon beside a
+   feature, the mark of a product, the symbol on a stat. It is the physical
+   version of an icon — something with an edge you could press — which is why
+   a row of features reads as a set of objects rather than as clip art.
+
+     .nv-tile             soft key: tinted face, the glyph in its tint
+     .nv-tile--solid      filled key: saturated face, a light glyph
+     .nv-tile--glow       the key is lit from inside
+     .nv-tile--sm / --lg / --xl
+
+   Everything derives from --nv-tile-tint, the accent unless set. A tile is
+   not a button: if it does something, it is an .nv-button--icon.
+   ========================================================================== */
+
+.nv-tile {
+  --nv-tile-tint: var(--nv-color-accent);
+  --_size: 2.75rem;
+  --_radius: var(--nv-radius-md);
+  --_bg: color-mix(in oklab, var(--nv-tile-tint) 16%, var(--nv-color-surface-elevated));
+  --_ink: color-mix(in oklab, var(--nv-tile-tint) 70%, var(--nv-color-text-primary));
+  --_sheen: var(--nv-sheen-raised);
+  --_glow: 0 0 transparent;
+
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--_size);
+  block-size: var(--_size);
+
+  background-color: var(--_bg);
+  background-image: var(--_sheen);
+  color: var(--_ink);
+  border: var(--nv-border-width) solid color-mix(in oklab, var(--nv-tile-tint) 30%, var(--nv-color-border-subtle));
+  border-radius: var(--_radius);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1), var(--_glow);
+  transition: var(--nv-transition-surface);
+}
+
+/* Glyphs take half the key; a mark that is itself a picture (an image, a
+   logo) fills it, clipped to the key's corners. */
+.nv-tile > svg {
+  inline-size: 50%;
+  block-size: 50%;
+}
+
+.nv-tile > img {
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.nv-tile--solid {
+  --_bg: var(--nv-tile-tint);
+  --_ink: var(--nv-color-on-accent);
+  --_sheen: var(--nv-sheen-filled);
+}
+
+.nv-tile--glow {
+  --_glow: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-sm)
+    color-mix(in oklab, var(--nv-tile-tint) var(--nv-glow-strength), transparent);
+}
+
+.nv-tile--sm {
+  --_size: 2rem;
+  --_radius: var(--nv-radius-sm);
+}
+
+.nv-tile--lg {
+  --_size: 3.5rem;
+  --_radius: var(--nv-radius-lg);
+}
+
+.nv-tile--xl {
+  --_size: 4.5rem;
+  --_radius: var(--nv-radius-xl);
+}

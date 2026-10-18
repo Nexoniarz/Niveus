@@ -76,6 +76,9 @@ States come from the element: `disabled`, `aria-disabled`, `aria-busy="true"`
 | `.nv-card--frosted` | glass card | Translucent, for use over imagery or a bed. |
 | `.nv-card--interactive` | clickable card | Lifts on hover, sinks on press. |
 | `.nv-card--flush` | edge-to-edge card | Removes part padding, for media or tables. |
+| `.nv-card--lit` | accent-edge card, colored top border | A strip of light along the top edge in the card's tint, spilling a little down the face. For a card that belongs to something with a color. |
+| `.nv-card--glow` | glowing card, highlighted card | Gives off its tint. For the one card that is *on* — the current plan, the live item. |
+| `.nv-card--spotlight` | spotlight card, cursor glow | A soft light follows the pointer across the face (needs `niveus.js`). Showcases only. |
 | `.nv-card__header` | card header | |
 | `.nv-card__title` | card title | |
 | `.nv-card__subtitle` | card subtitle, supporting text | |
@@ -85,6 +88,19 @@ States come from the element: `disabled`, `aria-disabled`, `aria-busy="true"`
 | `.nv-card__media` | card media | 16:9 image slot. |
 | `.nv-card__link` | stretched link | Expands one link's hit area over the whole card. |
 | `.nv-card-grid` | responsive card grid | Auto-fitting, equal-height columns. |
+
+`--lit`, `--glow` and `--spotlight` combine with every elevation and with each
+other. They take `--nv-card-tint` (the accent unless set on the card).
+
+## Deck
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-deck` | card stack, stacked cards | One surface in front of others of its kind. Every child shares one grid cell. |
+| `.nv-deck__layer` | stack layer | A decorative card behind the front one, stepping back and dimming with depth. Up to two; mark them `aria-hidden="true"`. |
+
+Hidden `.nv-tab-panel`s can live in a deck together: the front surface is
+whichever one is showing.
 
 ## Dialog
 
@@ -173,6 +189,61 @@ Set `--nv-scroller-item` for item width, `--nv-scroller-fade` for the edge fade.
 | `.nv-badge--square` | square badge | |
 | `.nv-badge__dot` | status dot | |
 
+## Tile
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-tile` | icon tile, icon badge, feature icon | A small raised key holding one glyph: tinted face, glyph in its tint. Not interactive. |
+| `.nv-tile--solid` | filled icon tile | Saturated face with a light glyph. |
+| `.nv-tile--glow` | glowing icon tile | Lit from inside. |
+| `.nv-tile--sm` `.nv-tile--lg` `.nv-tile--xl` | tile sizes | 32 / 56 / 72px; default 44px. |
+
+`--nv-tile-tint` picks the color. An `<img>` inside fills the key, an `<svg>`
+takes half of it.
+
+## Avatar
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-avatar` | avatar, profile picture | Round raised disc holding an `<img>` or initials. |
+| `.nv-avatar--ring` | avatar ring, story ring | A ring in `--nv-avatar-tint`, set off by a gap of surface. |
+| `.nv-avatar--glow` | glowing avatar | The ring, giving off its tint. |
+| `.nv-avatar--sm` `.nv-avatar--lg` `.nv-avatar--xl` | avatar sizes | 28 / 64 / 96px; default 40px. |
+| `.nv-avatar__status` | presence dot | Grey at rest. |
+| `.nv-avatar__status--online` | online indicator | Lit green. |
+| `.nv-avatar-group` | avatar stack, facepile | Overlapping row. |
+
+## Stat
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-stat-group` | stats row, KPI strip, readout | One recessed well holding several readings, split by hairlines. Wraps on its own. Use a `<dl>`. |
+| `.nv-stat` | stat, metric, KPI | One reading: label, value, optional delta, in that order. |
+| `.nv-stat__label` | metric label | `<dt>` inside a group. |
+| `.nv-stat__value` | metric value, big number | `<dd>`; tabular numerals. |
+| `.nv-stat__delta` | change, trend | |
+| `.nv-stat__delta--up` `.nv-stat__delta--down` | positive / negative trend | Success and danger text. |
+
+## Steps
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-steps` | stepper, timeline, process, progress steps | Markers set into a rail cut into the surface. Horizontal, vertical below 40rem. Use an `<ol>`. |
+| `.nv-steps--vertical` | vertical stepper, timeline | Always vertical. |
+| `.nv-steps__item` | step | `data-state="done"` lights it and its stretch of rail; `aria-current="step"` lights the marker only. |
+| `.nv-steps__marker` | step number, step knob | |
+| `.nv-steps__body` | step content | |
+| `.nv-steps__title` | step title | |
+| `.nv-steps__text` | step description | |
+
+## Skeleton
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-skeleton` | skeleton, loading placeholder, shimmer | A shallow well where content will be, with a slow band of light crossing it. Still under reduced motion. |
+| `.nv-skeleton--text` | text line placeholder | The last of several lines ends short. |
+| `.nv-skeleton--circle` | avatar placeholder | |
+
 ## Table
 
 | Class | Known as | Does |
@@ -256,6 +327,15 @@ var(--nv-sheen-raised)` over its role color.
 | `.nv-code` | code, monospace | 13px |
 | `.nv-text-primary` `.nv-text-secondary` `.nv-text-tertiary` | text color roles | Emphasis, not size. |
 | `.nv-text-accent` `.nv-text-success` `.nv-text-warning` `.nv-text-danger` | semantic text colors | |
+| `.nv-text-lit` | gradient text, metallic text | Lit from above, settling into the accent. One display line per page. |
+| `.nv-text-lit--accent` | accent gradient text | The accent alone, lit from above — for a phrase inside a display line. |
+
+## Reveal
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-reveal` | scroll reveal, animate on scroll | Rises and fades in once, as it scrolls into view. Needs `niveus.js`; without it, or under reduced motion, nothing is hidden. |
+| `.nv-reveal-group` | staggered reveal | Its children arrive one after another, `--nv-stagger` apart. |
 
 ## Layout utilities
 
@@ -309,6 +389,7 @@ material-frosted  material-glass  material-border
 window-close  window-minimize  window-zoom  window-inactive
 window-control-ring  window-glyph
 focus-ring  focus-ring-contrast  selection
+glow
 ```
 
 `on-*` is the text that goes on top of that color, and is derived — never set
@@ -348,15 +429,17 @@ never reference them.
 | `--nv-sheen-` | `raised filled surface knob` — gradients laid over a role color as `background-image` |
 | `--nv-blur-` | `sm md lg xl` — also `backdrop-frosted` `backdrop-glass` `backdrop-scrim` |
 | `--nv-material-` | `{solid,elevated,inset,frosted,glass}-{bg,border,shadow}` |
+| `--nv-glow-` | `sm md lg` (accent halos) · `blur-sm/md/lg` `spread-sm/md/lg` (geometry for a tinted glow) · `strength` (how much tint a glow carries) |
 
 ### Motion
 
 | Family | Steps |
 | --- | --- |
-| `--nv-duration-` | `instant fast quick normal slow slower travel expand theme` |
+| `--nv-duration-` | `instant fast quick normal slow slower travel expand theme shimmer` |
 | `--nv-ease-` | `standard entrance exit spring emphasized linear` |
 | `--nv-transition-` | `colors depth control surface expand` (composites) |
 | displacement | `--nv-lift-hover` `--nv-press-depth` `--nv-travel-sm/md/lg` |
+| sequence | `--nv-stagger` — the gap between siblings arriving one after another |
 
 `prefers-reduced-motion` collapses every duration and displacement at the token
 level. Components never opt in individually.
@@ -367,7 +450,9 @@ level. Components never opt in individually.
 `--nv-border-width-strong` · `--nv-target-min` · `--nv-layout-gutter` ·
 `--nv-layout-max-width` · `--nv-selection-name` · `--nv-anchor` ·
 `--nv-button-offset` · `--nv-bed-tint` · `--nv-scroller-item` ·
-`--nv-scroller-fade` · `--nv-content-name`
+`--nv-scroller-fade` · `--nv-content-name` · `--nv-card-tint` ·
+`--nv-tile-tint` · `--nv-avatar-tint` · `--nv-pointer-x` / `--nv-pointer-y`
+(set by `niveus.js`) · `--nv-reveal-index` (set by `niveus.js`)
 
 ---
 
@@ -385,7 +470,7 @@ everything still renders — state changes simply arrive instead of travelling.
 | `nv.selectTab` | `(tablist, tab) => Promise` | Moves selection and its panel, with direction. |
 | `nv.initScroller` | `(frame) => void` | Wires one scroller's controls. |
 | `nv.liftLabels` | `(scope) => Element[]` | Names the navigation items in `scope` so a travelling marker passes behind them, and returns them. `nv.transition` does this for its `scope` and removes the names afterwards. |
-| `nv.wire` | `(scope = document) => void` | Applies all of the below. Runs once on load; call again after injecting markup. |
+| `nv.wire` | `(scope = document) => void` | Applies all of the below, and starts watching `.nv-reveal` / `.nv-reveal-group`. Runs once on load; call again after injecting markup. |
 | `nv.prefersReducedMotion` | `() => boolean` | |
 
 ### Data attributes
@@ -402,6 +487,7 @@ everything still renders — state changes simply arrive instead of travelling.
 | `data-scrolled` | `.nv-nav` | Set by the application on scroll; gives the bar its shadow. |
 | `data-nv-direction` | `<html>` | Set during a transition by `nv.transition`. |
 | `data-nv-transition` | `<html>` | `"theme"` during an appearance change. |
+| `data-nv-reveal` | revealed element | `pending` while waiting to scroll into view, `shown` while arriving; removed once it has. Set by `niveus.js`. |
 | `data-nv-travelling` | selection group | Set by `nv.transition` on each `scope` for the length of the change; names its marker. |
 
 ---
