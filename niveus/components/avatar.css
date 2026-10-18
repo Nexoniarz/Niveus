@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Niveus — Avatar
+   --------------------------------------------------------------------------
+     <span class="nv-avatar"><img src="…" alt=""></span>
+     <span class="nv-avatar">NX</span>
+
+   A person, as a round raised disc: an image when there is one, initials when
+   there is not. The disc is lit like a knob — highlight above, shade below —
+   so a face reads as something set into the interface, not pasted onto it.
+
+     .nv-avatar--ring       a ring in the tint, set off by a gap of surface
+     .nv-avatar--glow       the ring gives off its tint
+     .nv-avatar--sm / --lg / --xl
+     .nv-avatar__status     presence dot; --online lights it
+     .nv-avatar-group       overlapping row of avatars
+
+   --nv-avatar-tint picks the ring color; the accent unless set.
+   ========================================================================== */
+
+.nv-avatar {
+  --nv-avatar-tint: var(--nv-color-accent);
+  --_size: 2.5rem;
+  --_ring: 0 0 transparent;
+  --_glow: 0 0 transparent;
+
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--_size);
+  block-size: var(--_size);
+
+  background-color: var(--nv-color-surface-elevated);
+  background-image: var(--nv-sheen-raised);
+  color: var(--nv-color-text-secondary);
+  font: var(--nv-font-label);
+  font-weight: var(--nv-font-weight-semibold);
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--_ring), var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1), var(--_glow);
+  user-select: none;
+}
+
+.nv-avatar > img {
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+/* The gap is drawn in the surface color, so the ring reads as a separate band
+   sitting around the disc rather than as a thick border painted onto it. */
+.nv-avatar--ring,
+.nv-avatar--glow {
+  --_ring:
+    0 0 0 2px var(--nv-color-surface),
+    0 0 0 4px var(--nv-avatar-tint);
+}
+
+.nv-avatar--glow {
+  --_glow: 0 0 var(--nv-glow-blur-md) var(--nv-glow-spread-sm)
+    color-mix(in oklab, var(--nv-avatar-tint) var(--nv-glow-strength), transparent);
+}
+
+.nv-avatar--sm {
+  --_size: 1.75rem;
+  font: var(--nv-font-caption);
+}
+
+.nv-avatar--lg {
+  --_size: 4rem;
+  font: var(--nv-font-title);
+}
+
+.nv-avatar--xl {
+  --_size: 6rem;
+  font: var(--nv-font-heading);
+}
+
+/* --- Status ------------------------------------------------------------------ */
+
+.nv-avatar__status {
+  position: absolute;
+  inset-block-end: 4%;
+  inset-inline-end: 4%;
+  inline-size: max(0.625rem, 24%);
+  block-size: max(0.625rem, 24%);
+  border-radius: var(--nv-radius-full);
+  background-color: var(--nv-color-text-tertiary);
+  box-shadow: 0 0 0 2px var(--nv-color-surface);
+}
+
+.nv-avatar__status--online {
+  background-color: var(--nv-color-success);
+  box-shadow:
+    0 0 0 2px var(--nv-color-surface),
+    0 0 var(--nv-glow-blur-sm) var(--nv-glow-spread-sm)
+      color-mix(in oklab, var(--nv-color-success) var(--nv-glow-strength), transparent);
+}
+
+/* --- Group ----------------------------------------------------------------------- */
+
+.nv-avatar-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nv-avatar-group > .nv-avatar {
+  box-shadow: 0 0 0 2px var(--nv-color-surface), var(--nv-bevel), var(--nv-elevation-1);
+}
+
+.nv-avatar-group > .nv-avatar + .nv-avatar {
+  margin-inline-start: calc(var(--_size) * -0.3);
+}

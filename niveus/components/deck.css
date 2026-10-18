@@ -1,0 +1,55 @@
+/* ==========================================================================
+   Niveus — Deck
+   --------------------------------------------------------------------------
+     <div class="nv-deck">
+       <article class="nv-card">…</article>
+       <div class="nv-deck__layer" aria-hidden="true"></div>
+       <div class="nv-deck__layer" aria-hidden="true"></div>
+     </div>
+
+   One surface in front of others of its kind: the current item of a set that
+   has more behind it. The layers are cards seen edge-on, stepping back and
+   dimming with distance, so the set has depth without anything having to
+   move. Use it where "there are more of these" is part of the message — a
+   showcase of products, a stack of notifications, a carousel at rest.
+
+   Everything in the deck shares one grid cell. The front surface is any
+   element; the layers are decorative and hidden from assistive technology.
+   Panels that swap (an .nv-tab-panel set) can live in the deck together:
+   the hidden ones take no space.
+   ========================================================================== */
+
+.nv-deck {
+  --_step: var(--nv-space-3);
+
+  display: grid;
+  position: relative;
+  isolation: isolate;
+  /* Room above the front surface for the layers that peek out behind it. */
+  padding-block-start: calc(var(--_step) * 2);
+}
+
+.nv-deck > * {
+  grid-area: 1 / 1;
+  min-inline-size: 0;
+}
+
+.nv-deck__layer {
+  --_depth: 1;
+
+  z-index: -1;
+  pointer-events: none;
+  background-color: color-mix(in oklab, var(--nv-color-surface) 90%, transparent);
+  background-image: var(--nv-sheen-surface);
+  border: var(--nv-border-width) solid var(--nv-color-border-subtle);
+  border-radius: var(--nv-radius-lg);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  translate: 0 calc(var(--_step) * var(--_depth) * -1);
+  scale: calc(1 - var(--_depth) * 0.05) 1;
+  opacity: calc(1 - var(--_depth) * 0.3);
+}
+
+.nv-deck__layer + .nv-deck__layer {
+  --_depth: 2;
+  z-index: -2;
+}

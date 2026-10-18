@@ -227,6 +227,11 @@
   --nv-color-sheen-strong-top: light-dark(var(--nv-light-sheen-strong-top), var(--nv-dark-sheen-strong-top));
   --nv-color-sheen-strong-bottom: light-dark(var(--nv-light-sheen-strong-bottom), var(--nv-dark-sheen-strong-bottom));
 
+  /* Glow: light a surface gives off, as opposed to the shade it casts. It is
+     the accent seen through air — strong enough in dark to read as a lit
+     edge, faint in light, where paper does not emit. */
+  --nv-color-glow: light-dark(var(--nv-light-glow), var(--nv-dark-glow));
+
   /* A knob: the thumb of a switch or a slider. It stays light in both
      appearances, the way a physical knob does not change color with the room. */
   --nv-color-knob: light-dark(var(--nv-light-knob), var(--nv-dark-knob));

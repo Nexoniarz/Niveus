@@ -149,6 +149,27 @@ answers how far that surface is from the canvas. They are independent.
 Applied as classes: `.nv-material-frosted`, `.nv-elevation-3`. A shadow that is
 on neither scale is a shadow that means nothing.
 
+### Light
+
+Elevation is the shade a surface casts. **Glow** is the light it gives off —
+and it is reserved for things that are *on*: a live status, the plan you are
+on, a finished step, the selected item in a showcase. Glow never replaces an
+elevation; a glowing surface still rests on something.
+
+| Where | How |
+| ----- | --- |
+| A card that belongs to something with a color | `.nv-card--lit` — a lit top edge in `--nv-card-tint` |
+| The one card that is on | `.nv-card--glow` |
+| A showcase card | `.nv-card--spotlight` — light follows the pointer |
+| A feature icon or product mark | `.nv-tile`, `--glow` to light it |
+| A person | `.nv-avatar--glow` |
+| A display line | `.nv-text-lit` — type cut from the same lit material |
+
+Glows come in the same steps as everything else (`--nv-glow-sm/md/lg`), and a
+tinted surface glows in its own tint, mixed down to `--nv-glow-strength`. Two
+glowing things side by side cancel each other out: if everything is lit,
+nothing is.
+
 ## Continuity
 
 Every interaction should read as a continuation of the state before it. When
@@ -181,6 +202,11 @@ nv.transition(() => {           // or document.startViewTransition directly
 works; changes simply arrive rather than travel. It also wires
 `[data-nv-theme]`, `[data-nv-dialog]`, `[data-nv-tabs]` and `[data-nv-close]`
 so the common cases need no code at all.
+
+Long pages can arrive in the order they were written: `.nv-reveal` rises into
+place once as it scrolls into view, and `.nv-reveal-group` brings its children
+in one after another, `--nv-stagger` apart. Only the script marks anything as
+waiting, so without it — and under reduced motion — nothing is ever hidden.
 
 ### One rule worth knowing
 
@@ -391,7 +417,7 @@ probably not the problem the system has.
 | -------------- | --------------------------------------------------------- |
 | `.nv-button`   | `--primary` `--subtle` `--ghost` `--danger` `--frosted` `--float`, `--sm`/`--lg`, `--icon`, `--pill`, `--block`, `.nv-button-group` |
 | `.nv-input`    | with `.nv-field`, `.nv-input-group`, `.nv-select`, `.nv-checkbox`, `.nv-radio`, `.nv-switch`, `.nv-choice` |
-| `.nv-card`     | `--elevated` `--floating` `--inset` `--frosted` `--interactive`, `.nv-card-grid` |
+| `.nv-card`     | `--elevated` `--floating` `--inset` `--frosted` `--interactive`, light: `--lit` `--glow` `--spotlight`, `.nv-card-grid` |
 | `.nv-dialog`   | native `<dialog>`; `--sheet` `--compact` `--wide`          |
 | `.nv-nav`      | `--vertical` `--plain` `--inline`, plus `.nv-nav-tabs`, `.nv-tab-panel` and `.nv-breadcrumbs` |
 | `.nv-menu`     | anchored popover with `.nv-menu-trigger`, `__item`, `__separator`, `__label`, `__shortcut` |
@@ -400,6 +426,12 @@ probably not the problem the system has.
 | `.nv-bed`      | ground that is visibly not ordinary background; `--quiet` `--vivid` `--single` `--flush` |
 | `.nv-badge`    | state, not an action; `--accent` `--success` `--warning` `--danger`, `--solid` `--count` `--square` |
 | `.nv-table`    | inside `.nv-table-frame`; `__number` `__actions`, `--compact` `--interactive` |
+| `.nv-tile`     | a small raised key holding one glyph; `--solid` `--glow`, `--sm` `--lg` `--xl` |
+| `.nv-avatar`   | round raised disc; `--ring` `--glow`, sizes, `__status`, `.nv-avatar-group` |
+| `.nv-stat`     | readings set into one recessed well with `.nv-stat-group`; `__label` `__value` `__delta` |
+| `.nv-steps`    | markers set into a rail; `data-state="done"` lights the way, `--vertical` |
+| `.nv-deck`     | one surface in front of others of its kind, with `__layer` |
+| `.nv-skeleton` | a waiting well with a slow sweep of light; `--text` `--circle` |
 | `.nv-surface`  | materials and elevation as utilities                       |
 
 Variants are defined by reassigning private `--_*` properties. Interaction —
