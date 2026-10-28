@@ -144,6 +144,11 @@
   --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 52 / 0.36), var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-material-border: rgb(255 255 255 / 0.14);
 
+  --nv-dark-material-glaze: color-mix(in oklab, rgb(30 30 38 / 1), var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-glaze-rim-lit: rgb(255 255 255 / 0.55);
+  --nv-dark-glaze-rim-far: rgb(255 255 255 / 0.14);
+  --nv-dark-glaze-specular: rgb(255 255 255 / 0.18);
+
   /* --- Window controls --------------------------------------------------------- */
   --nv-dark-window-close: var(--nv-palette-window-close);
   --nv-dark-window-minimize: var(--nv-palette-window-minimize);

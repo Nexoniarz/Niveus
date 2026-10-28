@@ -61,6 +61,105 @@
   -webkit-backdrop-filter: var(--nv-backdrop-glass);
 }
 
+/* --- Glaze ------------------------------------------------------------------
+   Glass with a dial, and a rim that catches the light.
+
+     .nv-material-glaze          the material
+     --nv-glass-frost: 0 … 1      clear glass … heavy frost (set anywhere)
+
+   Frost is read here, where the surface is drawn, not copied into a token
+   upstream: that is what lets a subtree (or a slider the visitor holds) change
+   it and have every surface inside follow. It moves three things together —
+   how far the backdrop is blurred, how much of the tint is laid over it, and
+   how much color the blur gives back — because a pane that changed only one
+   of them would stop looking like the same pane.
+
+   The rim is a 1.5px gradient border made with a masked ::before: bright on
+   the side facing the light, faint on the far side. ::after is the specular
+   bloom, a soft glow under the pointer. niveus.js sets --nv-light-x, -y and
+   -angle on the surface; without it both sit at their defaults (light from the
+   top left), so the material still reads as lit, just not as following you.
+
+   Zero specificity on position: a menu or dialog using it keeps the positioning
+   its own component gave it. */
+
+:where(.nv-material-glaze) {
+  position: relative;
+}
+
+.nv-material-glaze {
+  --_frost: var(--nv-glass-frost);
+  isolation: isolate;
+  background-color: color-mix(
+    in oklab,
+    var(--nv-color-material-glaze)
+      calc(var(--nv-glaze-tint-min) + (var(--nv-glaze-tint-max) - var(--nv-glaze-tint-min)) * var(--_frost)),
+    transparent
+  );
+  border: var(--nv-border-width) solid transparent;
+  box-shadow:
+    var(--nv-highlight-top-strong),
+    inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular),
+    var(--nv-outline),
+    var(--nv-elevation-4);
+  backdrop-filter:
+    blur(calc(4px + var(--_frost) * (var(--nv-glaze-blur-max) - 4px)))
+    saturate(calc(140% + var(--_frost) * 60%));
+  -webkit-backdrop-filter:
+    blur(calc(4px + var(--_frost) * (var(--nv-glaze-blur-max) - 4px)))
+    saturate(calc(140% + var(--_frost) * 60%));
+}
+
+.nv-material-glaze::before,
+.nv-material-glaze::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--nv-border-width) * -1);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.nv-material-glaze::before {
+  padding: var(--nv-glaze-rim);
+  background: linear-gradient(
+    var(--nv-light-angle, 135deg),
+    var(--nv-color-glaze-rim-lit) 0%,
+    transparent 38%,
+    transparent 62%,
+    var(--nv-color-glaze-rim-far) 100%
+  );
+  mask:
+    linear-gradient(currentcolor 0 0) content-box,
+    linear-gradient(currentcolor 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+}
+
+.nv-material-glaze::after {
+  z-index: -1;
+  background: radial-gradient(
+    circle 16rem at var(--nv-light-x, 15%) var(--nv-light-y, 0%),
+    var(--nv-color-glaze-specular),
+    transparent 70%
+  );
+}
+
+/* Where translucency cannot be honoured, glaze falls back to the elevated
+   solid, as the other glass materials do. */
+@media (prefers-reduced-transparency: reduce) {
+  .nv-material-glaze {
+    background-color: var(--nv-color-surface-elevated);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .nv-material-glaze::after { display: none; }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .nv-material-glaze { background-color: var(--nv-color-surface-elevated); }
+  .nv-material-glaze::after { display: none; }
+}
+
 /* --- Elevation -------------------------------------------------------------
    Elevation utilities carry three things at once, because a lifted surface is
    never only a shadow: the shadow itself, the highlight along its top edge,

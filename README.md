@@ -31,6 +31,10 @@ Open `index.html` for the full specimen: materials, the elevation scale, every
 semantic color, the type scale, and each component in both appearances.
 `examples/` holds four complete products built with it.
 
+**[GUIDELINES.md](GUIDELINES.md) is the rulebook** — what Niveus is, what it
+decides, what it forbids, and a protocol for AI agents. Read it before you
+design with the system or change it.
+
 **[REFERENCE.md](REFERENCE.md) is the complete API** — every class, token,
 attribute and function, each listed beside the name the rest of the industry
 uses for it. It is written to be read by a person *or* handed to a model on its
@@ -85,7 +89,8 @@ niveus/
 ├── base.css         elements, before any component
 ├── continuity.css   how one state becomes the next
 ├── components/      surface, button, input, card, dialog, navigation,
-│                    menu, disclosure, scroller, bed, badge, table
+│                    menu, picker, calendar, timepicker, slider,
+│                    disclosure, scroller, bed, badge, table
 ├── utilities.css    the short list
 ├── niveus.css       the entry point
 └── niveus.js        optional — continuity for changes CSS cannot animate
@@ -136,6 +141,7 @@ answers how far that surface is from the canvas. They are independent.
 | `inset`    | fields, wells, tracks — anything recessed       |
 | `frosted`  | chrome that content passes under: bars, toolbars |
 | `glass`    | contextual layers where content behind must stay legible |
+| `glaze`   | glass the person looking can tune: `--nv-glass-frost` (0 clear … 1 frosted), with a rim that follows the pointer |
 
 | Elevation | Relationship                    |
 | --------- | ------------------------------- |
@@ -352,7 +358,7 @@ interface tiring.
 | --- | --- |
 | **Clarity** | Every element has a purpose. Decoration never competes with content. |
 | **Soft physicality** | Depth comes from shadow, highlight and inset — not from ornament. |
-| **Material** | Surfaces are made of something. Solid, elevated, inset, frosted, glass. |
+| **Material** | Surfaces are made of something. Solid, elevated, inset, frosted, glass, glaze. |
 | **Restraint** | No effect exists because it is possible. Translucency and shadow are spent, not sprinkled. |
 | **Consistency** | The same control behaves the same way everywhere, including under a pointer. |
 | **Adaptability** | Nothing is defined in terms of an appearance or a color. |
@@ -432,6 +438,10 @@ probably not the problem the system has.
 | `.nv-steps`    | markers set into a rail; `data-state="done"` lights the way, `--vertical` |
 | `.nv-deck`     | one surface in front of others of its kind, with `__layer` |
 | `.nv-skeleton` | a waiting well with a slow sweep of light; `--text` `--circle` |
+| `.nv-slider`   | native range input as an inset track and a knob; `data-nv-var` binds it to a token |
+| `.nv-calendar` | month grid with keyboard model; chosen day is a small raised key |
+| `.nv-timepicker` | scroll-snap wheels, 24-hour by default, optional 24H / AM/PM switch |
+| `.nv-picker`   | field-shaped trigger for a popup list (`.nv-menu--listbox`) with search and type-ahead |
 | `.nv-surface`  | materials and elevation as utilities                       |
 
 Variants are defined by reassigning private `--_*` properties. Interaction —

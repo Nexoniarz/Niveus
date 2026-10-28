@@ -324,6 +324,10 @@
     --nv-color-material-frosted: light-dark(var(--nv-light-material-frosted), var(--nv-dark-material-frosted));
     --nv-color-material-glass: light-dark(var(--nv-light-material-glass), var(--nv-dark-material-glass));
     --nv-color-material-border: light-dark(var(--nv-light-material-border), var(--nv-dark-material-border));
+    --nv-color-material-glaze: light-dark(var(--nv-light-material-glaze), var(--nv-dark-material-glaze));
+    --nv-color-glaze-rim-lit: light-dark(var(--nv-light-glaze-rim-lit), var(--nv-dark-glaze-rim-lit));
+    --nv-color-glaze-rim-far: light-dark(var(--nv-light-glaze-rim-far), var(--nv-dark-glaze-rim-far));
+    --nv-color-glaze-specular: light-dark(var(--nv-light-glaze-specular), var(--nv-dark-glaze-specular));
 
     /* --- Window controls ------------------------------------------------------- */
     --nv-color-window-close: light-dark(var(--nv-light-window-close), var(--nv-dark-window-close));
@@ -765,6 +769,10 @@
                   over content: bars, docks, launchers, notifications, menus.
        glass      more translucent, lightly blurred. Contextual layers where the
                   content behind should stay legible: overlays, hover cards.
+       glaze     glass with a dial. How frosted it is belongs to whoever is
+                  looking at it, so it is one number (--nv-glass-frost) rather
+                  than a fixed recipe, and it carries a rim that catches the
+                  light and follows the pointer.
 
      Niveus is a solid system with glass used sparingly. Windows, cards, dialogs
      and everything that holds content are solid; translucency is reserved for
@@ -791,6 +799,18 @@
     --nv-backdrop-saturate: 180%;
     --nv-backdrop-frosted: blur(var(--nv-blur-md)) saturate(var(--nv-backdrop-saturate));
     --nv-backdrop-glass: blur(var(--nv-blur-sm)) saturate(var(--nv-backdrop-saturate));
+
+    /* --- Frost ------------------------------------------------------------------
+       The one input the glaze material derives from: 0 is clear glass, 1 is
+       nearly opaque frost. Set it on :root for the whole site, on a subtree to
+       change just that region, or bind a slider to it with data-nv-var and let
+       the person looking choose. The glaze recipe reads it where it is used,
+       so a subtree override always reaches the surfaces inside it. */
+    --nv-glass-frost: 0.5;
+    --nv-glaze-blur-max: 56px;   /* blur at frost 1 */
+    --nv-glaze-tint-min: 4%;     /* tint opacity at frost 0 */
+    --nv-glaze-tint-max: 78%;    /* tint opacity at frost 1 */
+    --nv-glaze-rim: 1.5px;
 
     /* --- Sheen ------------------------------------------------------------------
        raised    neutral controls: buttons, the selected tab, a titlebar
@@ -1023,6 +1043,13 @@
     --nv-light-material-glass: rgb(252 252 250 / 0.4);
     --nv-light-material-border: rgb(255 255 255 / 0.72);
 
+    /* Glaze: the tint it is made of, the rim that catches light on the side
+       facing the pointer, the rim on the far side, and the specular bloom. */
+    --nv-light-material-glaze: rgb(255 255 255 / 1);
+    --nv-light-glaze-rim-lit: rgb(255 255 255 / 1);
+    --nv-light-glaze-rim-far: rgb(255 255 255 / 0.5);
+    --nv-light-glaze-specular: rgb(255 255 255 / 0.6);
+
     /* --- Window controls --------------------------------------------------------- */
     --nv-light-window-close: var(--nv-palette-window-close);
     --nv-light-window-minimize: var(--nv-palette-window-minimize);
@@ -1183,6 +1210,11 @@
     --nv-dark-material-frosted: color-mix(in oklab, rgb(34 34 40 / 0.5), var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-material-glass: color-mix(in oklab, rgb(44 44 52 / 0.36), var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-material-border: rgb(255 255 255 / 0.14);
+
+    --nv-dark-material-glaze: color-mix(in oklab, rgb(30 30 38 / 1), var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-glaze-rim-lit: rgb(255 255 255 / 0.55);
+    --nv-dark-glaze-rim-far: rgb(255 255 255 / 0.14);
+    --nv-dark-glaze-specular: rgb(255 255 255 / 0.18);
 
     /* --- Window controls --------------------------------------------------------- */
     --nv-dark-window-close: var(--nv-palette-window-close);
@@ -1768,6 +1800,105 @@
     box-shadow: var(--nv-material-glass-shadow);
     backdrop-filter: var(--nv-backdrop-glass);
     -webkit-backdrop-filter: var(--nv-backdrop-glass);
+  }
+
+  /* --- Glaze ------------------------------------------------------------------
+     Glass with a dial, and a rim that catches the light.
+
+       .nv-material-glaze          the material
+       --nv-glass-frost: 0 … 1      clear glass … heavy frost (set anywhere)
+
+     Frost is read here, where the surface is drawn, not copied into a token
+     upstream: that is what lets a subtree (or a slider the visitor holds) change
+     it and have every surface inside follow. It moves three things together —
+     how far the backdrop is blurred, how much of the tint is laid over it, and
+     how much color the blur gives back — because a pane that changed only one
+     of them would stop looking like the same pane.
+
+     The rim is a 1.5px gradient border made with a masked ::before: bright on
+     the side facing the light, faint on the far side. ::after is the specular
+     bloom, a soft glow under the pointer. niveus.js sets --nv-light-x, -y and
+     -angle on the surface; without it both sit at their defaults (light from the
+     top left), so the material still reads as lit, just not as following you.
+
+     Zero specificity on position: a menu or dialog using it keeps the positioning
+     its own component gave it. */
+
+  :where(.nv-material-glaze) {
+    position: relative;
+  }
+
+  .nv-material-glaze {
+    --_frost: var(--nv-glass-frost);
+    isolation: isolate;
+    background-color: color-mix(
+      in oklab,
+      var(--nv-color-material-glaze)
+        calc(var(--nv-glaze-tint-min) + (var(--nv-glaze-tint-max) - var(--nv-glaze-tint-min)) * var(--_frost)),
+      transparent
+    );
+    border: var(--nv-border-width) solid transparent;
+    box-shadow:
+      var(--nv-highlight-top-strong),
+      inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular),
+      var(--nv-outline),
+      var(--nv-elevation-4);
+    backdrop-filter:
+      blur(calc(4px + var(--_frost) * (var(--nv-glaze-blur-max) - 4px)))
+      saturate(calc(140% + var(--_frost) * 60%));
+    -webkit-backdrop-filter:
+      blur(calc(4px + var(--_frost) * (var(--nv-glaze-blur-max) - 4px)))
+      saturate(calc(140% + var(--_frost) * 60%));
+  }
+
+  .nv-material-glaze::before,
+  .nv-material-glaze::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--nv-border-width) * -1);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .nv-material-glaze::before {
+    padding: var(--nv-glaze-rim);
+    background: linear-gradient(
+      var(--nv-light-angle, 135deg),
+      var(--nv-color-glaze-rim-lit) 0%,
+      transparent 38%,
+      transparent 62%,
+      var(--nv-color-glaze-rim-far) 100%
+    );
+    mask:
+      linear-gradient(currentcolor 0 0) content-box,
+      linear-gradient(currentcolor 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+  }
+
+  .nv-material-glaze::after {
+    z-index: -1;
+    background: radial-gradient(
+      circle 16rem at var(--nv-light-x, 15%) var(--nv-light-y, 0%),
+      var(--nv-color-glaze-specular),
+      transparent 70%
+    );
+  }
+
+  /* Where translucency cannot be honoured, glaze falls back to the elevated
+     solid, as the other glass materials do. */
+  @media (prefers-reduced-transparency: reduce) {
+    .nv-material-glaze {
+      background-color: var(--nv-color-surface-elevated);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .nv-material-glaze::after { display: none; }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .nv-material-glaze { background-color: var(--nv-color-surface-elevated); }
+    .nv-material-glaze::after { display: none; }
   }
 
   /* --- Elevation -------------------------------------------------------------
@@ -2561,6 +2692,117 @@
      explicitly rather than travelling the wrong way in RTL. */
   .nv-switch:checked:dir(rtl)::after {
     translate: calc(var(--_travel) * -1) -50%;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Slider
+     --------------------------------------------------------------------------
+       <input class="nv-slider" type="range" min="0" max="100" value="50">
+
+     A native range input dressed as the rest of the controls are: the track is a
+     well cut into the surface, the fill is the accent seen inside it, and the
+     thumb is a knob lit from above. Keyboard, touch, step and form behaviour are
+     the browser's.
+
+     Firefox draws the fill itself (::-moz-range-progress). Chromium and Safari
+     do not expose one, so the fill is a gradient sized by --nv-slider-pos, which
+     niveus.js keeps in step with the value. Without the script the fill is
+     simply absent in those two engines and the thumb still tells the truth.
+
+     To bind a slider to a design token, add data-nv-var="--nv-glass-frost" (and
+     optionally data-nv-var-target="#region" for a subtree instead of :root).
+     ========================================================================== */
+
+  .nv-slider {
+    --_track: 0.5rem;
+    --_thumb: 1.5rem;
+    --_pos: var(--nv-slider-pos, 50%);
+
+    display: block;
+    inline-size: 100%;
+    block-size: var(--_thumb);
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .nv-slider:focus-visible {
+    outline: none;
+  }
+
+  /* --- Track ------------------------------------------------------------------ */
+
+  .nv-slider::-webkit-slider-runnable-track {
+    block-size: var(--_track);
+    background:
+      linear-gradient(var(--nv-color-accent) 0 0) 0 / var(--_pos) 100% no-repeat,
+      var(--nv-color-surface-inset);
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+  }
+
+  .nv-slider::-moz-range-track {
+    block-size: var(--_track);
+    background-color: var(--nv-color-surface-inset);
+    border: var(--nv-border-width) solid var(--nv-color-border);
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+  }
+
+  .nv-slider::-moz-range-progress {
+    block-size: var(--_track);
+    background-color: var(--nv-color-accent);
+    border-radius: var(--nv-radius-full);
+  }
+
+  /* --- Thumb ------------------------------------------------------------------ */
+
+  .nv-slider::-webkit-slider-thumb {
+    inline-size: var(--_thumb);
+    block-size: var(--_thumb);
+    margin-block-start: calc((var(--_track) - var(--_thumb)) / 2);
+    background-color: var(--nv-color-knob);
+    background-image: var(--nv-sheen-knob);
+    border: 0;
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-outline), var(--nv-elevation-2);
+    appearance: none;
+    -webkit-appearance: none;
+    transition: scale var(--nv-duration-fast) var(--nv-ease-standard);
+  }
+
+  .nv-slider::-moz-range-thumb {
+    inline-size: var(--_thumb);
+    block-size: var(--_thumb);
+    box-sizing: border-box;
+    background-color: var(--nv-color-knob);
+    background-image: var(--nv-sheen-knob);
+    border: 0;
+    border-radius: var(--nv-radius-full);
+    box-shadow: var(--nv-outline), var(--nv-elevation-2);
+    transition: scale var(--nv-duration-fast) var(--nv-ease-standard);
+  }
+
+  .nv-slider:hover::-webkit-slider-thumb { scale: 1.06; }
+  .nv-slider:active::-webkit-slider-thumb { scale: 0.96; }
+  .nv-slider:hover::-moz-range-thumb { scale: 1.06; }
+  .nv-slider:active::-moz-range-thumb { scale: 0.96; }
+
+  .nv-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow: var(--nv-focus-ring), var(--nv-elevation-2);
+  }
+
+  .nv-slider:focus-visible::-moz-range-thumb {
+    box-shadow: var(--nv-focus-ring), var(--nv-elevation-2);
+  }
+
+  .nv-slider:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
   }
 }
 @layer niveus.components {
@@ -3528,7 +3770,8 @@
     cursor: not-allowed;
   }
 
-  .nv-menu__item[aria-checked="true"]::before {
+  .nv-menu__item[aria-checked="true"]::before,
+  .nv-menu__item[aria-selected="true"]::before {
     content: "";
     inline-size: 0.28em;
     block-size: 0.55em;
@@ -3559,6 +3802,340 @@
     letter-spacing: var(--nv-letter-spacing-wider);
     text-transform: uppercase;
     color: var(--nv-color-text-tertiary);
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Picker
+     --------------------------------------------------------------------------
+       <button class="nv-input nv-picker nv-menu-trigger" popovertarget="fruit"
+               style="--nv-anchor: --fruit">
+         <span data-nv-picker-label>Choose a fruit</span>
+       </button>
+
+       <div class="nv-menu nv-menu--listbox" popover id="fruit" role="listbox"
+            style="--nv-anchor: --fruit">
+         <input class="nv-input nv-input--sm nv-menu__search" placeholder="Search…">
+         <button class="nv-menu__item" role="option" data-value="apple">Apple</button>
+         <button class="nv-menu__item" role="option" data-value="pear" aria-selected="true">Pear</button>
+       </div>
+
+     A popup list is a menu whose items are options: the same frosted surface,
+     anchoring and light dismiss, with a selection that stays. A picker is its
+     trigger: a field-shaped button that shows the current choice and a chevron
+     that turns over while the list is open.
+
+     niveus.js adds what a native <select> would give for free and a styled
+     popover does not: arrow-key movement, type-ahead, Enter or Space to choose,
+     filtering when a .nv-menu__search is present, and an `nv:select` event on the
+     trigger carrying { value, label }.
+     ========================================================================== */
+
+  .nv-picker {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nv-space-2);
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .nv-picker[data-empty] {
+    color: var(--nv-color-text-tertiary);
+  }
+
+  .nv-picker::after {
+    content: "";
+    flex: none;
+    inline-size: 0.4em;
+    block-size: 0.4em;
+    translate: 0 -0.12em;
+    rotate: 45deg;
+    border-inline-end: 2px solid var(--nv-color-text-tertiary);
+    border-block-end: 2px solid var(--nv-color-text-tertiary);
+    transition: rotate var(--nv-duration-quick) var(--nv-ease-standard);
+  }
+
+  .nv-picker:has(+ .nv-menu:popover-open)::after {
+    rotate: 225deg;
+    translate: 0 0.12em;
+  }
+
+  .nv-menu--listbox {
+    min-inline-size: anchor-size(inline);
+  }
+
+  .nv-menu__search {
+    inline-size: 100%;
+    margin-block-end: var(--nv-space-1);
+  }
+
+  /* display on .nv-menu__item would otherwise win over the hidden attribute. */
+  .nv-menu__item[hidden] {
+    display: none;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Calendar
+     --------------------------------------------------------------------------
+       <div class="nv-calendar nv-surface" data-nv-calendar data-nv-value="2026-10-28">
+         <div class="nv-calendar__header">
+           <button class="nv-button nv-button--ghost nv-button--icon"
+                   data-nv-calendar-step="-1" aria-label="Previous month">‹</button>
+           <h3 class="nv-calendar__title" aria-live="polite">October 2026</h3>
+           <button class="nv-button nv-button--ghost nv-button--icon"
+                   data-nv-calendar-step="1" aria-label="Next month">›</button>
+         </div>
+         <div class="nv-calendar__grid" role="grid" aria-labelledby="…">
+           <div role="row"> <span class="nv-calendar__weekday" role="columnheader">Mo</span> … </div>
+           <div role="row">
+             <button class="nv-calendar__day" role="gridcell" data-date="2026-10-01">1</button> …
+           </div>
+         </div>
+       </div>
+
+     A calendar holds content, so it takes no material of its own: put it on
+     .nv-surface, or on .nv-material-glaze when it floats over something. The
+     grid and its states are plain markup and render without niveus.js; the
+     script's only jobs are to build the days for a month, step between months,
+     and keep the keyboard model (arrows, PageUp/PageDown, Home/End).
+
+     State lives in attributes the platform already has a meaning for:
+       aria-selected="true"   the chosen day
+       aria-current="date"    today
+       data-outside           a day that belongs to the neighbouring month
+       disabled               outside data-nv-min / data-nv-max
+     ========================================================================== */
+
+  .nv-calendar {
+    --_cell: 2.5rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-3);
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    padding: var(--nv-space-4);
+    border-radius: var(--nv-radius-xl);
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-calendar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nv-space-2);
+  }
+
+  .nv-calendar__title {
+    margin: 0;
+    font: var(--nv-font-label);
+    font-size: var(--nv-font-size-md);
+    font-weight: var(--nv-font-weight-semibold);
+  }
+
+  .nv-calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, var(--_cell));
+    gap: var(--nv-space-0-5) 0;
+  }
+
+  .nv-calendar__grid > [role="row"] {
+    display: contents;
+  }
+
+  .nv-calendar__weekday {
+    display: grid;
+    place-items: center;
+    block-size: var(--nv-space-8);
+    color: var(--nv-color-text-tertiary);
+    font: var(--nv-font-caption);
+    font-weight: var(--nv-font-weight-semibold);
+    letter-spacing: var(--nv-letter-spacing-wider);
+    text-transform: uppercase;
+  }
+
+  .nv-calendar__day {
+    inline-size: var(--_cell);
+    block-size: var(--_cell);
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    border-radius: var(--nv-radius-full);
+    color: var(--nv-color-text-primary);
+    font: var(--nv-font-label);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: var(--nv-transition-colors), var(--nv-transition-depth);
+  }
+
+  @media (hover: hover) {
+    .nv-calendar__day:hover:not(:disabled, [aria-selected="true"]) {
+      background-color: var(--nv-color-surface-hover);
+    }
+  }
+
+  .nv-calendar__day[data-outside] {
+    color: var(--nv-color-text-tertiary);
+  }
+
+  /* Today is ringed, not filled: filled means chosen. */
+  .nv-calendar__day[aria-current="date"] {
+    color: var(--nv-color-accent-text);
+    box-shadow: inset 0 0 0 var(--nv-border-width-strong) var(--nv-color-accent);
+  }
+
+  /* The chosen day is a small raised key, lit like the filled buttons. */
+  .nv-calendar__day[aria-selected="true"] {
+    background-color: var(--nv-color-accent);
+    background-image: var(--nv-sheen-filled);
+    color: var(--nv-color-on-accent);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  }
+
+  .nv-calendar__day:focus-visible {
+    outline: none;
+    box-shadow: var(--nv-focus-ring);
+  }
+
+  .nv-calendar__day[aria-selected="true"]:focus-visible {
+    box-shadow: var(--nv-bevel), var(--nv-focus-ring);
+  }
+
+  .nv-calendar__day:disabled {
+    color: var(--nv-color-text-disabled);
+    cursor: not-allowed;
+  }
+}
+@layer niveus.components {
+  /* ==========================================================================
+     Niveus — Time picker
+     --------------------------------------------------------------------------
+       <div class="nv-timepicker nv-surface" data-nv-timepicker
+            data-nv-value="09:30" data-nv-step="5" data-nv-format-toggle></div>
+
+     Wheels, as on a phone: each column scrolls and snaps, and whatever sits in
+     the lens across the middle is the value. Scrolling, snapping, momentum and
+     touch are the browser's; niveus.js builds the columns, reads which row is
+     centred, and exposes the value as data-nv-value and an `nv:time` event.
+
+     The lens is the selection colour laid over the centre row, so it follows the
+     brand. Rows fade towards the top and bottom with a mask rather than a
+     coloured gradient, which keeps the fade right on any surface — solid, or
+     Glaze with something moving behind it.
+
+     The format is 24-hour unless told otherwise. With data-nv-format-toggle a
+     24H / AM/PM switch sits under the wheels and adds an AM/PM wheel when chosen;
+     the value stays 24-hour either way, so a form never has to know which the
+     person used.
+
+     Without niveus.js the element is empty. For a no-script fallback, use a
+     native <input type="time" class="nv-input">.
+     ========================================================================== */
+
+  .nv-timepicker {
+    --_row: 2.25rem;
+    --_rows: 5;
+
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--nv-space-2);
+    padding: var(--nv-space-2) var(--nv-space-3) var(--nv-space-3);
+    border-radius: var(--nv-radius-xl);
+    color: var(--nv-color-text-primary);
+  }
+
+  .nv-timepicker__wheels {
+    position: relative;
+    display: flex;
+    gap: var(--nv-space-1);
+  }
+
+  /* The lens. It belongs to the wheels, not the picker, so the switch beneath
+     them never moves the centre. */
+  .nv-timepicker__wheels::before {
+    content: "";
+    position: absolute;
+    inset-inline: calc(var(--nv-space-2) * -1);
+    inset-block-start: 50%;
+    block-size: var(--_row);
+    translate: 0 -50%;
+    background-color: var(--nv-color-selection);
+    border-radius: var(--nv-radius-md);
+    box-shadow: var(--nv-highlight-top);
+    pointer-events: none;
+  }
+
+  .nv-timepicker__column {
+    position: relative;
+    inline-size: 3.5rem;
+    block-size: calc(var(--_row) * var(--_rows));
+    margin: 0;
+    padding: calc(var(--_row) * (var(--_rows) - 1) / 2) 0;
+    list-style: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    mask-image: linear-gradient(
+      transparent,
+      currentcolor 28%,
+      currentcolor 72%,
+      transparent
+    );
+  }
+
+  .nv-timepicker__column::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nv-timepicker__column:focus-visible {
+    outline: none;
+    border-radius: var(--nv-radius-md);
+    box-shadow: var(--nv-focus-ring);
+  }
+
+  .nv-timepicker__option {
+    display: grid;
+    place-items: center;
+    block-size: var(--_row);
+    scroll-snap-align: center;
+    color: var(--nv-color-text-tertiary);
+    font: var(--nv-font-label);
+    font-size: var(--nv-font-size-lg);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: var(--nv-transition-colors);
+  }
+
+  .nv-timepicker__option[aria-selected="true"] {
+    color: var(--nv-color-text-primary);
+    font-weight: var(--nv-font-weight-semibold);
+  }
+
+  /* 24H / AM/PM. A button group under the wheels; the pressed one is the format
+     in use. 24-hour is the default, so it starts pressed. */
+  .nv-timepicker__format {
+    align-self: center;
+  }
+
+  /* Pressed reads as pushed in: the format in use is a key held down. */
+  .nv-timepicker__format .nv-button[aria-pressed="true"] {
+    background-color: var(--nv-color-accent-subtle);
+    background-image: none;
+    color: var(--nv-color-accent-text);
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+  }
+
+  .nv-timepicker__separator {
+    display: grid;
+    place-items: center;
+    align-self: center;
+    color: var(--nv-color-text-tertiary);
+    font: var(--nv-font-label);
+    font-size: var(--nv-font-size-lg);
   }
 }
 @layer niveus.components {

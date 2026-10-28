@@ -142,7 +142,8 @@
   cursor: not-allowed;
 }
 
-.nv-menu__item[aria-checked="true"]::before {
+.nv-menu__item[aria-checked="true"]::before,
+.nv-menu__item[aria-selected="true"]::before {
   content: "";
   inline-size: 0.28em;
   block-size: 0.55em;

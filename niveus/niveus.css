@@ -48,10 +48,14 @@
 @import url("components/surface.css") layer(niveus.components);
 @import url("components/button.css") layer(niveus.components);
 @import url("components/input.css") layer(niveus.components);
+@import url("components/slider.css") layer(niveus.components);
 @import url("components/card.css") layer(niveus.components);
 @import url("components/dialog.css") layer(niveus.components);
 @import url("components/navigation.css") layer(niveus.components);
 @import url("components/menu.css") layer(niveus.components);
+@import url("components/picker.css") layer(niveus.components);
+@import url("components/calendar.css") layer(niveus.components);
+@import url("components/timepicker.css") layer(niveus.components);
 @import url("components/disclosure.css") layer(niveus.components);
 @import url("components/scroller.css") layer(niveus.components);
 @import url("components/bed.css") layer(niveus.components);

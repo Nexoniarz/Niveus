@@ -168,6 +168,13 @@
   --nv-light-material-glass: rgb(252 252 250 / 0.4);
   --nv-light-material-border: rgb(255 255 255 / 0.72);
 
+  /* Glaze: the tint it is made of, the rim that catches light on the side
+     facing the pointer, the rim on the far side, and the specular bloom. */
+  --nv-light-material-glaze: rgb(255 255 255 / 1);
+  --nv-light-glaze-rim-lit: rgb(255 255 255 / 1);
+  --nv-light-glaze-rim-far: rgb(255 255 255 / 0.5);
+  --nv-light-glaze-specular: rgb(255 255 255 / 0.6);
+
   /* --- Window controls --------------------------------------------------------- */
   --nv-light-window-close: var(--nv-palette-window-close);
   --nv-light-window-minimize: var(--nv-palette-window-minimize);

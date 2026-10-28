@@ -63,7 +63,28 @@ States come from the element: `disabled`, `aria-disabled`, `aria-busy="true"`
 | `.nv-checkbox` | checkbox | Native input, custom mark. Supports `:indeterminate`. |
 | `.nv-radio` | radio button | Native input, custom mark. |
 | `.nv-switch` | toggle switch | Inset track, elevated thumb that travels. |
+| `.nv-slider` | range slider, track bar | `input[type=range]`. Inset track, accent fill, knob thumb. Add `data-nv-var="--token"` to write its value into a CSS property. |
 | `.nv-choice` | control with inline label | `<label>` wrapping a control and its text. |
+
+## Pickers
+
+| Class | Known as | Does |
+| --- | --- | --- |
+| `.nv-calendar` | calendar, date picker | Month grid on whatever surface you give it (`.nv-surface`, or `.nv-material-glaze` when floating). Configure with `data-nv-calendar` plus `data-nv-value` / `-min` / `-max` / `-locale` / `-week-start`. Fires `nv:date`. |
+| `.nv-calendar__header` | calendar toolbar | Title and month-step buttons (`data-nv-calendar-step="-1"` / `"1"`). |
+| `.nv-calendar__title` | month and year heading | Filled by `niveus.js`. |
+| `.nv-calendar__grid` | day grid | `role="grid"`; built by `niveus.js` or written by hand. |
+| `.nv-calendar__weekday` | weekday column header | |
+| `.nv-calendar__day` | day cell | `aria-selected="true"` chosen · `aria-current="date"` today · `data-outside` neighbouring month · `disabled` out of range. |
+| `.nv-timepicker` | time picker, wheel picker | Scroll-snap wheels built from `data-nv-timepicker` plus `data-nv-value="HH:MM"` / `-hours` (`24` default, `12` adds an AM/PM wheel) / `-step` / `-name` / `-format-toggle` (a 24H / AM/PM switch under the wheels). The value is always 24-hour. Fires `nv:time`. Empty without the script; use `<input type="time" class="nv-input">` as the fallback. |
+| `.nv-timepicker__wheels` | wheel row, picker body | Holds the columns and the selection lens. |
+| `.nv-timepicker__format` | 24H / AM/PM switch, time format toggle | Button group under the wheels; added by `data-nv-format-toggle`. |
+| `.nv-timepicker__column` | wheel, picker column | One scrolling list (`role="listbox"`). |
+| `.nv-timepicker__option` | wheel row | `aria-selected="true"` is the row in the lens. |
+| `.nv-timepicker__separator` | colon between wheels | |
+| `.nv-picker` | select trigger, dropdown button | Goes on the trigger beside `.nv-input` and `.nv-menu-trigger`; chevron turns while its list is open. `data-empty` shows placeholder colour. |
+| `.nv-menu--listbox` | popup list, listbox, combobox list | A `.nv-menu` whose `.nv-menu__item`s are `role="option"`. At least as wide as its trigger. `niveus.js` adds keys, type-ahead and filtering; trigger fires `nv:select`. |
+| `.nv-menu__search` | list filter, combobox input | An `.nv-input` as the first child of a listbox; typing filters the options. |
 
 ## Card
 
@@ -297,6 +318,7 @@ color before they are read, so they never take the brand.
 | `.nv-material-inset` | recessed surface | Fields, wells, tracks. |
 | `.nv-material-frosted` | frosted glass, blur backdrop | Chrome that floats over content: bars, docks, launchers, notifications, menus. Moderate blur, bevelled rim. |
 | `.nv-material-glass` | glass | Contextual layers where content behind must stay legible. |
+| `.nv-material-glaze` | glaze, adjustable frosted glass | Glass with a dial. Frost comes from `--nv-glass-frost` (0 clear … 1 heavy), read where the surface is drawn, so a subtree or a slider can change it. Rim catches light and follows the pointer with `niveus.js`. |
 | `.nv-elevation-0` `.nv-elevation-1` `.nv-elevation-2` | elevation / z-depth | flush · resting · raised |
 | `.nv-elevation-3` `.nv-elevation-4` `.nv-elevation-5` | elevation / z-depth | floating · lifted · overlay |
 | `.nv-elevation-inset-sm` `.nv-elevation-inset-md` `.nv-elevation-inset-lg` | inner shadow | Recessed surfaces. |
@@ -305,7 +327,7 @@ color before they are read, so they never take the brand.
 
 Material and elevation are independent: combine freely.
 
-Niveus is solid, with glass used sparingly: anything that holds content
+Niveus is solid by default, with glass used sparingly: anything that holds content
 (windows, cards, dialogs) is solid, and only chrome floating over it is
 frosted. Raised things are bevelled — lit along the top edge, shaded along the
 bottom, with a contact outline — and carry a sheen across their face. When
@@ -446,7 +468,11 @@ level. Components never opt in individually.
 
 ### Other
 
-`--nv-focus-ring` · `--nv-focus-ring-width` · `--nv-border-width` ·
+`--nv-glass-frost` (0–1, the glaze material's one input; set on `:root` or any
+subtree) · `--nv-glaze-blur-max` · `--nv-glaze-tint-min` ·
+`--nv-glaze-tint-max` · `--nv-glaze-rim` · `--nv-light-x` / `--nv-light-y` /
+`--nv-light-angle` (set by `niveus.js` on each glaze surface) ·
+`--nv-slider-pos` (set by `niveus.js`) · `--nv-focus-ring` · `--nv-focus-ring-width` · `--nv-border-width` ·
 `--nv-border-width-strong` · `--nv-target-min` · `--nv-layout-gutter` ·
 `--nv-layout-max-width` · `--nv-selection-name` · `--nv-anchor` ·
 `--nv-button-offset` · `--nv-bed-tint` · `--nv-scroller-item` ·
@@ -468,10 +494,23 @@ everything still renders — state changes simply arrive instead of travelling.
 | `nv.syncThemeControls` | `(theme) => void` | Sets `aria-pressed` on every `[data-nv-theme]`. |
 | `nv.openDialog` | `(dialog \| id, trigger?) => dialog` | `showModal()`, plus a transform origin so the dialog expands out of its trigger. |
 | `nv.selectTab` | `(tablist, tab) => Promise` | Moves selection and its panel, with direction. |
+| `nv.initSlider` | `(input) => void` | Keeps one `.nv-slider`'s fill in step with its value, and applies `data-nv-var`. |
+| `nv.initCalendar` | `(el) => void` | Builds and drives one `[data-nv-calendar]`. |
+| `nv.initTimePicker` | `(el) => void` | Builds and drives one `[data-nv-timepicker]`. |
+| `nv.initListbox` | `(list) => void` | Wires one `.nv-menu--listbox` (needs an `id` and a trigger with that `popovertarget`). |
 | `nv.initScroller` | `(frame) => void` | Wires one scroller's controls. |
 | `nv.liftLabels` | `(scope) => Element[]` | Names the navigation items in `scope` so a travelling marker passes behind them, and returns them. `nv.transition` does this for its `scope` and removes the names afterwards. |
 | `nv.wire` | `(scope = document) => void` | Applies all of the below, and starts watching `.nv-reveal` / `.nv-reveal-group`. Runs once on load; call again after injecting markup. |
 | `nv.prefersReducedMotion` | `() => boolean` | |
+
+### Events
+
+| Event | On | Detail |
+| --- | --- | --- |
+| `nv:date` | `.nv-calendar` | `{ value: "YYYY-MM-DD", date }` |
+| `nv:time` | `.nv-timepicker` | `{ value: "HH:MM" }` (24-hour) |
+| `nv:select` | picker trigger | `{ value, label }` |
+| `nv:theme` | `<html>` | the new appearance |
 
 ### Data attributes
 
@@ -483,6 +522,12 @@ everything still renders — state changes simply arrive instead of travelling.
 | `data-nv-dialog` | button | Opens the dialog with that id, from itself. |
 | `data-nv-close` | button | Closes its dialog or popover. |
 | `data-nv-tabs` | tablist | Wires `[role=tab]` children to their `aria-controls` panels, with arrow keys. |
+| `data-nv-var` | `.nv-slider` | Name of the custom property (e.g. `--nv-glass-frost`) the slider writes its value to. It starts at that property's current value. |
+| `data-nv-var-target` | `.nv-slider` | Selector of the element that receives the property. Default: `<html>`. |
+| `data-nv-calendar` | `.nv-calendar` | Marks a calendar for `niveus.js`. Also `data-nv-value`, `-min`, `-max` (`YYYY-MM-DD`), `-locale`, `-week-start` (0 = Sunday). |
+| `data-nv-calendar-step` | button in a calendar | `-1` or `1`: months to move. |
+| `data-nv-timepicker` | `.nv-timepicker` | Marks a time picker. Also `data-nv-value` (`HH:MM`), `-hours` (`24` default / `12`), `-step` (minutes), `-name` (hidden form field), `-format-toggle` (adds the 24H / AM/PM switch). |
+| `data-nv-picker-label` | child of a picker trigger | Receives the chosen option's text; default is the trigger itself. |
 | `data-nv-scroller` | `.nv-scroller-frame` | Wires its `[data-nv-scroll="prev"\|"next"]` controls. |
 | `data-scrolled` | `.nv-nav` | Set by the application on scroll; gives the bar its shadow. |
 | `data-nv-direction` | `<html>` | Set during a transition by `nv.transition`. |

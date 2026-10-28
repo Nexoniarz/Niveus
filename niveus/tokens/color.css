@@ -249,6 +249,10 @@
   --nv-color-material-frosted: light-dark(var(--nv-light-material-frosted), var(--nv-dark-material-frosted));
   --nv-color-material-glass: light-dark(var(--nv-light-material-glass), var(--nv-dark-material-glass));
   --nv-color-material-border: light-dark(var(--nv-light-material-border), var(--nv-dark-material-border));
+  --nv-color-material-glaze: light-dark(var(--nv-light-material-glaze), var(--nv-dark-material-glaze));
+  --nv-color-glaze-rim-lit: light-dark(var(--nv-light-glaze-rim-lit), var(--nv-dark-glaze-rim-lit));
+  --nv-color-glaze-rim-far: light-dark(var(--nv-light-glaze-rim-far), var(--nv-dark-glaze-rim-far));
+  --nv-color-glaze-specular: light-dark(var(--nv-light-glaze-specular), var(--nv-dark-glaze-specular));
 
   /* --- Window controls ------------------------------------------------------- */
   --nv-color-window-close: light-dark(var(--nv-light-window-close), var(--nv-dark-window-close));
