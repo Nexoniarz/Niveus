@@ -350,7 +350,7 @@ have watched it reach.**
    exactly and costs no frame budget. Provide a fallback where the feature is missing — either the plain state, or the same curve from script (as the wheels do for Firefox) — and test input differences between engines: wheel notches arrive in pixels in Chromium and in *lines* in Firefox, so normalise `deltaMode` before using `deltaY`.
 10. **Local motion for local change.** Changing a month moves the month, not the
     page. Reserve page-wide view transitions for changes that are about the
-    page: appearance, route, a selection travelling between regions.
+    page: a route change, never appearance or selection — see 14.4.1.
 11. **Restraint wins ties.** When continuity and restraint conflict, animate less.
 
 ---
@@ -537,12 +537,15 @@ tune. This is a first-class goal, bounded by sections 3.1 and 11.
 
 Each of these was a real defect, found by driving Firefox with real input.
 
-1. **Never wrap an appearance change in a page-wide view transition.** The
-   snapshot cannot blur what sits behind frosted glass, so for its whole
-   duration every frosted bar, menu and Glaze pane goes clear and shows the page
-   sharply through itself. Let surfaces transition their own colours. Selection
-   markers still use a short view transition; keep it brief, and prefer a
-   per-element animation for anything inside frosted chrome.
+1. **Never wrap a change in a page-wide view transition.** The snapshot cannot
+   blur what sits behind frosted glass, so for its whole duration every frosted
+   bar, menu and Glaze pane goes clear and shows the page sharply through
+   itself. This applied to theme changes, brand changes *and* selection markers,
+   and was only noticed on the third. Let surfaces transition their own colours;
+   move a selection marker by animating the marker itself (measure, change,
+   animate the difference); animate arriving content on its own. `nv.transition`
+   is built this way; do not reintroduce `document.startViewTransition` around
+   anything on a page that has glass.
 2. **Do not use padding to make a scroll container's last item reachable.**
    Firefox leaves the container's bottom padding out of its scrollable area, so
    the final rows were unreachable and a short list could not scroll at all. Use
@@ -567,10 +570,23 @@ Each of these was a real defect, found by driving Firefox with real input.
 8. **Same-page links travel.** `scroll-behavior: smooth` under
    `prefers-reduced-motion: no-preference`; a jump to a section is the textbook
    change a user could have watched.
-9. **Know your test rig.** A headless browser without a GPU does not render
+9. **Own a gesture completely or not at all.** A control that is half native
+   scrolling and half script behaves differently in every engine, in a desktop
+   browser's phone mode, and on a real phone. The wheels take every pointer —
+   mouse, pen and touch — with `touch-action: none` and run one code path, so
+   what was tested is what runs everywhere.
+10. **An effect must not look like a value.** A rubber-band stretch of a whole
+    row makes the neighbouring row sit under the lens and read as a different
+    selection. Cap give at a fraction of a row (about 40%).
+11. **One animation-frame slot per element, never per component.** A slot shared
+    between a picker's wheels dropped the last scroll event of one wheel and
+    left its rows and value a step behind.
+12. **Know your test rig.** A headless browser without a GPU does not render
    `backdrop-filter`, reports no hover capability (so hover-only controls such
    as scroller arrows disappear), and may not deliver scroll events reliably.
-   Treat those as limits of the rig, not of the system, and confirm them on a
+   It also cannot pan on synthesized touch (not even the page itself), so any
+   behaviour that depends on native touch scrolling cannot be verified there.
+   Treat these as limits of the rig, not of the system, and confirm them on a
    real display.
 
 ### 14.3 Documentation

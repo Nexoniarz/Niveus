@@ -69,7 +69,11 @@
   list-style: none;
   cursor: grab;
   user-select: none;
-  touch-action: pan-y;
+  /* The wheel owns vertical gestures, whatever the pointer: niveus.js drags it
+     itself so a finger, a mouse and a desktop browser's phone mode behave
+     alike. Without the script the wheel still scrolls natively with a wheel
+     or keys; set touch-action back to pan-y if you ship it without. */
+  touch-action: none;
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-snap-type: y mandatory;

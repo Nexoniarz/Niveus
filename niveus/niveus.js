@@ -67,31 +67,85 @@
   function transition(update, options) {
     options = options || {};
 
-    if (!canTransition()) {
+    // Deliberately not a view transition. A page-wide snapshot cannot blur what
+    // sits behind frosted glass, so for the length of the change every frosted
+    // bar, menu and Glaze pane went clear and showed the page sharply through
+    // itself — on every theme, brand and selection change. Nothing here
+    // snapshots the page: surfaces transition their own colours, a selection
+    // marker is moved by animating the marker itself, and arriving content
+    // animates on its own. The glass stays live throughout.
+    var groups = [].concat(options.scope || []).filter(Boolean);
+    var contents = [].concat(options.content || []).filter(Boolean);
+
+    if (options.kind === "theme" || prefersReducedMotion() || typeof Element.prototype.animate !== "function") {
       return Promise.resolve(update());
     }
 
-    if (options.direction) root.dataset.nvDirection = options.direction;
-    if (options.kind) root.dataset.nvTransition = options.kind;
+    var before = groups.map(markerOf);
+    update();
 
-    var groups = [].concat(options.scope || []).filter(Boolean);
-    var lifted = [];
-    groups.forEach(function (group) {
-      group.setAttribute("data-nv-travelling", "");
-      lifted = lifted.concat(liftLabels(group));
+    var motion = [];
+    groups.forEach(function (group, index) {
+      var from = before[index];
+      var to = markerOf(group);
+      if (!from || !to || from.item === to.item) return;
+      motion.push(travelMarker(from.rect, to));
+    });
+    contents.forEach(function (content) {
+      motion.push(arriveContent(content, options.direction));
     });
 
-    var view = document.startViewTransition(update);
+    return Promise.all(motion).then(function () {});
+  }
 
-    function clear() {
-      delete root.dataset.nvDirection;
-      delete root.dataset.nvTransition;
-      groups.forEach(function (group) { group.removeAttribute("data-nv-travelling"); });
-      lifted.forEach(function (item) { item.style.viewTransitionName = ""; });
-    }
-    view.finished.then(clear, clear);
+  var MARKED = '.nv-nav__item[aria-current], .nv-nav__item--active, .nv-nav__item[aria-selected="true"]';
 
-    return view.finished;
+  /** The item carrying a group's selection marker, and where it is now. */
+  function markerOf(group) {
+    var item = group.matches(MARKED) ? group : group.querySelector(MARKED);
+    return item ? { item: item, rect: item.getBoundingClientRect() } : null;
+  }
+
+  function tokenMs(name) {
+    return parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
+  }
+
+  function tokenEase(name) {
+    return getComputedStyle(root).getPropertyValue(name).trim() || "ease-out";
+  }
+
+  /**
+   * FLIP: the marker is a ::before filling its item, so the new marker is
+   * drawn where the old one was and animated to where it belongs. It paints
+   * behind the labels exactly as it does at rest, so none of them are washed as
+   * it passes.
+   */
+  function travelMarker(from, to) {
+    var rect = to.rect;
+    var duration = tokenMs("--nv-duration-travel");
+    if (!duration || !rect.width || !rect.height) return Promise.resolve();
+    var start = {
+      transformOrigin: "0 0",
+      translate: (from.left - rect.left) + "px " + (from.top - rect.top) + "px",
+      scale: (from.width / rect.width) + " " + (from.height / rect.height),
+    };
+    var end = { transformOrigin: "0 0", translate: "0 0", scale: "1 1" };
+    return to.item.animate([start, end], {
+      duration: duration,
+      easing: tokenEase("--nv-ease-emphasized"),
+      pseudoElement: "::before",
+    }).finished.catch(function () {});
+  }
+
+  /** New content arrives from the side it lies on, or rises into place. */
+  function arriveContent(element, direction) {
+    var duration = tokenMs("--nv-duration-expand");
+    if (!duration) return Promise.resolve();
+    var shift = direction === "backward" ? -28 : direction === "forward" ? 28 : 0;
+    return element.animate([
+      { opacity: 0, translate: shift + "px " + (shift ? 0 : 10) + "px" },
+      { opacity: 1, translate: "0 0" },
+    ], { duration: duration, easing: tokenEase("--nv-ease-emphasized") }).finished.catch(function () {});
   }
 
   /** "light" | "dark" | "system" — system means: follow the environment. */
@@ -168,16 +222,10 @@
     }
     if (next < 0 || next === current) return Promise.resolve();
 
-    // The outgoing and incoming panels carry one name between them — the old
-    // one in the old state, the new one in the new — so the browser treats
-    // them as one surface whose content changes. Named only for the length of
-    // the change, so any number of tab sets can live on one page.
     var panelOf = function (candidate) {
       return candidate ? document.getElementById(candidate.getAttribute("aria-controls")) : null;
     };
-    var outgoing = panelOf(tabs[current]);
     var incoming = panelOf(tab);
-    if (outgoing && canTransition()) outgoing.style.viewTransitionName = "nv-panel";
 
     var done = transition(function () {
       tabs.forEach(function (candidate, index) {
@@ -188,12 +236,7 @@
         var panel = panelOf(candidate);
         if (panel) panel.hidden = !selected;
       });
-      if (outgoing) outgoing.style.viewTransitionName = "";
-      if (incoming && canTransition()) incoming.style.viewTransitionName = "nv-panel";
-    }, { direction: next > current ? "forward" : "backward", scope: tablist });
-
-    var settle = function () { if (incoming) incoming.style.viewTransitionName = ""; };
-    done.then(settle, settle);
+    }, { direction: next > current ? "forward" : "backward", scope: tablist, content: incoming });
 
     tab.focus();
     return done;
@@ -695,7 +738,6 @@
     var withFormat = picker.hasAttribute("data-nv-format-toggle");
     var placed = false;
     var last = "";
-    var frame = 0;
 
     function indexOf(column) {
       var row = column.firstElementChild ? column.firstElementChild.offsetHeight : 0;
@@ -725,7 +767,7 @@
       // swiped to. Wait for it to settle, then rebuild the hours for it.
       if (formatColumn && (fi > 0) !== twelve) {
         global.clearTimeout(modeTimer);
-        modeTimer = global.setTimeout(switchFormat, 160);
+        modeTimer = global.setTimeout(switchFormat, 120);
         return;
       }
 
@@ -773,7 +815,7 @@
       if (wants) h24 = (h24 % 12) + (fi === 2 ? 12 : 0);
       twelve = wants;
       picker.dataset.nvHours = twelve ? "12" : "24";
-      build();
+      build(true);
     }
 
     function buildColumn(label, items) {
@@ -791,14 +833,18 @@
       });
 
       // Past either end the wheel gives, as a phone's list does, then springs
-      // back. Touch is left to the platform (iOS bounces, Android stretches);
-      // overscroll-behavior keeps that inside the wheel. Mouse wheels and
-      // trackpads, which have no such effect on a nested scroller, are handled
-      // here. The distance has resistance: the further it is pulled, the less
+      // back — for a wheel or trackpad here, and for a finger or mouse drag
+      // below. The distance has resistance: the further it is pulled, the less
       // each notch moves it.
       var pull = 0;
       var settle = 0;
-      var limit = 36;
+      // A phone's list gives a fraction of a row, not a whole one: any more and
+      // the row under the lens looks like its neighbour.
+      function limitOf() {
+        var first = list.firstElementChild;
+        return Math.max(8, Math.round((first ? first.offsetHeight : 36) * 0.4));
+      }
+      var colFrame = 0;
 
       function clearPull() {
         pull = 0;
@@ -816,15 +862,17 @@
         if (!hold) settle = global.setTimeout(clearPull, 90);
       }
 
-      // Dragging with a mouse or pen. Touch scrolls natively; a desktop
-      // pointer has no such thing, so without this a wheel cannot be grabbed.
-      // Snapping is off while the pointer is down so the list follows it, the
-      // end gives with resistance, and on release the list coasts to the row
-      // the motion was heading for.
+      // Dragging, for every kind of pointer. A mouse has no native drag-scroll,
+      // and touch is taken over too (touch-action: none on the wheel) so that a
+      // phone, a desktop browser's phone mode and a mouse all run the same code:
+      // the same inertia, the same give at the ends, nothing left to each
+      // engine's own panning. Snapping is off while the pointer is down so the
+      // list follows it, and on release the list coasts to the row the motion
+      // was heading for.
       var drag = null;
 
       list.addEventListener("pointerdown", function (event) {
-        if (event.pointerType === "touch" || event.button !== 0) return;
+        if (event.button !== 0) return;
         drag = {
           id: event.pointerId, y: event.clientY, top: list.scrollTop,
           lastY: event.clientY, lastT: event.timeStamp, velocity: 0, moved: false,
@@ -854,7 +902,7 @@
           list.scrollTop = target < 0 ? 0 : max;
           var over = target < 0 ? -target : target - max;
           if (!prefersReducedMotion()) {
-            setPull((target < 0 ? 1 : -1) * Math.min(limit, over * 0.35), true);
+            setPull((target < 0 ? 1 : -1) * Math.min(limitOf(), over * 0.35), true);
           }
         } else {
           list.scrollTop = target;
@@ -893,18 +941,30 @@
         if (!pushing && !pull) return;
         if (drag && drag.moved) return;
         event.preventDefault();
+        var limit = limitOf();
         var next = pull - delta * 0.12 * (1 - Math.abs(pull) / limit);
         setPull(Math.max(-limit, Math.min(limit, next)));
       }, { passive: false });
 
       // A key pressed at the end nudges the wheel instead of doing nothing.
       list.nvNudge = function (direction) {
-        if (!prefersReducedMotion()) setPull(direction * 12);
+        if (!prefersReducedMotion()) setPull(direction * Math.round(limitOf() * 0.4));
       };
 
+      // The format changes the moment the format wheel comes to rest, not a
+      // fixed wait after it stops being touched.
+      list.addEventListener("scrollend", function () {
+        if (list !== formatColumn) return;
+        global.clearTimeout(modeTimer);
+        switchFormat();
+      });
+
+      // One frame slot per wheel: with a slot shared across the picker, a scroll
+      // on one wheel could swallow the last scroll event of another and leave
+      // its rows and its value one step behind.
       list.addEventListener("scroll", function () {
-        if (frame) return;
-        frame = global.requestAnimationFrame(function () { frame = 0; read(); drum(list); });
+        if (colFrame) return;
+        colFrame = global.requestAnimationFrame(function () { colFrame = 0; read(); drum(list); });
       }, { passive: true });
 
       list.addEventListener("click", function (event) {
@@ -971,7 +1031,7 @@
 
     // The wheels depend on the format, so a change of format rebuilds them and
     // lands on the same moment in the new layout.
-    function build() {
+    function build(animate) {
       var hourItems = [];
       var count = twelve ? 12 : 24;
       for (var h = 0; h < count; h++) hourItems.push(twelve ? String(h + 1) : pad(h));
@@ -992,6 +1052,19 @@
       [hourColumn, minuteColumn, formatColumn || periodColumn].forEach(function (list) {
         if (list) drum(list);
       });
+
+      // A new format is a new set of hours, so they arrive rather than swap:
+      // the wheel settles into place from slightly smaller and blurred, and
+      // the lens answers with a small press.
+      var duration = tokenMs("--nv-duration-expand");
+      if (animate && duration && !prefersReducedMotion() && hourColumn.animate) {
+        var easing = tokenEase("--nv-ease-spring");
+        hourColumn.animate([
+          { opacity: 0, scale: 0.86, filter: "blur(4px)" },
+          { opacity: 1, scale: 1, filter: "blur(0)" },
+        ], { duration: duration * 1.4, easing: easing });
+        wheels.animate([{ scale: "0.94 0.78" }, { scale: "1 1" }], { duration: duration, easing: easing, pseudoElement: "::before" });
+      }
     }
 
     picker.textContent = "";

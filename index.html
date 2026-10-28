@@ -1486,21 +1486,19 @@
     const brandInput = document.getElementById("brand-input");
     const brandValue = document.getElementById("brand-value");
 
-    function setBrand(value, continuous) {
-      const apply = () => {
-        document.documentElement.style.setProperty("--nv-brand", value);
-        brandInput.value = value;
-        brandValue.textContent = value;
-      };
-      if (continuous) nv.transition(apply, { kind: "theme" });
-      else apply();
+    /* No page-wide transition here: surfaces fade their own colours, and a
+       snapshot of the page would flatten every frosted surface while it ran. */
+    function setBrand(value) {
+      document.documentElement.style.setProperty("--nv-brand", value);
+      brandInput.value = value;
+      brandValue.textContent = value;
     }
 
-    brandInput.addEventListener("input", (event) => setBrand(event.target.value, false));
+    brandInput.addEventListener("input", (event) => setBrand(event.target.value));
 
     document.getElementById("brand-presets").addEventListener("click", (event) => {
       const preset = event.target.closest("[data-brand]");
-      if (preset) setBrand(preset.dataset.brand, true);
+      if (preset) setBrand(preset.dataset.brand);
     });
 
     /* A selection group whose emphasis travels: one marker, moved inside a

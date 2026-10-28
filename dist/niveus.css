@@ -3349,6 +3349,32 @@
     position: static;
   }
 
+  /* On a phone the bar keeps to one row. Wrapping put the controls on a second
+     line that sat over the links, and with glass behind it that read as a
+     collision. Instead the list gives way: it takes the room that is left and
+     scrolls sideways inside the bar, and everything else keeps its size. */
+  @media (max-width: 40rem) {
+    .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) {
+      flex-wrap: nowrap;
+      gap: var(--nv-space-2);
+      padding-inline: var(--nv-space-3);
+    }
+
+    .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) > * {
+      flex-shrink: 0;
+    }
+
+    .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) > .nv-nav__list {
+      flex: 1 1 0;
+      flex-shrink: 1;
+      overflow-x: auto;
+    }
+
+    .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) > .nv-nav__spacer {
+      display: none;
+    }
+  }
+
   /* A navigation group used inside content rather than as page chrome: no bar,
      no border, no blur — just the items and their travelling selection. */
   .nv-nav--inline {
@@ -4136,7 +4162,11 @@
     list-style: none;
     cursor: grab;
     user-select: none;
-    touch-action: pan-y;
+    /* The wheel owns vertical gestures, whatever the pointer: niveus.js drags it
+       itself so a finger, a mouse and a desktop browser's phone mode behave
+       alike. Without the script the wheel still scrolls natively with a wheel
+       or keys; set touch-action back to pan-y if you ship it without. */
+    touch-action: none;
     overflow-y: auto;
     overscroll-behavior: contain;
     scroll-snap-type: y mandatory;
@@ -4469,6 +4499,19 @@
 
     /* Read by .nv-button--float, which keeps it through hover and press. */
     --nv-button-offset: 0 -50%;
+  }
+
+  /* The arrows float over the cards, so they are glass: frosted, with the content
+     passing blurred beneath them, rather than an opaque key hiding what it sits
+     on. This is the system's rule for anything that floats over content. */
+  .nv-scroller-frame [data-nv-scroll] {
+    --_bg: var(--nv-material-frosted-bg);
+    --_bg-hover: var(--nv-material-frosted-bg);
+    --_bg-active: var(--nv-material-frosted-bg);
+    --_border: var(--nv-material-frosted-border);
+    --_sheen: none;
+    backdrop-filter: var(--nv-backdrop-frosted);
+    -webkit-backdrop-filter: var(--nv-backdrop-frosted);
   }
 
   /* Belt and braces: the frame knows these controls float, so their centring

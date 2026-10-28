@@ -488,7 +488,7 @@ everything still renders — state changes simply arrive instead of travelling.
 
 | Function | Signature | Does |
 | --- | --- | --- |
-| `nv.transition` | `(update, { direction, kind, scope }) => Promise` | Runs `update` inside a view transition so the change can be followed. `direction` is `"forward"`/`"backward"`; `kind: "theme"` slows the cross-fade; `scope` is the selection group (or list of groups) whose marker should travel — pass the group whose `aria-current`/`aria-selected` the update moves. Without `scope` nothing is lifted and the change cross-fades in place. Falls back to running `update` directly under reduced motion or without API support. |
+| `nv.transition` | `(update, { direction, kind, scope, content }) => Promise` | Runs `update` so the change can be followed, **without snapshotting the page**: a snapshot flattens frosted glass for its duration. `scope` is the selection group (or list of groups) whose marker should travel — the marker is measured before and after `update` and animated between the two boxes. `content` is an element (or list) that arrives from the side `direction` (`"forward"`/`"backward"`) names, or rises into place. `kind: "theme"` and reduced motion run `update` directly: surfaces transition their own colours. |
 | `nv.setTheme` | `("light" \| "dark" \| "system") => Promise` | Cross-fades the whole surface into the new appearance and fires `nv:theme` on `<html>`. |
 | `nv.syncThemeControls` | `(theme) => void` | Sets `aria-pressed` on every `[data-nv-theme]`. |
 | `nv.openDialog` | `(dialog \| id, trigger?) => dialog` | `showModal()`, plus a transform origin so the dialog expands out of its trigger. |
@@ -498,7 +498,7 @@ everything still renders — state changes simply arrive instead of travelling.
 | `nv.initTimePicker` | `(el) => void` | Builds and drives one `[data-nv-timepicker]`. |
 | `nv.initListbox` | `(list) => void` | Wires one `.nv-menu--listbox` (needs an `id` and a trigger with that `popovertarget`). |
 | `nv.initScroller` | `(frame) => void` | Wires one scroller's controls. |
-| `nv.liftLabels` | `(scope) => Element[]` | Names the navigation items in `scope` so a travelling marker passes behind them, and returns them. `nv.transition` does this for its `scope` and removes the names afterwards. |
+| `nv.liftLabels` | `(scope) => Element[]` | Names the navigation items in `scope`. Only for code that starts its own view transition; `nv.transition` no longer needs it. |
 | `nv.wire` | `(scope = document) => void` | Applies all of the below, and starts watching `.nv-reveal` / `.nv-reveal-group`. Runs once on load; call again after injecting markup. |
 | `nv.prefersReducedMotion` | `() => boolean` | |
 
@@ -530,20 +530,16 @@ everything still renders — state changes simply arrive instead of travelling.
 | `data-nv-tristate` | `input[type=checkbox]` | Click cycles unchecked → checked → partial. `="partial"` starts partial. Exposes `data-nv-state` (`off`/`on`/`partial`). |
 | `data-nv-scroller` | `.nv-scroller-frame` | Wires its `[data-nv-scroll="prev"\|"next"]` controls. |
 | `data-scrolled` | `.nv-nav` | Set by the application on scroll; gives the bar its shadow. |
-| `data-nv-direction` | `<html>` | Set during a transition by `nv.transition`. |
-| `data-nv-transition` | `<html>` | `"theme"` during an appearance change. |
+| `data-nv-direction` | `<html>` | Set during a view transition that application code starts itself. |
+| `data-nv-transition` | `<html>` | `"theme"` during a view transition the application starts for an appearance change. |
 | `data-nv-reveal` | revealed element | `pending` while waiting to scroll into view, `shown` while arriving; removed once it has. Set by `niveus.js`. |
-| `data-nv-travelling` | selection group | Set by `nv.transition` on each `scope` for the length of the change; names its marker. |
+| `data-nv-travelling` | selection group | Names the marker for a view transition the application starts itself. |
 
 ---
 
 ## Rules that bite
 
-1. **`view-transition-name` must be unique per document.** A duplicate makes
-   the browser skip the transition entirely. Markers are only named while their
-   group is in `scope`, so this only bites when one transition moves two groups
-   at once: give each its own `--nv-selection-name`. `.nv-nav-tabs` defaults
-   to `nv-tabs-selection` and everything else to `nv-selection`.
+1. **Do not start your own view transition around a page that has glass.** The snapshot cannot blur what sits behind frosted surfaces, so they go clear for its duration. Use `nv.transition`, which never snapshots the page. (If you must, `view-transition-name` has to be unique per document, or the browser skips the transition; give each selection group its own `--nv-selection-name`.)
 2. **A menu and its trigger must name the same anchor** through `--nv-anchor`,
    and the value must be unique per pair.
 3. **Hide inactive `.nv-tab-panel`s with `hidden`.** `nv.selectTab` relies
