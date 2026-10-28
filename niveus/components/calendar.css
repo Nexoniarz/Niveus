@@ -93,8 +93,12 @@
 }
 
 @media (hover: hover) {
+  /* Hover presses the day slightly into the surface; it is never a flat wash
+     of colour, because the chosen day is a raised key and the two must read as
+     the same material. */
   .nv-calendar__day:hover:not(:disabled, [aria-selected="true"]) {
     background-color: var(--nv-color-surface-hover);
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
   }
 }
 
@@ -105,7 +109,7 @@
 /* Today is ringed, not filled: filled means chosen. */
 .nv-calendar__day[aria-current="date"] {
   color: var(--nv-color-accent-text);
-  box-shadow: inset 0 0 0 var(--nv-border-width-strong) var(--nv-color-accent);
+  box-shadow: inset 0 0 0 var(--nv-border-width-strong) var(--nv-color-accent), var(--nv-elevation-inset-sm);
 }
 
 /* The chosen day is a small raised key, lit like the filled buttons. */
@@ -128,4 +132,15 @@
 .nv-calendar__day:disabled {
   color: var(--nv-color-text-disabled);
   cursor: not-allowed;
+}
+
+/* A day pressed into place springs up to full size. Only when it was just
+   chosen: a selection that is merely *there* on load stays still. */
+.nv-calendar__day[aria-selected="true"][data-nv-pop] {
+  animation: nv-day-pop var(--nv-duration-quick) var(--nv-ease-spring);
+}
+
+@keyframes nv-day-pop {
+  from { scale: 0.72; }
+  to { scale: 1; }
 }

@@ -15,9 +15,9 @@
    Glaze with something moving behind it.
 
    The format is 24-hour unless told otherwise. With data-nv-format-toggle a
-   24H / AM/PM switch sits under the wheels and adds an AM/PM wheel when chosen;
-   the value stays 24-hour either way, so a form never has to know which the
-   person used.
+   third wheel reads 24H / AM / PM: swipe it to AM or PM and the hour wheel
+   becomes 1–12; swipe back to 24H and it returns to 0–23. The value stays
+   24-hour either way, so a form never has to know which the person used.
 
    Without niveus.js the element is empty. For a no-script fallback, use a
    native <input type="time" class="nv-input">.
@@ -31,7 +31,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--nv-space-2);
-  padding: var(--nv-space-2) var(--nv-space-3) var(--nv-space-3);
+  padding: var(--nv-space-2) var(--nv-space-3);
   border-radius: var(--nv-radius-xl);
   color: var(--nv-color-text-primary);
 }
@@ -42,8 +42,10 @@
   gap: var(--nv-space-1);
 }
 
-/* The lens. It belongs to the wheels, not the picker, so the switch beneath
-   them never moves the centre. */
+/* The lens: a bar of tinted glass lying across the centre row. It is raised
+   like the keys elsewhere in the system — lit on top, shaded below, with a
+   contact line — not a flat band of colour, so it reads as a thing the wheels
+   pass under. */
 .nv-timepicker__wheels::before {
   content: "";
   position: absolute;
@@ -52,8 +54,9 @@
   block-size: var(--_row);
   translate: 0 -50%;
   background-color: var(--nv-color-selection);
+  background-image: var(--nv-sheen-raised);
   border-radius: var(--nv-radius-md);
-  box-shadow: var(--nv-highlight-top);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
   pointer-events: none;
 }
 
@@ -74,6 +77,9 @@
     currentcolor 72%,
     transparent
   );
+  /* Depth for the drum effect below: rows turn away from the viewer as they
+     leave the centre. */
+  perspective: 14rem;
 }
 
 .nv-timepicker__column::-webkit-scrollbar {
@@ -96,26 +102,41 @@
   font-size: var(--nv-font-size-lg);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
+  /* --nv-pull is how far the wheel has been dragged past its end. Letting go
+     removes it, and the spring easing carries the rows back with a small
+     overshoot — the way a phone's list gives at its limit and settles. */
+  translate: 0 var(--nv-pull, 0);
+  transition:
+    var(--nv-transition-colors),
+    translate var(--nv-duration-slower) var(--nv-ease-spring);
+}
+
+.nv-timepicker__column[data-nv-pulling] .nv-timepicker__option {
   transition: var(--nv-transition-colors);
+}
+
+/* A drum: each row shrinks, fades and tilts away in proportion to how far it
+   is from the lens. Driven by the scroll position itself, so it needs no
+   script and tracks a finger exactly. Where scroll-driven animation is missing
+   the rows are simply flat, which is still correct. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .nv-timepicker__option {
+      animation: nv-wheel-drum linear both;
+      animation-timeline: view(block);
+    }
+  }
+}
+
+@keyframes nv-wheel-drum {
+  0% { scale: 0.78; opacity: 0.25; rotate: x 52deg; }
+  50% { scale: 1; opacity: 1; rotate: x 0deg; }
+  100% { scale: 0.78; opacity: 0.25; rotate: x -52deg; }
 }
 
 .nv-timepicker__option[aria-selected="true"] {
   color: var(--nv-color-text-primary);
   font-weight: var(--nv-font-weight-semibold);
-}
-
-/* 24H / AM/PM. A button group under the wheels; the pressed one is the format
-   in use. 24-hour is the default, so it starts pressed. */
-.nv-timepicker__format {
-  align-self: center;
-}
-
-/* Pressed reads as pushed in: the format in use is a key held down. */
-.nv-timepicker__format .nv-button[aria-pressed="true"] {
-  background-color: var(--nv-color-accent-subtle);
-  background-image: none;
-  color: var(--nv-color-accent-text);
-  box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
 }
 
 .nv-timepicker__separator {

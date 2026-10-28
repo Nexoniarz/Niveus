@@ -146,6 +146,16 @@ freely.
 
 ### 4.1 Rules
 
+0. **One dimensionality per interface.** Niveus is skeuomorphic *all the way
+   through*. A raised key, a recessed well and a lit lens are physical objects;
+   a flat colour block beside them reads as a different system. Every
+   interactive or selected element MUST take its shape from the depth
+   vocabulary — bevel, sheen, inset, ledge, outline, elevation — and MUST NOT be
+   a flat fill. If a state seems to need a flat wash (a hover, a selection band,
+   a pressed toggle), give it depth instead: press it *into* the surface, or
+   lay a lit lens over it. Mixing flat and physical is the single most common
+   way a Niveus interface starts to look unfinished.
+
 1. **Solid by default.** Anything that *holds content* — windows, cards, dialogs,
    tables, forms — is solid. Translucency is reserved for what *floats over*
    content.
@@ -265,7 +275,17 @@ place to define a colour.
    attribute change (see 11).
 5. **Semantic colours mean one thing.** `success`, `warning`, `danger` carry
    meaning; they are not accents. Use `accent` for emphasis and brand.
-6. **Dark mode is designed, not generated.** When a new surface is added, look at
+6. **Every neutral carries the brand.** Surfaces, canvases, glass and shadows
+   are mixed with `--nv-brand` in *both* appearances, so changing one value
+   re-colours the whole interface and light and dark read as one material. A
+   neutral that ignores the brand — a literal grey or a bright white field — is
+   a defect. Light is a soft stone, not paper-white: a glaring field flattens
+   the bevels meant to shape it.
+7. **No native colour survives.** Anything the browser draws itself (checkbox
+   ticks, range and progress fills, the caret, selection, date glyphs) takes the
+   brand through `accent-color`, `caret-color` and `::selection`. Do not leave a
+   control in its default blue.
+8. **Dark mode is designed, not generated.** When a new surface is added, look at
    it in dark. If it only works on white, it is not finished.
 
 ---
@@ -320,7 +340,18 @@ have watched it reach.**
    away from the control that opened them.
 7. **No JavaScript, no breakage.** Continuity enhances; it MUST NOT be required
    for function.
-8. **Restraint wins ties.** When continuity and restraint conflict, animate less.
+8. **Edges give.** A scroller that reaches its end yields and springs back
+   (rubber-band) instead of stopping dead, the way a phone's list does. Use the
+   spring easing token, cap the stretch, and leave touch to the platform where
+   it already does this. The wheels in the time picker are the reference.
+9. **Let scroll drive depth.** Where an effect is a function of scroll
+   position — a drum's rows fading and tilting away from the centre — express it
+   as a scroll-driven animation in CSS, not as script, so it tracks a finger
+   exactly and costs no frame budget. Provide a fallback where the feature is missing — either the plain state, or the same curve from script (as the wheels do for Firefox) — and test input differences between engines: wheel notches arrive in pixels in Chromium and in *lines* in Firefox, so normalise `deltaMode` before using `deltaY`.
+10. **Local motion for local change.** Changing a month moves the month, not the
+    page. Reserve page-wide view transitions for changes that are about the
+    page: appearance, route, a selection travelling between regions.
+11. **Restraint wins ties.** When continuity and restraint conflict, animate less.
 
 ---
 
@@ -368,8 +399,10 @@ Niveus provides the base; the author is responsible for the rest.
    visible focus order that follows reading order.
 4. **Labels.** Every field has a programmatic label. Errors pair
    `aria-invalid="true"` with `aria-describedby` pointing at the message.
-5. **Dialogs and popovers** trap or restore focus (native `<dialog>` and
-   `popover` do; custom ones MUST).
+5. **Focus management.** A modal `<dialog>` opened with `showModal()` traps focus
+   and restores it on close. A `popover` does **not** trap focus: move focus into
+   it on open where it holds controls, and return it to the trigger on close, as
+   the popup list does. Custom overlays MUST do both.
 6. **Live regions** (`aria-live`) for content that changes without focus —
    a calendar's month title is one.
 7. **Test the extremes.** Verify text on translucent materials at the
@@ -396,8 +429,8 @@ The complete list and API live in `REFERENCE.md`. These are the rules for
      month so it never changes height. The grid and states are plain markup;
      `niveus.js` only builds days, steps months and provides keyboard movement.
    - **Time picker** (`.nv-timepicker`): scroll-snap wheels. **24-hour is the
-     default**; `data-nv-format-toggle` adds a 24H / AM/PM switch beneath, and
-     AM/PM adds a third wheel. The value is always 24-hour (`HH:MM`), so a form
+     default**; `data-nv-format-toggle` adds a third wheel of 24H / AM / PM: swiping it
+     changes the format, and the hour wheel follows. The value is always 24-hour (`HH:MM`), so a form
      never needs to know which the person used. For a no-script fallback use
      `<input type="time" class="nv-input">`; the wheels are an enhancement, not
      the only path.

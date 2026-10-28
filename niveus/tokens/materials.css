@@ -54,6 +54,9 @@
   --nv-glaze-tint-min: 4%;     /* tint opacity at frost 0 */
   --nv-glaze-tint-max: 78%;    /* tint opacity at frost 1 */
   --nv-glaze-rim: 1.5px;
+  /* The light a pane holds just inside its edge, so it reads as a thick lens
+     rather than a flat film. */
+  --nv-glaze-glow: inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular);
 
   /* --- Sheen ------------------------------------------------------------------
      raised    neutral controls: buttons, the selected tab, a titlebar

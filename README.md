@@ -494,6 +494,7 @@ to the state change simply happening rather than travelling:
 | `interpolate-size` | disclosure height | content appears at full height (`.nv-collapse` still animates) |
 | Anchor positioning | menus tied to their trigger | the menu centres itself |
 | `popover` | menus, light dismiss | needs the application's own toggle |
+| Scroll-driven animation | the time picker's drum effect | `niveus.js` applies the same curve from the scroll position (Firefox) |
 
 ---
 

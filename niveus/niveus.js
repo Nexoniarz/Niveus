@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: Apache-2.0 */
 /* ==========================================================================
    Niveus — continuity helpers
    --------------------------------------------------------------------------
@@ -492,6 +493,8 @@
       grid.setAttribute("aria-labelledby", title.id);
     }
 
+    var pop = false;
+
     function render() {
       if (title) title.textContent = view.toLocaleDateString(locale, { month: "long", year: "numeric" });
       grid.textContent = "";
@@ -525,6 +528,7 @@
         }
         var iso = isoDate(cursor);
         var day = document.createElement("button");
+        if (pop && iso === selectedIso) day.dataset.nvPop = "";
         day.type = "button";
         day.className = "nv-calendar__day";
         day.setAttribute("role", "gridcell");
@@ -558,10 +562,36 @@
       var update = function () {
         view = new Date(date.getFullYear(), date.getMonth(), 1);
         render();
+        pop = false;
         if (focus) focusActive();
       };
-      if (monthChanged) transition(update, { direction: direction });
-      else update();
+      update();
+      if (monthChanged) slide(direction);
+    }
+
+    // The month slides in from the side it lies on, with the easing and
+    // duration the rest of the system uses, so it collapses with reduced
+    // motion like everything else. Only the grid moves; the page does not.
+    function slide(direction) {
+      if (prefersReducedMotion() || !grid.animate) return;
+      var root = getComputedStyle(document.documentElement);
+      var duration = parseFloat(root.getPropertyValue("--nv-duration-expand"));
+      if (!duration) return;
+      var easing = root.getPropertyValue("--nv-ease-emphasized").trim() || "ease-out";
+      var shift = (direction === "forward" ? 1 : -1) * 28;
+      grid.animate(
+        [
+          { opacity: 0, translate: shift + "px 0", filter: "blur(3px)" },
+          { opacity: 1, translate: "0 0", filter: "blur(0)" },
+        ],
+        { duration: duration, easing: easing }
+      );
+      if (title) {
+        title.animate(
+          [{ opacity: 0, translate: shift / 2 + "px 0" }, { opacity: 1, translate: "0 0" }],
+          { duration: duration, easing: easing }
+        );
+      }
     }
 
     function stepMonth(count) {
@@ -574,14 +604,18 @@
     function choose(button) {
       selected = parseDate(button.dataset.date);
       active = selected;
+      pop = true;
       calendar.dataset.nvValue = button.dataset.date;
       if (button.dataset.outside !== undefined) {
         show(selected, selected > view ? "forward" : "backward", true);
       } else {
         grid.querySelectorAll('[aria-selected="true"]').forEach(function (other) {
           other.removeAttribute("aria-selected");
+          delete other.dataset.nvPop;
         });
         button.setAttribute("aria-selected", "true");
+        button.dataset.nvPop = "";
+        pop = false;
       }
       calendar.dispatchEvent(new CustomEvent("nv:date", {
         bubbles: true,
@@ -632,7 +666,8 @@
    * Builds and drives one .nv-timepicker from data-*: nv-value (HH:MM, 24h),
    * nv-hours ("24", the default, or "12" for an AM/PM wheel), nv-step (minute
    * interval), nv-name (adds a hidden input for forms) and nv-format-toggle
-   * (adds a 24H / AM/PM switch under the wheels). The value is always 24-hour,
+   * (adds a third wheel of 24H / AM / PM: swiping it changes the format). The
+   * value is always 24-hour,
    * whatever the wheels show. Fires `nv:time` with { value } as the wheels
    * settle on a new row.
    */
@@ -652,9 +687,10 @@
 
     var wheels = document.createElement("div");
     wheels.className = "nv-timepicker__wheels";
-    var hourColumn, minuteColumn, periodColumn;
+    var hourColumn, minuteColumn, periodColumn, formatColumn;
     var field = null;
-    var formatButtons = [];
+    var modeTimer = 0;
+    var withFormat = picker.hasAttribute("data-nv-format-toggle");
     var placed = false;
     var last = "";
     var frame = 0;
@@ -680,10 +716,22 @@
       var hi = indexOf(hourColumn);
       var mi = indexOf(minuteColumn);
       if (hi < 0 || mi < 0) return;
-      var pm = periodColumn ? indexOf(periodColumn) === 1 : false;
+      var fi = formatColumn ? indexOf(formatColumn) : -1;
+      if (formatColumn && fi < 0) return;
+
+      // The format wheel disagrees with the hour wheel: a new format was
+      // swiped to. Wait for it to settle, then rebuild the hours for it.
+      if (formatColumn && (fi > 0) !== twelve) {
+        global.clearTimeout(modeTimer);
+        modeTimer = global.setTimeout(switchFormat, 160);
+        return;
+      }
+
+      var pm = formatColumn ? fi === 2 : periodColumn ? indexOf(periodColumn) === 1 : false;
       mark(hourColumn, hi);
       mark(minuteColumn, mi);
-      if (periodColumn) mark(periodColumn, pm ? 1 : 0);
+      if (formatColumn) mark(formatColumn, fi);
+      else if (periodColumn) mark(periodColumn, pm ? 1 : 0);
 
       var hour = twelve ? ((hi + 1) % 12) + (pm ? 12 : 0) : hi;
       var value = pad(hour) + ":" + minuteItems[mi];
@@ -708,8 +756,22 @@
       var mi = Math.round(minute / step) % minuteItems.length;
       scrollTo(hourColumn, hi, false);
       scrollTo(minuteColumn, mi, false);
-      if (periodColumn) scrollTo(periodColumn, h24 >= 12 ? 1 : 0, false);
+      if (formatColumn) scrollTo(formatColumn, twelve ? (h24 >= 12 ? 2 : 1) : 0, false);
+      else if (periodColumn) scrollTo(periodColumn, h24 >= 12 ? 1 : 0, false);
       read();
+    }
+
+    // Going to 12-hour takes the half of the day that was swiped to; going back
+    // to 24-hour keeps the moment, which the hour wheel has been tracking.
+    function switchFormat() {
+      var fi = indexOf(formatColumn);
+      if (fi < 0) return;
+      var wants = fi > 0;
+      if (wants === twelve) { read(); return; }
+      if (wants) h24 = (h24 % 12) + (fi === 2 ? 12 : 0);
+      twelve = wants;
+      picker.dataset.nvHours = twelve ? "12" : "24";
+      build();
     }
 
     function buildColumn(label, items) {
@@ -726,9 +788,51 @@
         list.appendChild(option);
       });
 
+      // Past either end the wheel gives, as a phone's list does, then springs
+      // back. Touch is left to the platform (iOS bounces, Android stretches);
+      // overscroll-behavior keeps that inside the wheel. Mouse wheels and
+      // trackpads, which have no such effect on a nested scroller, are handled
+      // here. The distance has resistance: the further it is pulled, the less
+      // each notch moves it.
+      var pull = 0;
+      var settle = 0;
+      var limit = 36;
+
+      function setPull(value) {
+        pull = value;
+        list.style.setProperty("--nv-pull", value.toFixed(1) + "px");
+        list.dataset.nvPulling = "";
+        global.clearTimeout(settle);
+        settle = global.setTimeout(function () {
+          pull = 0;
+          delete list.dataset.nvPulling;
+          list.style.removeProperty("--nv-pull");
+        }, 90);
+      }
+
+      list.addEventListener("wheel", function (event) {
+        if (prefersReducedMotion()) return;
+        var atTop = list.scrollTop <= 0;
+        var atBottom = list.scrollTop >= list.scrollHeight - list.clientHeight - 1;
+        // Chromium reports a wheel notch in pixels (~100); Firefox reports it
+        // in lines (~3). Both are brought to pixels, or the pull would be
+        // invisible in one of them.
+        var delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? list.clientHeight : 1);
+        var pushing = (atTop && delta < 0) || (atBottom && delta > 0);
+        if (!pushing && !pull) return;
+        event.preventDefault();
+        var next = pull - delta * 0.12 * (1 - Math.abs(pull) / limit);
+        setPull(Math.max(-limit, Math.min(limit, next)));
+      }, { passive: false });
+
+      // A key pressed at the end nudges the wheel instead of doing nothing.
+      list.nvNudge = function (direction) {
+        if (!prefersReducedMotion()) setPull(direction * 12);
+      };
+
       list.addEventListener("scroll", function () {
         if (frame) return;
-        frame = global.requestAnimationFrame(function () { frame = 0; read(); });
+        frame = global.requestAnimationFrame(function () { frame = 0; read(); drum(list); });
       }, { passive: true });
 
       list.addEventListener("click", function (event) {
@@ -750,9 +854,39 @@
           default: return;
         }
         event.preventDefault();
-        scrollTo(list, Math.max(0, Math.min(end, to)), true);
+        var clamped = Math.max(0, Math.min(end, to));
+        if (clamped === index) list.nvNudge(to < index ? 1 : -1);
+        scrollTo(list, clamped, true);
       });
       return list;
+    }
+
+    // The drum effect is a CSS scroll-driven animation (see timepicker.css).
+    // Where that does not exist — Firefox — the same curve is applied from the
+    // scroll position here, so the wheels look the same in both. Only the few
+    // rows near the lens are touched.
+    var scrollDriven = global.CSS && global.CSS.supports && global.CSS.supports("animation-timeline", "view()");
+
+    function drum(list) {
+      if (scrollDriven || prefersReducedMotion()) return;
+      var first = list.firstElementChild;
+      var row = first ? first.offsetHeight : 0;
+      if (!row) return;
+      var centre = list.scrollTop / row;
+      var reach = list.clientHeight + row;
+      for (var i = 0; i < list.children.length; i++) {
+        var away = i - centre;
+        var option = list.children[i];
+        if (Math.abs(away) > 3) {
+          option.style.opacity = "0.25";
+          continue;
+        }
+        // 1 at the lens, 0 at the edge of the wheel; the CSS keyframes, spelt out.
+        var near = 1 - Math.min(1, Math.abs(away) * row / reach * 2);
+        option.style.scale = String(0.78 + 0.22 * near);
+        option.style.opacity = String(0.25 + 0.75 * near);
+        option.style.rotate = "x " + ((away < 0 ? 1 : -1) * 52 * (1 - near)).toFixed(1) + "deg";
+      }
     }
 
     function colon() {
@@ -773,17 +907,19 @@
       wheels.textContent = "";
       hourColumn = buildColumn("Hours", hourItems);
       minuteColumn = buildColumn("Minutes", minuteItems);
-      periodColumn = twelve ? buildColumn("AM or PM", ["AM", "PM"]) : null;
+      formatColumn = withFormat ? buildColumn("Time format", ["24H", "AM", "PM"]) : null;
+      periodColumn = twelve && !withFormat ? buildColumn("AM or PM", ["AM", "PM"]) : null;
       wheels.appendChild(hourColumn);
       wheels.appendChild(colon());
       wheels.appendChild(minuteColumn);
-      if (periodColumn) wheels.appendChild(periodColumn);
+      if (formatColumn) wheels.appendChild(formatColumn);
+      else if (periodColumn) wheels.appendChild(periodColumn);
 
-      formatButtons.forEach(function (button) {
-        button.setAttribute("aria-pressed", String((button.dataset.hours === "12") === twelve));
-      });
       placed = false;
       place();
+      [hourColumn, minuteColumn, formatColumn || periodColumn].forEach(function (list) {
+        if (list) drum(list);
+      });
     }
 
     picker.textContent = "";
@@ -792,30 +928,6 @@
       picker.setAttribute("aria-label", "Time");
     }
     picker.appendChild(wheels);
-
-    if (picker.hasAttribute("data-nv-format-toggle")) {
-      var format = document.createElement("div");
-      format.className = "nv-timepicker__format nv-button-group";
-      format.setAttribute("role", "group");
-      format.setAttribute("aria-label", "Time format");
-      [["24", "24H"], ["12", "AM/PM"]].forEach(function (option) {
-        var button = document.createElement("button");
-        button.type = "button";
-        button.className = "nv-button nv-button--sm";
-        button.dataset.hours = option[0];
-        button.textContent = option[1];
-        button.addEventListener("click", function () {
-          var wants = option[0] === "12";
-          if (wants === twelve) return;
-          twelve = wants;
-          picker.dataset.nvHours = option[0];
-          build();
-        });
-        formatButtons.push(button);
-        format.appendChild(button);
-      });
-      picker.appendChild(format);
-    }
 
     if (picker.dataset.nvName) {
       field = document.createElement("input");

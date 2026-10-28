@@ -134,6 +134,14 @@ textarea {
   border-radius: var(--nv-radius-xs);
 }
 
+/* Whatever the browser draws itself — a bare checkbox, a progress bar, the
+   text caret, a date field's glyphs — takes the brand, so no native colour
+   survives next to the system's own. */
+:root {
+  accent-color: var(--nv-color-accent);
+  caret-color: var(--nv-color-accent);
+}
+
 ::selection {
   background-color: var(--nv-color-selection);
   color: var(--nv-color-text-primary);

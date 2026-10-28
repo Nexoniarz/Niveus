@@ -76,9 +76,8 @@ States come from the element: `disabled`, `aria-disabled`, `aria-busy="true"`
 | `.nv-calendar__grid` | day grid | `role="grid"`; built by `niveus.js` or written by hand. |
 | `.nv-calendar__weekday` | weekday column header | |
 | `.nv-calendar__day` | day cell | `aria-selected="true"` chosen · `aria-current="date"` today · `data-outside` neighbouring month · `disabled` out of range. |
-| `.nv-timepicker` | time picker, wheel picker | Scroll-snap wheels built from `data-nv-timepicker` plus `data-nv-value="HH:MM"` / `-hours` (`24` default, `12` adds an AM/PM wheel) / `-step` / `-name` / `-format-toggle` (a 24H / AM/PM switch under the wheels). The value is always 24-hour. Fires `nv:time`. Empty without the script; use `<input type="time" class="nv-input">` as the fallback. |
+| `.nv-timepicker` | time picker, wheel picker | Scroll-snap wheels built from `data-nv-timepicker` plus `data-nv-value="HH:MM"` / `-hours` (`24` default, `12` adds an AM/PM wheel) / `-step` / `-name` / `-format-toggle` (a third wheel of 24H / AM / PM; swipe it to change the format). The value is always 24-hour. Fires `nv:time`. Empty without the script; use `<input type="time" class="nv-input">` as the fallback. |
 | `.nv-timepicker__wheels` | wheel row, picker body | Holds the columns and the selection lens. |
-| `.nv-timepicker__format` | 24H / AM/PM switch, time format toggle | Button group under the wheels; added by `data-nv-format-toggle`. |
 | `.nv-timepicker__column` | wheel, picker column | One scrolling list (`role="listbox"`). |
 | `.nv-timepicker__option` | wheel row | `aria-selected="true"` is the row in the lens. |
 | `.nv-timepicker__separator` | colon between wheels | |
@@ -472,7 +471,7 @@ level. Components never opt in individually.
 subtree) · `--nv-glaze-blur-max` · `--nv-glaze-tint-min` ·
 `--nv-glaze-tint-max` · `--nv-glaze-rim` · `--nv-light-x` / `--nv-light-y` /
 `--nv-light-angle` (set by `niveus.js` on each glaze surface) ·
-`--nv-slider-pos` (set by `niveus.js`) · `--nv-focus-ring` · `--nv-focus-ring-width` · `--nv-border-width` ·
+`--nv-slider-pos` (set by `niveus.js`) · `--nv-pull` (set by `niveus.js` on a time-picker wheel pulled past its end) · `--nv-focus-ring` · `--nv-focus-ring-width` · `--nv-border-width` ·
 `--nv-border-width-strong` · `--nv-target-min` · `--nv-layout-gutter` ·
 `--nv-layout-max-width` · `--nv-selection-name` · `--nv-anchor` ·
 `--nv-button-offset` · `--nv-bed-tint` · `--nv-scroller-item` ·
@@ -526,7 +525,7 @@ everything still renders — state changes simply arrive instead of travelling.
 | `data-nv-var-target` | `.nv-slider` | Selector of the element that receives the property. Default: `<html>`. |
 | `data-nv-calendar` | `.nv-calendar` | Marks a calendar for `niveus.js`. Also `data-nv-value`, `-min`, `-max` (`YYYY-MM-DD`), `-locale`, `-week-start` (0 = Sunday). |
 | `data-nv-calendar-step` | button in a calendar | `-1` or `1`: months to move. |
-| `data-nv-timepicker` | `.nv-timepicker` | Marks a time picker. Also `data-nv-value` (`HH:MM`), `-hours` (`24` default / `12`), `-step` (minutes), `-name` (hidden form field), `-format-toggle` (adds the 24H / AM/PM switch). |
+| `data-nv-timepicker` | `.nv-timepicker` | Marks a time picker. Also `data-nv-value` (`HH:MM`), `-hours` (`24` default / `12`), `-step` (minutes), `-name` (hidden form field), `-format-toggle` (adds the 24H / AM / PM wheel). |
 | `data-nv-picker-label` | child of a picker trigger | Receives the chosen option's text; default is the trigger itself. |
 | `data-nv-scroller` | `.nv-scroller-frame` | Wires its `[data-nv-scroll="prev"\|"next"]` controls. |
 | `data-scrolled` | `.nv-nav` | Set by the application on scroll; gives the bar its shadow. |

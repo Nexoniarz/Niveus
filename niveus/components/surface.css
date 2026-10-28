@@ -99,7 +99,7 @@
   border: var(--nv-border-width) solid transparent;
   box-shadow:
     var(--nv-highlight-top-strong),
-    inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular),
+    var(--nv-glaze-glow),
     var(--nv-outline),
     var(--nv-elevation-4);
   backdrop-filter:

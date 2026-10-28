@@ -811,6 +811,9 @@
     --nv-glaze-tint-min: 4%;     /* tint opacity at frost 0 */
     --nv-glaze-tint-max: 78%;    /* tint opacity at frost 1 */
     --nv-glaze-rim: 1.5px;
+    /* The light a pane holds just inside its edge, so it reads as a thick lens
+       rather than a flat film. */
+    --nv-glaze-glow: inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular);
 
     /* --- Sheen ------------------------------------------------------------------
        raised    neutral controls: buttons, the selected tab, a titlebar
@@ -907,16 +910,18 @@
   :root,
   [data-nv-brand] {
     /* --- Canvas and surfaces -----------------------------------------------
-       Paper stays paper: the two surfaces that hold content are left untinted so
-       text keeps its contrast. Everything the surfaces sit *in* picks up a trace
-       of the brand, which is what stops an accent from looking stuck on. */
-    --nv-light-background: color-mix(in oklab, #e8e5de, var(--nv-brand) var(--nv-brand-tint));
-    --nv-light-background-subtle: color-mix(in oklab, #eeece6, var(--nv-brand) var(--nv-brand-tint));
-    --nv-light-surface: #fbfbfa;
-    --nv-light-surface-elevated: #f8f8f6;
-    --nv-light-surface-inset: color-mix(in oklab, #eeede8, var(--nv-brand) var(--nv-brand-tint));
-    --nv-light-surface-hover: color-mix(in oklab, #f1f0ec, var(--nv-brand) var(--nv-brand-tint));
-    --nv-light-surface-active: color-mix(in oklab, #e6e5e0, var(--nv-brand) var(--nv-brand-tint));
+       Every neutral carries a trace of the brand, content surfaces included, the
+       way dark does: that is what stops an accent from looking stuck on, and what
+       makes the two appearances read as one material. The paper is a soft
+       grey-stone, not white — a bright field glares, and flattens the bevels that
+       are meant to shape it. Text keeps its contrast: the primary is neutral. */
+    --nv-light-background: color-mix(in oklab, #d8d5ce, var(--nv-brand) calc(var(--nv-brand-tint) * 2));
+    --nv-light-background-subtle: color-mix(in oklab, #dedbd4, var(--nv-brand) calc(var(--nv-brand-tint) * 2));
+    --nv-light-surface: color-mix(in oklab, #eeede9, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-elevated: color-mix(in oklab, #f2f1ed, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-inset: color-mix(in oklab, #dddbd4, var(--nv-brand) calc(var(--nv-brand-tint) * 2));
+    --nv-light-surface-hover: color-mix(in oklab, #e6e4de, var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-surface-active: color-mix(in oklab, #dad8d1, var(--nv-brand) var(--nv-brand-tint));
     --nv-light-scrim: rgb(28 24 18 / 0.34);
 
     /* --- Text ---------------------------------------------------------------
@@ -925,7 +930,7 @@
        loss of legibility. */
     --nv-light-text-primary: var(--nv-palette-neutral-900);
     --nv-light-text-secondary: color-mix(in oklab, var(--nv-palette-neutral-600), var(--nv-brand) 8%);
-    --nv-light-text-tertiary: color-mix(in oklab, var(--nv-palette-neutral-500), var(--nv-brand) 8%);
+    --nv-light-text-tertiary: color-mix(in oklab, color-mix(in oklab, var(--nv-palette-neutral-500), var(--nv-palette-neutral-600) 40%), var(--nv-brand) 8%);
     --nv-light-text-disabled: var(--nv-palette-neutral-400);
     --nv-light-text-inverted: var(--nv-palette-neutral-0);
 
@@ -1010,20 +1015,20 @@
     /* --- Depth and material -------------------------------------------------
        Three shadow colors build every elevation level: an ambient contact
        shadow, a soft penumbra, and a deeper umbra for high elevations. */
-    --nv-light-shadow-ambient: rgb(40 32 20 / 0.08);
-    --nv-light-shadow-penumbra: rgb(40 32 20 / 0.1);
-    --nv-light-shadow-umbra: rgb(40 32 20 / 0.16);
-    --nv-light-shadow-inset: rgb(40 32 20 / 0.14);
-    --nv-light-highlight: rgb(255 255 255 / 0.9);
-    --nv-light-highlight-strong: rgb(255 255 255 / 1);
+    --nv-light-shadow-ambient: rgb(32 28 22 / 0.12);
+    --nv-light-shadow-penumbra: rgb(32 28 22 / 0.15);
+    --nv-light-shadow-umbra: rgb(32 28 22 / 0.24);
+    --nv-light-shadow-inset: rgb(32 28 22 / 0.2);
+    --nv-light-highlight: rgb(255 255 255 / 0.7);
+    --nv-light-highlight-strong: rgb(255 255 255 / 0.85);
 
     /* Paper already has a border doing the contact work, so the outline only
        softens it; the bottom shade is faint for the same reason. */
-    --nv-light-lowlight: rgb(40 32 20 / 0.09);
-    --nv-light-outline: rgb(40 32 20 / 0.05);
+    --nv-light-lowlight: rgb(32 28 22 / 0.14);
+    --nv-light-outline: rgb(32 28 22 / 0.08);
 
-    --nv-light-sheen-top: rgb(255 255 255 / 0.9);
-    --nv-light-sheen-bottom: rgb(40 32 20 / 0.07);
+    --nv-light-sheen-top: rgb(255 255 255 / 0.55);
+    --nv-light-sheen-bottom: rgb(32 28 22 / 0.11);
     --nv-light-sheen-strong-top: rgb(255 255 255 / 0.32);
     --nv-light-sheen-strong-bottom: rgb(20 16 10 / 0.16);
     --nv-light-glow: oklch(from var(--nv-light-accent) l c h / 0.3);
@@ -1039,16 +1044,16 @@
     --nv-light-elevation-tint-4: transparent;
     --nv-light-elevation-tint-5: transparent;
 
-    --nv-light-material-frosted: rgb(252 252 250 / 0.56);
-    --nv-light-material-glass: rgb(252 252 250 / 0.4);
-    --nv-light-material-border: rgb(255 255 255 / 0.72);
+    --nv-light-material-frosted: color-mix(in oklab, rgb(228 227 222 / 0.6), var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-material-glass: color-mix(in oklab, rgb(228 227 222 / 0.44), var(--nv-brand) var(--nv-brand-tint));
+    --nv-light-material-border: rgb(255 255 255 / 0.5);
 
     /* Glaze: the tint it is made of, the rim that catches light on the side
        facing the pointer, the rim on the far side, and the specular bloom. */
-    --nv-light-material-glaze: rgb(255 255 255 / 1);
-    --nv-light-glaze-rim-lit: rgb(255 255 255 / 1);
-    --nv-light-glaze-rim-far: rgb(255 255 255 / 0.5);
-    --nv-light-glaze-specular: rgb(255 255 255 / 0.6);
+    --nv-light-material-glaze: color-mix(in oklab, rgb(232 231 226 / 1), var(--nv-brand) calc(var(--nv-brand-tint) * 2));
+    --nv-light-glaze-rim-lit: rgb(255 255 255 / 0.9);
+    --nv-light-glaze-rim-far: rgb(255 255 255 / 0.4);
+    --nv-light-glaze-specular: rgb(255 255 255 / 0.4);
 
     /* --- Window controls --------------------------------------------------------- */
     --nv-light-window-close: var(--nv-palette-window-close);
@@ -1367,6 +1372,14 @@
     outline: var(--nv-focus-ring-width) solid var(--nv-color-focus-ring);
     outline-offset: 2px;
     border-radius: var(--nv-radius-xs);
+  }
+
+  /* Whatever the browser draws itself — a bare checkbox, a progress bar, the
+     text caret, a date field's glyphs — takes the brand, so no native colour
+     survives next to the system's own. */
+  :root {
+    accent-color: var(--nv-color-accent);
+    caret-color: var(--nv-color-accent);
   }
 
   ::selection {
@@ -1840,7 +1853,7 @@
     border: var(--nv-border-width) solid transparent;
     box-shadow:
       var(--nv-highlight-top-strong),
-      inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular),
+      var(--nv-glaze-glow),
       var(--nv-outline),
       var(--nv-elevation-4);
     backdrop-filter:
@@ -2772,7 +2785,7 @@
     box-shadow: var(--nv-outline), var(--nv-elevation-2);
     appearance: none;
     -webkit-appearance: none;
-    transition: scale var(--nv-duration-fast) var(--nv-ease-standard);
+    transition: scale var(--nv-duration-quick) var(--nv-ease-spring);
   }
 
   .nv-slider::-moz-range-thumb {
@@ -2784,12 +2797,17 @@
     border: 0;
     border-radius: var(--nv-radius-full);
     box-shadow: var(--nv-outline), var(--nv-elevation-2);
-    transition: scale var(--nv-duration-fast) var(--nv-ease-standard);
+    transition: scale var(--nv-duration-quick) var(--nv-ease-spring);
   }
 
-  .nv-slider:hover::-webkit-slider-thumb { scale: 1.06; }
+  /* Hover only where there is a pointer to hover with; touch would leave the
+     thumb enlarged after a tap. */
+  @media (hover: hover) {
+    .nv-slider:hover::-webkit-slider-thumb { scale: 1.06; }
+    .nv-slider:hover::-moz-range-thumb { scale: 1.06; }
+  }
+
   .nv-slider:active::-webkit-slider-thumb { scale: 0.96; }
-  .nv-slider:hover::-moz-range-thumb { scale: 1.06; }
   .nv-slider:active::-moz-range-thumb { scale: 0.96; }
 
   .nv-slider:focus-visible::-webkit-slider-thumb {
@@ -3971,8 +3989,12 @@
   }
 
   @media (hover: hover) {
+    /* Hover presses the day slightly into the surface; it is never a flat wash
+       of colour, because the chosen day is a raised key and the two must read as
+       the same material. */
     .nv-calendar__day:hover:not(:disabled, [aria-selected="true"]) {
       background-color: var(--nv-color-surface-hover);
+      box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
     }
   }
 
@@ -3983,7 +4005,7 @@
   /* Today is ringed, not filled: filled means chosen. */
   .nv-calendar__day[aria-current="date"] {
     color: var(--nv-color-accent-text);
-    box-shadow: inset 0 0 0 var(--nv-border-width-strong) var(--nv-color-accent);
+    box-shadow: inset 0 0 0 var(--nv-border-width-strong) var(--nv-color-accent), var(--nv-elevation-inset-sm);
   }
 
   /* The chosen day is a small raised key, lit like the filled buttons. */
@@ -4007,6 +4029,17 @@
     color: var(--nv-color-text-disabled);
     cursor: not-allowed;
   }
+
+  /* A day pressed into place springs up to full size. Only when it was just
+     chosen: a selection that is merely *there* on load stays still. */
+  .nv-calendar__day[aria-selected="true"][data-nv-pop] {
+    animation: nv-day-pop var(--nv-duration-quick) var(--nv-ease-spring);
+  }
+
+  @keyframes nv-day-pop {
+    from { scale: 0.72; }
+    to { scale: 1; }
+  }
 }
 @layer niveus.components {
   /* ==========================================================================
@@ -4026,9 +4059,9 @@
      Glaze with something moving behind it.
 
      The format is 24-hour unless told otherwise. With data-nv-format-toggle a
-     24H / AM/PM switch sits under the wheels and adds an AM/PM wheel when chosen;
-     the value stays 24-hour either way, so a form never has to know which the
-     person used.
+     third wheel reads 24H / AM / PM: swipe it to AM or PM and the hour wheel
+     becomes 1–12; swipe back to 24H and it returns to 0–23. The value stays
+     24-hour either way, so a form never has to know which the person used.
 
      Without niveus.js the element is empty. For a no-script fallback, use a
      native <input type="time" class="nv-input">.
@@ -4042,7 +4075,7 @@
     flex-direction: column;
     align-items: center;
     gap: var(--nv-space-2);
-    padding: var(--nv-space-2) var(--nv-space-3) var(--nv-space-3);
+    padding: var(--nv-space-2) var(--nv-space-3);
     border-radius: var(--nv-radius-xl);
     color: var(--nv-color-text-primary);
   }
@@ -4053,8 +4086,10 @@
     gap: var(--nv-space-1);
   }
 
-  /* The lens. It belongs to the wheels, not the picker, so the switch beneath
-     them never moves the centre. */
+  /* The lens: a bar of tinted glass lying across the centre row. It is raised
+     like the keys elsewhere in the system — lit on top, shaded below, with a
+     contact line — not a flat band of colour, so it reads as a thing the wheels
+     pass under. */
   .nv-timepicker__wheels::before {
     content: "";
     position: absolute;
@@ -4063,8 +4098,9 @@
     block-size: var(--_row);
     translate: 0 -50%;
     background-color: var(--nv-color-selection);
+    background-image: var(--nv-sheen-raised);
     border-radius: var(--nv-radius-md);
-    box-shadow: var(--nv-highlight-top);
+    box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
     pointer-events: none;
   }
 
@@ -4085,6 +4121,9 @@
       currentcolor 72%,
       transparent
     );
+    /* Depth for the drum effect below: rows turn away from the viewer as they
+       leave the centre. */
+    perspective: 14rem;
   }
 
   .nv-timepicker__column::-webkit-scrollbar {
@@ -4107,26 +4146,41 @@
     font-size: var(--nv-font-size-lg);
     font-variant-numeric: tabular-nums;
     cursor: pointer;
+    /* --nv-pull is how far the wheel has been dragged past its end. Letting go
+       removes it, and the spring easing carries the rows back with a small
+       overshoot — the way a phone's list gives at its limit and settles. */
+    translate: 0 var(--nv-pull, 0);
+    transition:
+      var(--nv-transition-colors),
+      translate var(--nv-duration-slower) var(--nv-ease-spring);
+  }
+
+  .nv-timepicker__column[data-nv-pulling] .nv-timepicker__option {
     transition: var(--nv-transition-colors);
+  }
+
+  /* A drum: each row shrinks, fades and tilts away in proportion to how far it
+     is from the lens. Driven by the scroll position itself, so it needs no
+     script and tracks a finger exactly. Where scroll-driven animation is missing
+     the rows are simply flat, which is still correct. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .nv-timepicker__option {
+        animation: nv-wheel-drum linear both;
+        animation-timeline: view(block);
+      }
+    }
+  }
+
+  @keyframes nv-wheel-drum {
+    0% { scale: 0.78; opacity: 0.25; rotate: x 52deg; }
+    50% { scale: 1; opacity: 1; rotate: x 0deg; }
+    100% { scale: 0.78; opacity: 0.25; rotate: x -52deg; }
   }
 
   .nv-timepicker__option[aria-selected="true"] {
     color: var(--nv-color-text-primary);
     font-weight: var(--nv-font-weight-semibold);
-  }
-
-  /* 24H / AM/PM. A button group under the wheels; the pressed one is the format
-     in use. 24-hour is the default, so it starts pressed. */
-  .nv-timepicker__format {
-    align-self: center;
-  }
-
-  /* Pressed reads as pushed in: the format in use is a key held down. */
-  .nv-timepicker__format .nv-button[aria-pressed="true"] {
-    background-color: var(--nv-color-accent-subtle);
-    background-image: none;
-    color: var(--nv-color-accent-text);
-    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
   }
 
   .nv-timepicker__separator {

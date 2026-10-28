@@ -75,7 +75,7 @@
   box-shadow: var(--nv-outline), var(--nv-elevation-2);
   appearance: none;
   -webkit-appearance: none;
-  transition: scale var(--nv-duration-fast) var(--nv-ease-standard);
+  transition: scale var(--nv-duration-quick) var(--nv-ease-spring);
 }
 
 .nv-slider::-moz-range-thumb {
@@ -87,12 +87,17 @@
   border: 0;
   border-radius: var(--nv-radius-full);
   box-shadow: var(--nv-outline), var(--nv-elevation-2);
-  transition: scale var(--nv-duration-fast) var(--nv-ease-standard);
+  transition: scale var(--nv-duration-quick) var(--nv-ease-spring);
 }
 
-.nv-slider:hover::-webkit-slider-thumb { scale: 1.06; }
+/* Hover only where there is a pointer to hover with; touch would leave the
+   thumb enlarged after a tap. */
+@media (hover: hover) {
+  .nv-slider:hover::-webkit-slider-thumb { scale: 1.06; }
+  .nv-slider:hover::-moz-range-thumb { scale: 1.06; }
+}
+
 .nv-slider:active::-webkit-slider-thumb { scale: 0.96; }
-.nv-slider:hover::-moz-range-thumb { scale: 1.06; }
 .nv-slider:active::-moz-range-thumb { scale: 0.96; }
 
 .nv-slider:focus-visible::-webkit-slider-thumb {
