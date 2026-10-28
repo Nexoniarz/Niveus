@@ -41,7 +41,7 @@ styles win without `!important`.
 | `.nv-button--pill` | pill button | Fully rounded. |
 | `.nv-button--block` | full-width button | Fills its container. |
 | `.nv-button__icon` | button icon slot | Sizes an inline SVG to the label. |
-| `.nv-button-group` | segmented control, button group | Buttons sharing edges; only outer corners round. |
+| `.nv-button-group` | segmented control, button group | Buttons sharing edges; only outer corners round. A button with `aria-pressed="true"` is drawn pressed in, in the brand colour. |
 
 States come from the element: `disabled`, `aria-disabled`, `aria-busy="true"`
 (shows a spinner and keeps the width), `aria-pressed` for toggles.

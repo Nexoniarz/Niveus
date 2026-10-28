@@ -2283,6 +2283,16 @@
     z-index: 1;
     translate: none;
   }
+
+  /* The chosen segment is a key held down: pressed into the surface, in the
+     brand colour, rather than a flat wash. This is what makes the appearance
+     toggle (and any segmented choice) show which option is in use. */
+  .nv-button-group > .nv-button[aria-pressed="true"] {
+    background-color: var(--nv-color-accent-subtle);
+    background-image: none;
+    color: var(--nv-color-accent-text);
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+  }
 }
 @layer niveus.components {
   /* ==========================================================================
