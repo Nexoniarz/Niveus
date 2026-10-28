@@ -96,17 +96,19 @@
 
   /** "light" | "dark" | "system" — system means: follow the environment. */
   function setTheme(theme) {
-    var done = transition(function () {
-      if (theme === "system") {
-        root.removeAttribute("data-theme");
-      } else {
-        root.setAttribute("data-theme", theme);
-      }
-      syncThemeControls(theme);
-    }, { kind: "theme" });
-
+    // Deliberately not a view transition. A page-wide snapshot cannot blur what
+    // sits behind frosted glass, so for the length of the cross-fade every
+    // frosted bar, menu and glaze pane went clear and showed the page sharply
+    // through itself. Surfaces transition their own colours instead (see
+    // --nv-transition-surface), and the glass stays live throughout.
+    if (theme === "system") {
+      root.removeAttribute("data-theme");
+    } else {
+      root.setAttribute("data-theme", theme);
+    }
+    syncThemeControls(theme);
     root.dispatchEvent(new CustomEvent("nv:theme", { detail: { theme: theme } }));
-    return done;
+    return Promise.resolve();
   }
 
   function syncThemeControls(theme) {
@@ -798,17 +800,86 @@
       var settle = 0;
       var limit = 36;
 
-      function setPull(value) {
+      function clearPull() {
+        pull = 0;
+        delete list.dataset.nvPulling;
+        list.style.removeProperty("--nv-pull");
+      }
+
+      // `hold` keeps the pull until clearPull() — a finger or button is still
+      // down — instead of releasing it after the wheel goes quiet.
+      function setPull(value, hold) {
         pull = value;
         list.style.setProperty("--nv-pull", value.toFixed(1) + "px");
         list.dataset.nvPulling = "";
         global.clearTimeout(settle);
-        settle = global.setTimeout(function () {
-          pull = 0;
-          delete list.dataset.nvPulling;
-          list.style.removeProperty("--nv-pull");
-        }, 90);
+        if (!hold) settle = global.setTimeout(clearPull, 90);
       }
+
+      // Dragging with a mouse or pen. Touch scrolls natively; a desktop
+      // pointer has no such thing, so without this a wheel cannot be grabbed.
+      // Snapping is off while the pointer is down so the list follows it, the
+      // end gives with resistance, and on release the list coasts to the row
+      // the motion was heading for.
+      var drag = null;
+
+      list.addEventListener("pointerdown", function (event) {
+        if (event.pointerType === "touch" || event.button !== 0) return;
+        drag = {
+          id: event.pointerId, y: event.clientY, top: list.scrollTop,
+          lastY: event.clientY, lastT: event.timeStamp, velocity: 0, moved: false,
+        };
+      });
+
+      list.addEventListener("pointermove", function (event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        var dy = event.clientY - drag.y;
+        if (!drag.moved) {
+          if (Math.abs(dy) < 4) return;
+          // Only now is it a drag and not a click, so only now is the pointer
+          // captured; capturing earlier would redirect the click to the list.
+          drag.moved = true;
+          list.setPointerCapture(event.pointerId);
+          list.style.scrollSnapType = "none";
+          list.dataset.nvDragging = "";
+        }
+        var elapsed = event.timeStamp - drag.lastT;
+        if (elapsed > 0) drag.velocity = (event.clientY - drag.lastY) / elapsed;
+        drag.lastY = event.clientY;
+        drag.lastT = event.timeStamp;
+
+        var max = list.scrollHeight - list.clientHeight;
+        var target = drag.top - dy;
+        if (target < 0 || target > max) {
+          list.scrollTop = target < 0 ? 0 : max;
+          var over = target < 0 ? -target : target - max;
+          if (!prefersReducedMotion()) {
+            setPull((target < 0 ? 1 : -1) * Math.min(limit, over * 0.35), true);
+          }
+        } else {
+          list.scrollTop = target;
+          if (pull) clearPull();
+        }
+      });
+
+      function endDrag(event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        var moved = drag.moved;
+        var velocity = drag.velocity;
+        drag = null;
+        if (!moved) return;
+        delete list.dataset.nvDragging;
+        list.style.scrollSnapType = "";
+        clearPull();
+        // Coast: carry the release speed a little way on, then settle on a row.
+        var row = list.firstElementChild.offsetHeight;
+        var ahead = list.scrollTop - velocity * 160;
+        var index = Math.max(0, Math.min(list.children.length - 1, Math.round(ahead / row)));
+        scrollTo(list, index, true);
+      }
+
+      list.addEventListener("pointerup", endDrag);
+      list.addEventListener("pointercancel", endDrag);
 
       list.addEventListener("wheel", function (event) {
         if (prefersReducedMotion()) return;
@@ -820,6 +891,7 @@
         var delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? list.clientHeight : 1);
         var pushing = (atTop && delta < 0) || (atBottom && delta > 0);
         if (!pushing && !pull) return;
+        if (drag && drag.moved) return;
         event.preventDefault();
         var next = pull - delta * 0.12 * (1 - Math.abs(pull) / limit);
         setPull(Math.max(-limit, Math.min(limit, next)));
@@ -1089,6 +1161,31 @@
     });
   }
 
+  /**
+   * A checkbox with data-nv-tristate cycles unchecked → checked → partial →
+   * unchecked. The browser only offers the first two by clicking, and the third
+   * only from script, so a partial state could be shown but never chosen.
+   * data-nv-tristate="partial" starts it partial.
+   */
+  function initTristate(box) {
+    if (box.dataset.nvTristateWired) return;
+    box.dataset.nvTristateWired = "";
+    var states = ["off", "on", "partial"];
+    var state = box.dataset.nvTristate === "partial" ? 2 : box.checked ? 1 : 0;
+
+    function apply() {
+      box.checked = state === 1;
+      box.indeterminate = state === 2;
+      box.dataset.nvState = states[state];
+    }
+
+    box.addEventListener("click", function () {
+      state = (state + 1) % 3;
+      apply();
+    });
+    apply();
+  }
+
   function wire(scope) {
     scope = scope || document;
 
@@ -1107,6 +1204,7 @@
     scope.querySelectorAll("[data-nv-tabs]").forEach(initTabs);
     scope.querySelectorAll("[data-nv-scroller]").forEach(initScroller);
     scope.querySelectorAll(".nv-slider").forEach(initSlider);
+    scope.querySelectorAll("input[data-nv-tristate]").forEach(initTristate);
     scope.querySelectorAll("[data-nv-calendar]").forEach(initCalendar);
     scope.querySelectorAll("[data-nv-timepicker]").forEach(initTimePicker);
     scope.querySelectorAll(".nv-menu--listbox").forEach(initListbox);

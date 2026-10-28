@@ -768,7 +768,7 @@
             Weekly digest
           </label>
           <label class="nv-choice">
-            <input class="nv-checkbox" type="checkbox" id="f-indeterminate">
+            <input class="nv-checkbox" type="checkbox" id="f-indeterminate" data-nv-tristate="partial">
             Partial selection
           </label>
           <label class="nv-choice">
@@ -1527,7 +1527,6 @@
     addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
-    document.getElementById("f-indeterminate").indeterminate = true;
 
     /* Build the semantic color list from the tokens themselves, so the page
        cannot show a role the system does not actually define. */

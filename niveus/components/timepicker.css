@@ -65,8 +65,11 @@
   inline-size: 3.5rem;
   block-size: calc(var(--_row) * var(--_rows));
   margin: 0;
-  padding: calc(var(--_row) * (var(--_rows) - 1) / 2) 0;
+  padding: 0;
   list-style: none;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-snap-type: y mandatory;
@@ -84,6 +87,21 @@
 
 .nv-timepicker__column::-webkit-scrollbar {
   display: none;
+}
+
+/* Spacers, not padding: they let the first and last rows reach the centre.
+   Firefox leaves the bottom padding of a scroll container out of its
+   scrollable area, which stranded the last rows (and made a three-row wheel
+   unscrollable); real boxes always count. */
+.nv-timepicker__column::before,
+.nv-timepicker__column::after {
+  content: "";
+  display: block;
+  block-size: calc(var(--_row) * (var(--_rows) - 1) / 2);
+}
+
+.nv-timepicker__column[data-nv-dragging] {
+  cursor: grabbing;
 }
 
 .nv-timepicker__column:focus-visible {

@@ -527,6 +527,12 @@
      consistent between appearances: an ambient contact shadow that keeps the
      edge crisp, a soft penumbra for the spread, and an umbra that only appears
      once a surface is genuinely far from the canvas.
+
+     Two things keep a shadow visible, and both have failed before. The soft
+     layers use only a mild negative spread: a deep one tucks the blur under the
+     element and leaves almost nothing outside it. And the canvas has to be
+     lighter than the shadow colour — black cannot darken black — which is why the
+     dark canvas is not the darkest value it could be.
      ========================================================================== */
 
   :root {
@@ -535,27 +541,27 @@
     --nv-elevation-1:
       0 1px 1px var(--nv-color-shadow-ambient),
       0 2px 4px -1px var(--nv-color-shadow-penumbra),
-      0 6px 14px -8px var(--nv-color-shadow-umbra);
+      0 6px 14px -5px var(--nv-color-shadow-umbra);
 
     --nv-elevation-2:
       0 1px 1px var(--nv-color-shadow-ambient),
       0 3px 6px -2px var(--nv-color-shadow-penumbra),
-      0 10px 20px -10px var(--nv-color-shadow-umbra);
+      0 10px 20px -7px var(--nv-color-shadow-umbra);
 
     --nv-elevation-3:
       0 1px 2px var(--nv-color-shadow-ambient),
       0 6px 12px -4px var(--nv-color-shadow-penumbra),
-      0 18px 36px -12px var(--nv-color-shadow-umbra);
+      0 18px 36px -9px var(--nv-color-shadow-umbra);
 
     --nv-elevation-4:
       0 1px 2px var(--nv-color-shadow-ambient),
       0 10px 20px -6px var(--nv-color-shadow-penumbra),
-      0 30px 60px -16px var(--nv-color-shadow-umbra);
+      0 30px 60px -12px var(--nv-color-shadow-umbra);
 
     --nv-elevation-5:
       0 2px 3px var(--nv-color-shadow-ambient),
       0 16px 32px -8px var(--nv-color-shadow-penumbra),
-      0 44px 88px -20px var(--nv-color-shadow-umbra);
+      0 44px 88px -16px var(--nv-color-shadow-umbra);
 
     /* --- Inset ---------------------------------------------------------------
        Recessed surfaces: fields, wells, tracks, pressed controls. */
@@ -1093,10 +1099,10 @@
   :root,
   [data-nv-brand] {
     /* --- Canvas and surfaces ----------------------------------------------- */
-    --nv-dark-background: color-mix(in oklab, #0f0f12, var(--nv-brand) var(--nv-brand-tint));
-    --nv-dark-background-subtle: color-mix(in oklab, #18181b, var(--nv-brand) var(--nv-brand-tint));
-    --nv-dark-surface: color-mix(in oklab, #1f1f22, var(--nv-brand) var(--nv-brand-tint));
-    --nv-dark-surface-elevated: color-mix(in oklab, #2a2a2e, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-background: color-mix(in oklab, #17171b, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-background-subtle: color-mix(in oklab, #1d1d21, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface: color-mix(in oklab, #232327, var(--nv-brand) var(--nv-brand-tint));
+    --nv-dark-surface-elevated: color-mix(in oklab, #2d2d32, var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-surface-inset: color-mix(in oklab, #111113, var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-surface-hover: color-mix(in oklab, #313136, var(--nv-brand) var(--nv-brand-tint));
     --nv-dark-surface-active: color-mix(in oklab, #39393f, var(--nv-brand) var(--nv-brand-tint));
@@ -1183,9 +1189,9 @@
       calc(c * 0.2) h);
 
     /* --- Depth and material -------------------------------------------------- */
-    --nv-dark-shadow-ambient: rgb(0 0 0 / 0.5);
-    --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.5);
-    --nv-dark-shadow-umbra: rgb(0 0 0 / 0.55);
+    --nv-dark-shadow-ambient: rgb(0 0 0 / 0.6);
+    --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.62);
+    --nv-dark-shadow-umbra: rgb(0 0 0 / 0.72);
     --nv-dark-shadow-inset: rgb(0 0 0 / 0.65);
     --nv-dark-highlight: rgb(255 255 255 / 0.15);
     --nv-dark-highlight-strong: rgb(255 255 255 / 0.24);
@@ -1372,6 +1378,13 @@
     outline: var(--nv-focus-ring-width) solid var(--nv-color-focus-ring);
     outline-offset: 2px;
     border-radius: var(--nv-radius-xs);
+  }
+
+  /* A link to a place on the same page travels there instead of cutting. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   /* Whatever the browser draws itself — a bare checkbox, a progress bar, the
@@ -4119,8 +4132,11 @@
     inline-size: 3.5rem;
     block-size: calc(var(--_row) * var(--_rows));
     margin: 0;
-    padding: calc(var(--_row) * (var(--_rows) - 1) / 2) 0;
+    padding: 0;
     list-style: none;
+    cursor: grab;
+    user-select: none;
+    touch-action: pan-y;
     overflow-y: auto;
     overscroll-behavior: contain;
     scroll-snap-type: y mandatory;
@@ -4138,6 +4154,21 @@
 
   .nv-timepicker__column::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Spacers, not padding: they let the first and last rows reach the centre.
+     Firefox leaves the bottom padding of a scroll container out of its
+     scrollable area, which stranded the last rows (and made a three-row wheel
+     unscrollable); real boxes always count. */
+  .nv-timepicker__column::before,
+  .nv-timepicker__column::after {
+    content: "";
+    display: block;
+    block-size: calc(var(--_row) * (var(--_rows) - 1) / 2);
+  }
+
+  .nv-timepicker__column[data-nv-dragging] {
+    cursor: grabbing;
   }
 
   .nv-timepicker__column:focus-visible {

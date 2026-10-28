@@ -527,6 +527,7 @@ everything still renders — state changes simply arrive instead of travelling.
 | `data-nv-calendar-step` | button in a calendar | `-1` or `1`: months to move. |
 | `data-nv-timepicker` | `.nv-timepicker` | Marks a time picker. Also `data-nv-value` (`HH:MM`), `-hours` (`24` default / `12`), `-step` (minutes), `-name` (hidden form field), `-format-toggle` (adds the 24H / AM / PM wheel). |
 | `data-nv-picker-label` | child of a picker trigger | Receives the chosen option's text; default is the trigger itself. |
+| `data-nv-tristate` | `input[type=checkbox]` | Click cycles unchecked → checked → partial. `="partial"` starts partial. Exposes `data-nv-state` (`off`/`on`/`partial`). |
 | `data-nv-scroller` | `.nv-scroller-frame` | Wires its `[data-nv-scroll="prev"\|"next"]` controls. |
 | `data-scrolled` | `.nv-nav` | Set by the application on scroll; gives the bar its shadow. |
 | `data-nv-direction` | `<html>` | Set during a transition by `nv.transition`. |

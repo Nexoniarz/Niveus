@@ -533,6 +533,46 @@ tune. This is a first-class goal, bounded by sections 3.1 and 11.
 5. **One listener, one write per frame** for pointer-driven effects.
 6. **ES5-compatible style** in `niveus.js`, to match the file.
 
+### 14.4 Cross-engine rules
+
+Each of these was a real defect, found by driving Firefox with real input.
+
+1. **Never wrap an appearance change in a page-wide view transition.** The
+   snapshot cannot blur what sits behind frosted glass, so for its whole
+   duration every frosted bar, menu and Glaze pane goes clear and shows the page
+   sharply through itself. Let surfaces transition their own colours. Selection
+   markers still use a short view transition; keep it brief, and prefer a
+   per-element animation for anything inside frosted chrome.
+2. **Do not use padding to make a scroll container's last item reachable.**
+   Firefox leaves the container's bottom padding out of its scrollable area, so
+   the final rows were unreachable and a short list could not scroll at all. Use
+   real boxes — `::before` / `::after` spacers — which every engine counts.
+3. **Normalise wheel deltas.** Chromium reports a notch in pixels (~100);
+   Firefox reports it in lines (~3). Convert with `deltaMode` before using
+   `deltaY`, or an effect that works in one engine is invisible in the other.
+4. **A scrollable list is not draggable on desktop.** Touch scrolls natively; a
+   mouse does not. Anything that is meant to feel like a phone control (a wheel,
+   a carousel) needs pointer-drag handling, with inertia, an edge that gives, and
+   a click that still works when the pointer did not move.
+5. **Shadows need something to darken.** A black shadow on a near-black canvas
+   is invisible, however correct its computed value. The dark canvas is
+   deliberately lighter than the shadow colour, and soft layers use only a mild
+   negative spread so the blur reaches outside the element.
+6. **Where a CSS feature is missing, supply the same curve in script** (scroll-
+   driven animation and `interpolate-size` are absent in Firefox), and keep the
+   plain state correct without either.
+7. **State that the browser only half-supports needs an attribute.** A checkbox
+   can *show* a partial state but a click never *chooses* it;
+   `data-nv-tristate` makes the cycle explicit.
+8. **Same-page links travel.** `scroll-behavior: smooth` under
+   `prefers-reduced-motion: no-preference`; a jump to a section is the textbook
+   change a user could have watched.
+9. **Know your test rig.** A headless browser without a GPU does not render
+   `backdrop-filter`, reports no hover capability (so hover-only controls such
+   as scroller arrows disappear), and may not deliver scroll events reliably.
+   Treat those as limits of the rig, not of the system, and confirm them on a
+   real display.
+
 ### 14.3 Documentation
 
 Every new class, token, attribute, function or event is added to `REFERENCE.md`
@@ -604,9 +644,13 @@ Niveus code, follow it literally.
    python3 tools/build.py --check  # dist/ matches sources
    ```
 
-7. **Look at it.** Render both appearances in a real browser at a realistic size
-   and inspect the result. Passing checks prove the rules; they do not prove it
-   looks right or works. Exercise interactive components, not just their markup.
+7. **Look at it, in Firefox first.** Chromium implements nearly everything
+   Niveus uses, so passing there proves little; Firefox is the stricter test and
+   is where regressions have actually appeared. Render both appearances at a
+   realistic size and exercise the interactive parts with *real input* — pointer
+   drags, wheel notches, key presses — not only synthetic events or static
+   screenshots. Passing checks prove the rules; they do not prove it looks right
+   or works. Then confirm in Chromium. See 14.4 for what differs.
 8. **Report faithfully.** State what you verified, what you could not, and what
    failed. A test that failed because of the test harness is still reported.
 
@@ -651,6 +695,7 @@ A change is done when:
 - [ ] It is documented in `REFERENCE.md`; `README.md` and this document are
       updated if a principle or the component list changed.
 - [ ] It renders correctly in **light and dark**, with and without `niveus.js`.
+- [ ] It was seen and exercised in **Firefox** with real input, then in Chromium.
 - [ ] Every interaction state exists and is reachable by keyboard.
 - [ ] Translucent surfaces have a solid fallback.
 - [ ] It respects reduced motion and reduced transparency.
@@ -714,7 +759,7 @@ Use this for review, human or automated. Every line is a yes/no.
 - [ ] No `!important`; application CSS is unlayered.
 - [ ] `REFERENCE.md` updated; `dist/` rebuilt, not hand-edited.
 - [ ] `build.py`, `check.py`, `build.py --check` pass.
-- [ ] Seen in a browser; interactive parts exercised.
+- [ ] Seen and exercised in Firefox with real input, then Chromium.
 
 ---
 

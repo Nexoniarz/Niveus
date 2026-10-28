@@ -15,6 +15,12 @@
    consistent between appearances: an ambient contact shadow that keeps the
    edge crisp, a soft penumbra for the spread, and an umbra that only appears
    once a surface is genuinely far from the canvas.
+
+   Two things keep a shadow visible, and both have failed before. The soft
+   layers use only a mild negative spread: a deep one tucks the blur under the
+   element and leaves almost nothing outside it. And the canvas has to be
+   lighter than the shadow colour — black cannot darken black — which is why the
+   dark canvas is not the darkest value it could be.
    ========================================================================== */
 
 :root {
@@ -23,27 +29,27 @@
   --nv-elevation-1:
     0 1px 1px var(--nv-color-shadow-ambient),
     0 2px 4px -1px var(--nv-color-shadow-penumbra),
-    0 6px 14px -8px var(--nv-color-shadow-umbra);
+    0 6px 14px -5px var(--nv-color-shadow-umbra);
 
   --nv-elevation-2:
     0 1px 1px var(--nv-color-shadow-ambient),
     0 3px 6px -2px var(--nv-color-shadow-penumbra),
-    0 10px 20px -10px var(--nv-color-shadow-umbra);
+    0 10px 20px -7px var(--nv-color-shadow-umbra);
 
   --nv-elevation-3:
     0 1px 2px var(--nv-color-shadow-ambient),
     0 6px 12px -4px var(--nv-color-shadow-penumbra),
-    0 18px 36px -12px var(--nv-color-shadow-umbra);
+    0 18px 36px -9px var(--nv-color-shadow-umbra);
 
   --nv-elevation-4:
     0 1px 2px var(--nv-color-shadow-ambient),
     0 10px 20px -6px var(--nv-color-shadow-penumbra),
-    0 30px 60px -16px var(--nv-color-shadow-umbra);
+    0 30px 60px -12px var(--nv-color-shadow-umbra);
 
   --nv-elevation-5:
     0 2px 3px var(--nv-color-shadow-ambient),
     0 16px 32px -8px var(--nv-color-shadow-penumbra),
-    0 44px 88px -20px var(--nv-color-shadow-umbra);
+    0 44px 88px -16px var(--nv-color-shadow-umbra);
 
   /* --- Inset ---------------------------------------------------------------
      Recessed surfaces: fields, wells, tracks, pressed controls. */

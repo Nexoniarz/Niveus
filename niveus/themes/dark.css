@@ -21,10 +21,10 @@
 :root,
 [data-nv-brand] {
   /* --- Canvas and surfaces ----------------------------------------------- */
-  --nv-dark-background: color-mix(in oklab, #0f0f12, var(--nv-brand) var(--nv-brand-tint));
-  --nv-dark-background-subtle: color-mix(in oklab, #18181b, var(--nv-brand) var(--nv-brand-tint));
-  --nv-dark-surface: color-mix(in oklab, #1f1f22, var(--nv-brand) var(--nv-brand-tint));
-  --nv-dark-surface-elevated: color-mix(in oklab, #2a2a2e, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-background: color-mix(in oklab, #17171b, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-background-subtle: color-mix(in oklab, #1d1d21, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface: color-mix(in oklab, #232327, var(--nv-brand) var(--nv-brand-tint));
+  --nv-dark-surface-elevated: color-mix(in oklab, #2d2d32, var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-surface-inset: color-mix(in oklab, #111113, var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-surface-hover: color-mix(in oklab, #313136, var(--nv-brand) var(--nv-brand-tint));
   --nv-dark-surface-active: color-mix(in oklab, #39393f, var(--nv-brand) var(--nv-brand-tint));
@@ -111,9 +111,9 @@
     calc(c * 0.2) h);
 
   /* --- Depth and material -------------------------------------------------- */
-  --nv-dark-shadow-ambient: rgb(0 0 0 / 0.5);
-  --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.5);
-  --nv-dark-shadow-umbra: rgb(0 0 0 / 0.55);
+  --nv-dark-shadow-ambient: rgb(0 0 0 / 0.6);
+  --nv-dark-shadow-penumbra: rgb(0 0 0 / 0.62);
+  --nv-dark-shadow-umbra: rgb(0 0 0 / 0.72);
   --nv-dark-shadow-inset: rgb(0 0 0 / 0.65);
   --nv-dark-highlight: rgb(255 255 255 / 0.15);
   --nv-dark-highlight-strong: rgb(255 255 255 / 0.24);
