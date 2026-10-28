@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Niveus — Slider
+   --------------------------------------------------------------------------
+     <input class="nv-slider" type="range" min="0" max="100" value="50">
+
+   A native range input dressed as the rest of the controls are: the track is a
+   well cut into the surface, the fill is the accent seen inside it, and the
+   thumb is a knob lit from above. Keyboard, touch, step and form behaviour are
+   the browser's.
+
+   Firefox draws the fill itself (::-moz-range-progress). Chromium and Safari
+   do not expose one, so the fill is a gradient sized by --nv-slider-pos, which
+   niveus.js keeps in step with the value. Without the script the fill is
+   simply absent in those two engines and the thumb still tells the truth.
+
+   To bind a slider to a design token, add data-nv-var="--nv-glass-frost" (and
+   optionally data-nv-var-target="#region" for a subtree instead of :root).
+   ========================================================================== */
+
+.nv-slider {
+  --_track: 0.5rem;
+  --_thumb: 1.5rem;
+  --_pos: var(--nv-slider-pos, 50%);
+
+  display: block;
+  inline-size: 100%;
+  block-size: var(--_thumb);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.nv-slider:focus-visible {
+  outline: none;
+}
+
+/* --- Track ------------------------------------------------------------------ */
+
+.nv-slider::-webkit-slider-runnable-track {
+  block-size: var(--_track);
+  background:
+    linear-gradient(var(--nv-color-accent) 0 0) 0 / var(--_pos) 100% no-repeat,
+    var(--nv-color-surface-inset);
+  border: var(--nv-border-width) solid var(--nv-color-border);
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+}
+
+.nv-slider::-moz-range-track {
+  block-size: var(--_track);
+  background-color: var(--nv-color-surface-inset);
+  border: var(--nv-border-width) solid var(--nv-color-border);
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-elevation-inset-md), var(--nv-ledge);
+}
+
+.nv-slider::-moz-range-progress {
+  block-size: var(--_track);
+  background-color: var(--nv-color-accent);
+  border-radius: var(--nv-radius-full);
+}
+
+/* --- Thumb ------------------------------------------------------------------ */
+
+.nv-slider::-webkit-slider-thumb {
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  margin-block-start: calc((var(--_track) - var(--_thumb)) / 2);
+  background-color: var(--nv-color-knob);
+  background-image: var(--nv-sheen-knob);
+  border: 0;
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-outline), var(--nv-elevation-2);
+  appearance: none;
+  -webkit-appearance: none;
+  transition: scale var(--nv-duration-quick) var(--nv-ease-spring);
+}
+
+.nv-slider::-moz-range-thumb {
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  box-sizing: border-box;
+  background-color: var(--nv-color-knob);
+  background-image: var(--nv-sheen-knob);
+  border: 0;
+  border-radius: var(--nv-radius-full);
+  box-shadow: var(--nv-outline), var(--nv-elevation-2);
+  transition: scale var(--nv-duration-quick) var(--nv-ease-spring);
+}
+
+/* Hover only where there is a pointer to hover with; touch would leave the
+   thumb enlarged after a tap. */
+@media (hover: hover) {
+  .nv-slider:hover::-webkit-slider-thumb { scale: 1.06; }
+  .nv-slider:hover::-moz-range-thumb { scale: 1.06; }
+}
+
+.nv-slider:active::-webkit-slider-thumb { scale: 0.96; }
+.nv-slider:active::-moz-range-thumb { scale: 0.96; }
+
+.nv-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--nv-focus-ring), var(--nv-elevation-2);
+}
+
+.nv-slider:focus-visible::-moz-range-thumb {
+  box-shadow: var(--nv-focus-ring), var(--nv-elevation-2);
+}
+
+.nv-slider:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

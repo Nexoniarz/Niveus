@@ -12,6 +12,10 @@
                 over content: bars, docks, launchers, notifications, menus.
      glass      more translucent, lightly blurred. Contextual layers where the
                 content behind should stay legible: overlays, hover cards.
+     glaze     glass with a dial. How frosted it is belongs to whoever is
+                looking at it, so it is one number (--nv-glass-frost) rather
+                than a fixed recipe, and it carries a rim that catches the
+                light and follows the pointer.
 
    Niveus is a solid system with glass used sparingly. Windows, cards, dialogs
    and everything that holds content are solid; translucency is reserved for
@@ -38,6 +42,21 @@
   --nv-backdrop-saturate: 180%;
   --nv-backdrop-frosted: blur(var(--nv-blur-md)) saturate(var(--nv-backdrop-saturate));
   --nv-backdrop-glass: blur(var(--nv-blur-sm)) saturate(var(--nv-backdrop-saturate));
+
+  /* --- Frost ------------------------------------------------------------------
+     The one input the glaze material derives from: 0 is clear glass, 1 is
+     nearly opaque frost. Set it on :root for the whole site, on a subtree to
+     change just that region, or bind a slider to it with data-nv-var and let
+     the person looking choose. The glaze recipe reads it where it is used,
+     so a subtree override always reaches the surfaces inside it. */
+  --nv-glass-frost: 0.5;
+  --nv-glaze-blur-max: 56px;   /* blur at frost 1 */
+  --nv-glaze-tint-min: 4%;     /* tint opacity at frost 0 */
+  --nv-glaze-tint-max: 78%;    /* tint opacity at frost 1 */
+  --nv-glaze-rim: 1.5px;
+  /* The light a pane holds just inside its edge, so it reads as a thick lens
+     rather than a flat film. */
+  --nv-glaze-glow: inset 0 0 1.5rem -0.5rem var(--nv-color-glaze-specular);
 
   /* --- Sheen ------------------------------------------------------------------
      raised    neutral controls: buttons, the selected tab, a titlebar

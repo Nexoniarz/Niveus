@@ -67,6 +67,72 @@
     place-items: center;
   }
 
+  /* Glaze specimen: color behind the pane, so the frost has something to
+     act on. The orbs and the line of type are only there to be blurred. */
+  .glaze-demo {
+    position: relative;
+    margin-block-start: var(--nv-space-6);
+    min-block-size: 22rem;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .glaze-demo__scene {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .glaze-demo__orb {
+    position: absolute;
+    border-radius: var(--nv-radius-full);
+    inline-size: var(--_size);
+    block-size: var(--_size);
+    inset-inline-start: var(--_x);
+    inset-block-start: var(--_y);
+    background: var(--_fill);
+  }
+
+  .glaze-demo__type {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: var(--nv-space-4);
+    text-align: center;
+    font: var(--nv-font-display);
+    font-size: clamp(2.5rem, 9vw, 5.5rem);
+    font-weight: 700;
+    color: var(--nv-color-text-primary);
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+
+  .glaze-demo__panel {
+    position: relative;
+    inline-size: min(26rem, 100%);
+    padding: var(--nv-space-6);
+    border-radius: var(--nv-radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-4);
+  }
+
+  .picker-demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--nv-space-6);
+    margin-block-start: var(--nv-space-6);
+  }
+
+  .picker-demo__column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nv-space-4);
+    inline-size: min(16rem, 100%);
+  }
+
   .specimen__name {
     font: var(--nv-font-label);
   }
@@ -294,6 +360,84 @@
           <div class="specimen__demo nv-material-glass"></div>
           <span class="specimen__name">Glass</span>
           <span class="specimen__note">Contextual layers</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nv-bed glaze-demo" id="glaze-bed">
+      <div class="glaze-demo__scene" aria-hidden="true">
+        <span class="glaze-demo__orb" style="--_size: 11rem; --_x: 8%; --_y: 8%; --_fill: var(--nv-color-accent)"></span>
+        <span class="glaze-demo__orb" style="--_size: 8rem; --_x: 68%; --_y: 14%; --_fill: var(--nv-color-danger)"></span>
+        <span class="glaze-demo__orb" style="--_size: 9rem; --_x: 52%; --_y: 58%; --_fill: var(--nv-color-success)"></span>
+        <span class="glaze-demo__type">Niveus glaze</span>
+      </div>
+
+      <div class="nv-material-glaze glaze-demo__panel">
+        <div>
+          <h3 class="nv-heading">Glaze</h3>
+          <p class="nv-prose">
+            One dial controls how frosted this pane is. The rim brightens on
+            the side facing your pointer.
+          </p>
+        </div>
+        <div class="nv-field">
+          <label class="nv-field__label" for="frost">Frost</label>
+          <input class="nv-slider" id="frost" type="range" min="0" max="1" step="0.01"
+                 data-nv-var="--nv-glass-frost" data-nv-var-target="#glaze-bed">
+          <span class="nv-field__hint">Clear glass on the left, heavy frost on the right.</span>
+        </div>
+        <div class="nv-cluster nv-cluster--tight">
+          <button class="nv-button nv-button--primary">Continue</button>
+          <button class="nv-button">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <section id="pickers">
+    <div class="section__head">
+      <h2 class="nv-heading">Pickers</h2>
+      <p class="nv-prose">
+        A calendar, wheels for time, and a popup list. They hold content, so
+        they sit on solid surfaces; here the first two float on Glaze
+        over a bed, which is where a date field's popover would be.
+      </p>
+    </div>
+
+    <div class="nv-bed picker-demo" id="picker-bed">
+      <div class="nv-calendar nv-material-glaze" data-nv-calendar data-nv-value="2026-10-28"
+           data-nv-min="2026-10-05">
+        <div class="nv-calendar__header">
+          <button class="nv-button nv-button--ghost nv-button--icon" data-nv-calendar-step="-1"
+                  aria-label="Previous month">&lsaquo;</button>
+          <h3 class="nv-calendar__title" aria-live="polite"></h3>
+          <button class="nv-button nv-button--ghost nv-button--icon" data-nv-calendar-step="1"
+                  aria-label="Next month">&rsaquo;</button>
+        </div>
+        <div class="nv-calendar__grid" role="grid"></div>
+      </div>
+
+      <div class="picker-demo__column">
+        <div class="nv-timepicker nv-material-glaze" data-nv-timepicker data-nv-value="09:30"
+             data-nv-step="5" data-nv-format-toggle aria-label="Start time"></div>
+        <output class="nv-caption nv-code" id="picker-output">09:30</output>
+
+        <div class="nv-field">
+          <label class="nv-field__label" id="fruit-label">Fruit</label>
+          <button class="nv-input nv-picker nv-menu-trigger" data-empty popovertarget="fruit"
+                  aria-labelledby="fruit-label" style="--nv-anchor: --fruit">
+            <span data-nv-picker-label>Choose a fruit</span>
+          </button>
+          <div class="nv-menu nv-menu--listbox" popover id="fruit" style="--nv-anchor: --fruit">
+            <input class="nv-input nv-input--sm nv-menu__search" placeholder="Search…" aria-label="Search fruit">
+            <button class="nv-menu__item" role="option" data-value="apple">Apple</button>
+            <button class="nv-menu__item" role="option" data-value="apricot">Apricot</button>
+            <button class="nv-menu__item" role="option" data-value="banana">Banana</button>
+            <button class="nv-menu__item" role="option" data-value="cherry">Cherry</button>
+            <button class="nv-menu__item" role="option" data-value="mango">Mango</button>
+            <button class="nv-menu__item" role="option" data-value="pear">Pear</button>
+          </div>
         </div>
       </div>
     </div>
@@ -624,7 +768,7 @@
             Weekly digest
           </label>
           <label class="nv-choice">
-            <input class="nv-checkbox" type="checkbox" id="f-indeterminate">
+            <input class="nv-checkbox" type="checkbox" id="f-indeterminate" data-nv-tristate="partial">
             Partial selection
           </label>
           <label class="nv-choice">
@@ -1315,6 +1459,10 @@
 </dialog>
 
 <script>
+  document.addEventListener("nv:time", function (event) {
+    var out = document.getElementById("picker-output");
+    if (out) out.textContent = event.detail.value;
+  });
   /* --------------------------------------------------------------------
      Page behaviour. Note what is *not* here: no style values, no colors,
      no durations. Continuity comes from nv.transition(); this file only
@@ -1338,21 +1486,19 @@
     const brandInput = document.getElementById("brand-input");
     const brandValue = document.getElementById("brand-value");
 
-    function setBrand(value, continuous) {
-      const apply = () => {
-        document.documentElement.style.setProperty("--nv-brand", value);
-        brandInput.value = value;
-        brandValue.textContent = value;
-      };
-      if (continuous) nv.transition(apply, { kind: "theme" });
-      else apply();
+    /* No page-wide transition here: surfaces fade their own colours, and a
+       snapshot of the page would flatten every frosted surface while it ran. */
+    function setBrand(value) {
+      document.documentElement.style.setProperty("--nv-brand", value);
+      brandInput.value = value;
+      brandValue.textContent = value;
     }
 
-    brandInput.addEventListener("input", (event) => setBrand(event.target.value, false));
+    brandInput.addEventListener("input", (event) => setBrand(event.target.value));
 
     document.getElementById("brand-presets").addEventListener("click", (event) => {
       const preset = event.target.closest("[data-brand]");
-      if (preset) setBrand(preset.dataset.brand, true);
+      if (preset) setBrand(preset.dataset.brand);
     });
 
     /* A selection group whose emphasis travels: one marker, moved inside a
@@ -1379,7 +1525,6 @@
     addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
-    document.getElementById("f-indeterminate").indeterminate = true;
 
     /* Build the semantic color list from the tokens themselves, so the page
        cannot show a role the system does not actually define. */

@@ -1,0 +1,146 @@
+/* ==========================================================================
+   Niveus — Calendar
+   --------------------------------------------------------------------------
+     <div class="nv-calendar nv-surface" data-nv-calendar data-nv-value="2026-10-28">
+       <div class="nv-calendar__header">
+         <button class="nv-button nv-button--ghost nv-button--icon"
+                 data-nv-calendar-step="-1" aria-label="Previous month">‹</button>
+         <h3 class="nv-calendar__title" aria-live="polite">October 2026</h3>
+         <button class="nv-button nv-button--ghost nv-button--icon"
+                 data-nv-calendar-step="1" aria-label="Next month">›</button>
+       </div>
+       <div class="nv-calendar__grid" role="grid" aria-labelledby="…">
+         <div role="row"> <span class="nv-calendar__weekday" role="columnheader">Mo</span> … </div>
+         <div role="row">
+           <button class="nv-calendar__day" role="gridcell" data-date="2026-10-01">1</button> …
+         </div>
+       </div>
+     </div>
+
+   A calendar holds content, so it takes no material of its own: put it on
+   .nv-surface, or on .nv-material-glaze when it floats over something. The
+   grid and its states are plain markup and render without niveus.js; the
+   script's only jobs are to build the days for a month, step between months,
+   and keep the keyboard model (arrows, PageUp/PageDown, Home/End).
+
+   State lives in attributes the platform already has a meaning for:
+     aria-selected="true"   the chosen day
+     aria-current="date"    today
+     data-outside           a day that belongs to the neighbouring month
+     disabled               outside data-nv-min / data-nv-max
+   ========================================================================== */
+
+.nv-calendar {
+  --_cell: 2.5rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--nv-space-3);
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  padding: var(--nv-space-4);
+  border-radius: var(--nv-radius-xl);
+  color: var(--nv-color-text-primary);
+}
+
+.nv-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nv-space-2);
+}
+
+.nv-calendar__title {
+  margin: 0;
+  font: var(--nv-font-label);
+  font-size: var(--nv-font-size-md);
+  font-weight: var(--nv-font-weight-semibold);
+}
+
+.nv-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, var(--_cell));
+  gap: var(--nv-space-0-5) 0;
+}
+
+.nv-calendar__grid > [role="row"] {
+  display: contents;
+}
+
+.nv-calendar__weekday {
+  display: grid;
+  place-items: center;
+  block-size: var(--nv-space-8);
+  color: var(--nv-color-text-tertiary);
+  font: var(--nv-font-caption);
+  font-weight: var(--nv-font-weight-semibold);
+  letter-spacing: var(--nv-letter-spacing-wider);
+  text-transform: uppercase;
+}
+
+.nv-calendar__day {
+  inline-size: var(--_cell);
+  block-size: var(--_cell);
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+  border-radius: var(--nv-radius-full);
+  color: var(--nv-color-text-primary);
+  font: var(--nv-font-label);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: var(--nv-transition-colors), var(--nv-transition-depth);
+}
+
+@media (hover: hover) {
+  /* Hover presses the day slightly into the surface; it is never a flat wash
+     of colour, because the chosen day is a raised key and the two must read as
+     the same material. */
+  .nv-calendar__day:hover:not(:disabled, [aria-selected="true"]) {
+    background-color: var(--nv-color-surface-hover);
+    box-shadow: var(--nv-elevation-inset-sm), var(--nv-ledge);
+  }
+}
+
+.nv-calendar__day[data-outside] {
+  color: var(--nv-color-text-tertiary);
+}
+
+/* Today is ringed, not filled: filled means chosen. */
+.nv-calendar__day[aria-current="date"] {
+  color: var(--nv-color-accent-text);
+  box-shadow: inset 0 0 0 var(--nv-border-width-strong) var(--nv-color-accent), var(--nv-elevation-inset-sm);
+}
+
+/* The chosen day is a small raised key, lit like the filled buttons. */
+.nv-calendar__day[aria-selected="true"] {
+  background-color: var(--nv-color-accent);
+  background-image: var(--nv-sheen-filled);
+  color: var(--nv-color-on-accent);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+}
+
+.nv-calendar__day:focus-visible {
+  outline: none;
+  box-shadow: var(--nv-focus-ring);
+}
+
+.nv-calendar__day[aria-selected="true"]:focus-visible {
+  box-shadow: var(--nv-bevel), var(--nv-focus-ring);
+}
+
+.nv-calendar__day:disabled {
+  color: var(--nv-color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* A day pressed into place springs up to full size. Only when it was just
+   chosen: a selection that is merely *there* on load stays still. */
+.nv-calendar__day[aria-selected="true"][data-nv-pop] {
+  animation: nv-day-pop var(--nv-duration-quick) var(--nv-ease-spring);
+}
+
+@keyframes nv-day-pop {
+  from { scale: 0.72; }
+  to { scale: 1; }
+}

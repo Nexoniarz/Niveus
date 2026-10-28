@@ -102,6 +102,19 @@
   --nv-button-offset: 0 -50%;
 }
 
+/* The arrows float over the cards, so they are glass: frosted, with the content
+   passing blurred beneath them, rather than an opaque key hiding what it sits
+   on. This is the system's rule for anything that floats over content. */
+.nv-scroller-frame [data-nv-scroll] {
+  --_bg: var(--nv-material-frosted-bg);
+  --_bg-hover: var(--nv-material-frosted-bg);
+  --_bg-active: var(--nv-material-frosted-bg);
+  --_border: var(--nv-material-frosted-border);
+  --_sheen: none;
+  backdrop-filter: var(--nv-backdrop-frosted);
+  -webkit-backdrop-filter: var(--nv-backdrop-frosted);
+}
+
 /* Belt and braces: the frame knows these controls float, so their centring
    survives even if the markup forgets --float. */
 .nv-scroller-frame [data-nv-scroll],

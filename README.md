@@ -31,6 +31,10 @@ Open `index.html` for the full specimen: materials, the elevation scale, every
 semantic color, the type scale, and each component in both appearances.
 `examples/` holds four complete products built with it.
 
+**[GUIDELINES.md](GUIDELINES.md) is the rulebook** — what Niveus is, what it
+decides, what it forbids, and a protocol for AI agents. Read it before you
+design with the system or change it.
+
 **[REFERENCE.md](REFERENCE.md) is the complete API** — every class, token,
 attribute and function, each listed beside the name the rest of the industry
 uses for it. It is written to be read by a person *or* handed to a model on its
@@ -85,7 +89,8 @@ niveus/
 ├── base.css         elements, before any component
 ├── continuity.css   how one state becomes the next
 ├── components/      surface, button, input, card, dialog, navigation,
-│                    menu, disclosure, scroller, bed, badge, table
+│                    menu, picker, calendar, timepicker, slider,
+│                    disclosure, scroller, bed, badge, table
 ├── utilities.css    the short list
 ├── niveus.css       the entry point
 └── niveus.js        optional — continuity for changes CSS cannot animate
@@ -136,6 +141,7 @@ answers how far that surface is from the canvas. They are independent.
 | `inset`    | fields, wells, tracks — anything recessed       |
 | `frosted`  | chrome that content passes under: bars, toolbars |
 | `glass`    | contextual layers where content behind must stay legible |
+| `glaze`   | glass the person looking can tune: `--nv-glass-frost` (0 clear … 1 frosted), with a rim that follows the pointer |
 
 | Elevation | Relationship                    |
 | --------- | ------------------------------- |
@@ -180,22 +186,24 @@ could have watched it reach.
 
 | Change | How it stays continuous |
 | ------ | ----------------------- |
-| Selection moves between items | The marker itself travels. It is a pseudo-element with a shared `view-transition-name`, so the browser interpolates its old box into its new one. |
-| Switching tabs | Panels cross-fade inside one box and slide with the direction of travel — forward one way, back the other. |
+| Selection moves between items | The marker itself travels. It is a pseudo-element; `niveus.js` measures it before and after the change and animates the new marker from the old box to its own. |
+| Switching tabs | The incoming panel slides in from the side the user is moving towards, and the marker travels with it. |
 | Content expanding | `interpolate-size` lets `block-size: auto` animate, so content grows from the row that revealed it. Nothing is measured. |
 | Menus and dialogs | A menu is anchored to its trigger and scales out of its edge; a dialog expands away from the control that opened it. |
-| Theme change | The whole surface cross-fades. Surfaces also transition their own colors, so it glides even with no script. |
+| Theme or brand change | Surfaces transition their own colors, so it glides even with no script. Nothing snapshots the page, so frosted glass stays live while it happens. |
 | Hover, press, focus, select | All have a duration. Marks grow from their centre, the switch thumb travels its track. |
 
-Most of this is plain CSS. The three cases CSS cannot do alone — a selection
-moving *between two elements*, one panel replacing another, and the whole page
-changing appearance — need a view transition, which needs one line of script:
+Most of this is plain CSS. The two cases CSS cannot do alone — a selection
+moving *between two elements*, and one panel replacing another — need one line
+of script. It deliberately does **not** use a view transition: a page-wide
+snapshot cannot blur what sits behind frosted glass, so every frosted surface
+went clear for the length of the change.
 
 ```js
-nv.transition(() => {           // or document.startViewTransition directly
+nv.transition(() => {
   previous.removeAttribute("aria-current");
   next.setAttribute("aria-current", "page");
-});
+}, { scope: group });           // the group whose marker should travel
 ```
 
 `niveus.js` is optional and dependency-free. Without it every component still
@@ -208,27 +216,13 @@ place once as it scrolls into view, and `.nv-reveal-group` brings its children
 in one after another, `--nv-stagger` apart. Only the script marks anything as
 waiting, so without it — and under reduced motion — nothing is ever hidden.
 
-### One rule worth knowing
+### Nothing to name, nothing to keep unique
 
-A `view-transition-name` must be unique among all rendered elements, or the
-browser skips the transition entirely. Each selection group therefore needs its
-own marker name:
-
-```html
-<nav class="nv-nav" style="--nv-selection-name: nv-sel-sidebar"> … </nav>
-<nav class="nv-nav-tabs" style="--nv-selection-name: nv-sel-tabs"> … </nav>
-```
-
-Tab strips default to `nv-tabs-selection` and everything else to
-`nv-selection`, which is enough for one of each per page.
-
-### Motion under a transition
-
-Transition layers always paint above the page, so a travelling marker cannot
-stay behind the labels it passes the way it does at rest. Rather than let an
-opaque marker wipe them, Niveus thins it while it is in flight: it stays
-visible the whole way — it can still be followed — but reads as having lifted
-off the surface to travel.
+Because the marker is animated directly, several selection groups can change at
+once and none of them needs a name. (`--nv-selection-name` only matters to
+application code that starts its own view transition; if you do, remember that
+a `view-transition-name` must be unique among all rendered elements, and that
+the snapshot flattens frosted glass for as long as it runs.)
 
 `prefers-reduced-motion` collapses every duration at the token level and skips
 view transitions entirely. The change still happens; it just arrives.
@@ -352,7 +346,7 @@ interface tiring.
 | --- | --- |
 | **Clarity** | Every element has a purpose. Decoration never competes with content. |
 | **Soft physicality** | Depth comes from shadow, highlight and inset — not from ornament. |
-| **Material** | Surfaces are made of something. Solid, elevated, inset, frosted, glass. |
+| **Material** | Surfaces are made of something. Solid, elevated, inset, frosted, glass, glaze. |
 | **Restraint** | No effect exists because it is possible. Translucency and shadow are spent, not sprinkled. |
 | **Consistency** | The same control behaves the same way everywhere, including under a pointer. |
 | **Adaptability** | Nothing is defined in terms of an appearance or a color. |
@@ -432,6 +426,10 @@ probably not the problem the system has.
 | `.nv-steps`    | markers set into a rail; `data-state="done"` lights the way, `--vertical` |
 | `.nv-deck`     | one surface in front of others of its kind, with `__layer` |
 | `.nv-skeleton` | a waiting well with a slow sweep of light; `--text` `--circle` |
+| `.nv-slider`   | native range input as an inset track and a knob; `data-nv-var` binds it to a token |
+| `.nv-calendar` | month grid with keyboard model; chosen day is a small raised key |
+| `.nv-timepicker` | scroll-snap wheels, 24-hour by default, optional 24H / AM/PM switch |
+| `.nv-picker`   | field-shaped trigger for a popup list (`.nv-menu--listbox`) with search and type-ahead |
 | `.nv-surface`  | materials and elevation as utilities                       |
 
 Variants are defined by reassigning private `--_*` properties. Interaction —
@@ -480,10 +478,11 @@ to the state change simply happening rather than travelling:
 
 | Feature | Used for | Without it |
 | ------- | -------- | ---------- |
-| View transitions | travelling selection, tab panels, theme cross-fade | the change applies instantly |
+| Web Animations (`pseudoElement`) | travelling selection marker, tab panels | the change applies instantly |
 | `interpolate-size` | disclosure height | content appears at full height (`.nv-collapse` still animates) |
 | Anchor positioning | menus tied to their trigger | the menu centres itself |
 | `popover` | menus, light dismiss | needs the application's own toggle |
+| Scroll-driven animation | the time picker's drum effect | `niveus.js` applies the same curve from the scroll position (Firefox) |
 
 ---
 

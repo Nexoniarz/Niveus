@@ -1,0 +1,171 @@
+/* ==========================================================================
+   Niveus — Time picker
+   --------------------------------------------------------------------------
+     <div class="nv-timepicker nv-surface" data-nv-timepicker
+          data-nv-value="09:30" data-nv-step="5" data-nv-format-toggle></div>
+
+   Wheels, as on a phone: each column scrolls and snaps, and whatever sits in
+   the lens across the middle is the value. Scrolling, snapping, momentum and
+   touch are the browser's; niveus.js builds the columns, reads which row is
+   centred, and exposes the value as data-nv-value and an `nv:time` event.
+
+   The lens is the selection colour laid over the centre row, so it follows the
+   brand. Rows fade towards the top and bottom with a mask rather than a
+   coloured gradient, which keeps the fade right on any surface — solid, or
+   Glaze with something moving behind it.
+
+   The format is 24-hour unless told otherwise. With data-nv-format-toggle a
+   third wheel reads 24H / AM / PM: swipe it to AM or PM and the hour wheel
+   becomes 1–12; swipe back to 24H and it returns to 0–23. The value stays
+   24-hour either way, so a form never has to know which the person used.
+
+   Without niveus.js the element is empty. For a no-script fallback, use a
+   native <input type="time" class="nv-input">.
+   ========================================================================== */
+
+.nv-timepicker {
+  --_row: 2.25rem;
+  --_rows: 5;
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nv-space-2);
+  padding: var(--nv-space-2) var(--nv-space-3);
+  border-radius: var(--nv-radius-xl);
+  color: var(--nv-color-text-primary);
+}
+
+.nv-timepicker__wheels {
+  position: relative;
+  display: flex;
+  gap: var(--nv-space-1);
+}
+
+/* The lens: a bar of tinted glass lying across the centre row. It is raised
+   like the keys elsewhere in the system — lit on top, shaded below, with a
+   contact line — not a flat band of colour, so it reads as a thing the wheels
+   pass under. */
+.nv-timepicker__wheels::before {
+  content: "";
+  position: absolute;
+  inset-inline: calc(var(--nv-space-2) * -1);
+  inset-block-start: 50%;
+  block-size: var(--_row);
+  translate: 0 -50%;
+  background-color: var(--nv-color-selection);
+  background-image: var(--nv-sheen-raised);
+  border-radius: var(--nv-radius-md);
+  box-shadow: var(--nv-bevel), var(--nv-outline), var(--nv-elevation-1);
+  pointer-events: none;
+}
+
+.nv-timepicker__column {
+  position: relative;
+  inline-size: 3.5rem;
+  block-size: calc(var(--_row) * var(--_rows));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  cursor: grab;
+  user-select: none;
+  /* The wheel owns vertical gestures, whatever the pointer: niveus.js drags it
+     itself so a finger, a mouse and a desktop browser's phone mode behave
+     alike. Without the script the wheel still scrolls natively with a wheel
+     or keys; set touch-action back to pan-y if you ship it without. */
+  touch-action: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    transparent,
+    currentcolor 28%,
+    currentcolor 72%,
+    transparent
+  );
+  /* Depth for the drum effect below: rows turn away from the viewer as they
+     leave the centre. */
+  perspective: 14rem;
+}
+
+.nv-timepicker__column::-webkit-scrollbar {
+  display: none;
+}
+
+/* Spacers, not padding: they let the first and last rows reach the centre.
+   Firefox leaves the bottom padding of a scroll container out of its
+   scrollable area, which stranded the last rows (and made a three-row wheel
+   unscrollable); real boxes always count. */
+.nv-timepicker__column::before,
+.nv-timepicker__column::after {
+  content: "";
+  display: block;
+  block-size: calc(var(--_row) * (var(--_rows) - 1) / 2);
+}
+
+.nv-timepicker__column[data-nv-dragging] {
+  cursor: grabbing;
+}
+
+.nv-timepicker__column:focus-visible {
+  outline: none;
+  border-radius: var(--nv-radius-md);
+  box-shadow: var(--nv-focus-ring);
+}
+
+.nv-timepicker__option {
+  display: grid;
+  place-items: center;
+  block-size: var(--_row);
+  scroll-snap-align: center;
+  color: var(--nv-color-text-tertiary);
+  font: var(--nv-font-label);
+  font-size: var(--nv-font-size-lg);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  /* --nv-pull is how far the wheel has been dragged past its end. Letting go
+     removes it, and the spring easing carries the rows back with a small
+     overshoot — the way a phone's list gives at its limit and settles. */
+  translate: 0 var(--nv-pull, 0);
+  transition:
+    var(--nv-transition-colors),
+    translate var(--nv-duration-slower) var(--nv-ease-spring);
+}
+
+.nv-timepicker__column[data-nv-pulling] .nv-timepicker__option {
+  transition: var(--nv-transition-colors);
+}
+
+/* A drum: each row shrinks, fades and tilts away in proportion to how far it
+   is from the lens. Driven by the scroll position itself, so it needs no
+   script and tracks a finger exactly. Where scroll-driven animation is missing
+   the rows are simply flat, which is still correct. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .nv-timepicker__option {
+      animation: nv-wheel-drum linear both;
+      animation-timeline: view(block);
+    }
+  }
+}
+
+@keyframes nv-wheel-drum {
+  0% { scale: 0.78; opacity: 0.25; rotate: x 52deg; }
+  50% { scale: 1; opacity: 1; rotate: x 0deg; }
+  100% { scale: 0.78; opacity: 0.25; rotate: x -52deg; }
+}
+
+.nv-timepicker__option[aria-selected="true"] {
+  color: var(--nv-color-text-primary);
+  font-weight: var(--nv-font-weight-semibold);
+}
+
+.nv-timepicker__separator {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  color: var(--nv-color-text-tertiary);
+  font: var(--nv-font-label);
+  font-size: var(--nv-font-size-lg);
+}

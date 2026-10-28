@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Niveus — Picker
+   --------------------------------------------------------------------------
+     <button class="nv-input nv-picker nv-menu-trigger" popovertarget="fruit"
+             style="--nv-anchor: --fruit">
+       <span data-nv-picker-label>Choose a fruit</span>
+     </button>
+
+     <div class="nv-menu nv-menu--listbox" popover id="fruit" role="listbox"
+          style="--nv-anchor: --fruit">
+       <input class="nv-input nv-input--sm nv-menu__search" placeholder="Search…">
+       <button class="nv-menu__item" role="option" data-value="apple">Apple</button>
+       <button class="nv-menu__item" role="option" data-value="pear" aria-selected="true">Pear</button>
+     </div>
+
+   A popup list is a menu whose items are options: the same frosted surface,
+   anchoring and light dismiss, with a selection that stays. A picker is its
+   trigger: a field-shaped button that shows the current choice and a chevron
+   that turns over while the list is open.
+
+   niveus.js adds what a native <select> would give for free and a styled
+   popover does not: arrow-key movement, type-ahead, Enter or Space to choose,
+   filtering when a .nv-menu__search is present, and an `nv:select` event on the
+   trigger carrying { value, label }.
+   ========================================================================== */
+
+.nv-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nv-space-2);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nv-picker[data-empty] {
+  color: var(--nv-color-text-tertiary);
+}
+
+.nv-picker::after {
+  content: "";
+  flex: none;
+  inline-size: 0.4em;
+  block-size: 0.4em;
+  translate: 0 -0.12em;
+  rotate: 45deg;
+  border-inline-end: 2px solid var(--nv-color-text-tertiary);
+  border-block-end: 2px solid var(--nv-color-text-tertiary);
+  transition: rotate var(--nv-duration-quick) var(--nv-ease-standard);
+}
+
+.nv-picker:has(+ .nv-menu:popover-open)::after {
+  rotate: 225deg;
+  translate: 0 0.12em;
+}
+
+.nv-menu--listbox {
+  min-inline-size: anchor-size(inline);
+}
+
+.nv-menu__search {
+  inline-size: 100%;
+  margin-block-end: var(--nv-space-1);
+}
+
+/* display on .nv-menu__item would otherwise win over the hidden attribute. */
+.nv-menu__item[hidden] {
+  display: none;
+}

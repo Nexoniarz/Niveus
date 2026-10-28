@@ -404,7 +404,7 @@
             .forEach((el) => el.removeAttribute("aria-current"));
           item.setAttribute("aria-current", "page");
           render(item.dataset.thread);
-        }, { scope: list });
+        }, { scope: list, content: transcript });
         scroller.scrollTop = 0;
       });
     });

@@ -56,6 +56,32 @@
   position: static;
 }
 
+/* On a phone the bar keeps to one row. Wrapping put the controls on a second
+   line that sat over the links, and with glass behind it that read as a
+   collision. Instead the list gives way: it takes the room that is left and
+   scrolls sideways inside the bar, and everything else keeps its size. */
+@media (max-width: 40rem) {
+  .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) {
+    flex-wrap: nowrap;
+    gap: var(--nv-space-2);
+    padding-inline: var(--nv-space-3);
+  }
+
+  .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) > * {
+    flex-shrink: 0;
+  }
+
+  .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) > .nv-nav__list {
+    flex: 1 1 0;
+    flex-shrink: 1;
+    overflow-x: auto;
+  }
+
+  .nv-nav:not(.nv-nav--vertical):not(.nv-nav--inline) > .nv-nav__spacer {
+    display: none;
+  }
+}
+
 /* A navigation group used inside content rather than as page chrome: no bar,
    no border, no blur — just the items and their travelling selection. */
 .nv-nav--inline {
